@@ -1,0 +1,17 @@
+groups:
+- name: kubernetes-apps
+  rules:
+  - alert: KubeDaemonSetNotScheduled
+    annotations:
+      description: '{{ $value }} Pods of DaemonSet {{ $labels.namespace }}/{{ $labels.daemonset
+        }} are not scheduled on cluster {{ $labels.cluster }}.'
+      runbook_url: https://runbooks.prometheus-operator.dev/runbooks/kubernetes/kubedaemonsetnotscheduled
+      summary: DaemonSet pods are not scheduled.
+    expr: "kube_daemonset_status_desired_number_scheduled{job=\"kube-state-metrics\"\
+      , namespace=~\".*\"}\n  -\nkube_daemonset_status_current_number_scheduled{job=\"\
+      kube-state-metrics\", namespace=~\".*\"} > 0"
+    for: 10m
+    labels:
+      rackspace_com_coreAccountID: '5002029'
+      rackspace_com_overseerID: '935811'
+      severity: warning

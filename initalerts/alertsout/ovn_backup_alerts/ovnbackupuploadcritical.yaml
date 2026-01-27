@@ -1,0 +1,15 @@
+groups:
+- name: ovn_backup_alerts
+  rules:
+  - alert: ovnBackupUploadCritical
+    annotations:
+      description: 'Second successive OVN backup not uploaded within 1 hour of scheduled
+        run.
+
+        '
+      summary: Second successive OVN backup not uploaded within 1 hour of scheduled
+        run
+    expr: time() - upload_pairs_success_timestamp{job="ovn-backup"} > 43200
+    for: 1h
+    labels:
+      severity: critical

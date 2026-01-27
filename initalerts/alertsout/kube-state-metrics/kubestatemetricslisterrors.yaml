@@ -1,0 +1,18 @@
+groups:
+- name: kube-state-metrics
+  rules:
+  - alert: KubeStateMetricsListErrors
+    annotations:
+      description: kube-state-metrics is experiencing errors at an elevated rate in
+        list operations. This is likely causing it to not be able to expose metrics
+        about Kubernetes objects correctly or at all.
+      runbook_url: https://runbooks.prometheus-operator.dev/runbooks/kube-state-metrics/kubestatemetricslisterrors
+      summary: kube-state-metrics is experiencing errors in list operations.
+    expr: "(sum(rate(kube_state_metrics_list_total{job=\"kube-state-metrics\",result=\"\
+      error\"}[5m])) by (cluster)\n  /\nsum(rate(kube_state_metrics_list_total{job=\"\
+      kube-state-metrics\"}[5m])) by (cluster))\n> 0.01"
+    for: 15m
+    labels:
+      rackspace_com_coreAccountID: '5002029'
+      rackspace_com_overseerID: '935811'
+      severity: critical

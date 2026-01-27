@@ -1,2 +1,2 @@
 # genestack-monitoring
-Houses alerts, dashboards and other monitoring related items
+Houses alerts, recording rules, dashboards and other monitoring related items

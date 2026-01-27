@@ -1,0 +1,8 @@
+groups:
+- name: node-exporter.rules
+  rules:
+  - expr: rate(node_disk_io_time_weighted_seconds_total{job="node-exporter", device=~"(/dev/)?(mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|md.+|dasd.+)"}[5m])
+    labels:
+      rackspace_com_coreAccountID: '5002029'
+      rackspace_com_overseerID: '935811'
+    record: instance_device:node_disk_io_time_weighted_seconds:rate5m

@@ -1,0 +1,19 @@
+groups:
+- name: node-exporter
+  rules:
+  - alert: NodeFilesystemAlmostOutOfSpace
+    annotations:
+      description: Filesystem on {{ $labels.device }}, mounted on {{ $labels.mountpoint
+        }}, at {{ $labels.instance }} has only {{ printf "%.2f" $value }}% available
+        space left.
+      runbook_url: https://runbooks.prometheus-operator.dev/runbooks/node/nodefilesystemalmostoutofspace
+      summary: Filesystem has less than 3% space left.
+    expr: "(\n  node_filesystem_avail_bytes{job=\"node-exporter\",fstype!=\"\",mountpoint!=\"\
+      \"} / node_filesystem_size_bytes{job=\"node-exporter\",fstype!=\"\",mountpoint!=\"\
+      \"} * 100 < 3\nand\n  node_filesystem_readonly{job=\"node-exporter\",fstype!=\"\
+      \",mountpoint!=\"\"} == 0\n)"
+    for: 30m
+    labels:
+      rackspace_com_coreAccountID: '5002029'
+      rackspace_com_overseerID: '935811'
+      severity: critical

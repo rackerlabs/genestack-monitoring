@@ -1,0 +1,12 @@
+groups:
+- name: k8s.rules.container_resource
+  rules:
+  - expr: "sum by (namespace, cluster) (\n    sum by (namespace, pod, cluster) (\n\
+      \        max by (namespace, pod, container, cluster) (\n          kube_pod_container_resource_limits{resource=\"\
+      memory\",job=\"kube-state-metrics\"}\n        ) * on (namespace, pod, cluster)\
+      \ group_left() max by (namespace, pod, cluster) (\n          kube_pod_status_phase{phase=~\"\
+      Pending|Running\"} == 1\n        )\n    )\n)"
+    labels:
+      rackspace_com_coreAccountID: '5002029'
+      rackspace_com_overseerID: '935811'
+    record: namespace_memory:kube_pod_container_resource_limits:sum

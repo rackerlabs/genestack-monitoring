@@ -1,0 +1,17 @@
+groups:
+- name: kube-state-metrics
+  rules:
+  - alert: KubeStateMetricsShardsMissing
+    annotations:
+      description: kube-state-metrics shards are missing, some Kubernetes objects
+        are not being exposed.
+      runbook_url: https://runbooks.prometheus-operator.dev/runbooks/kube-state-metrics/kubestatemetricsshardsmissing
+      summary: kube-state-metrics shards are missing.
+    expr: "2^max(kube_state_metrics_total_shards{job=\"kube-state-metrics\"}) by (cluster)\
+      \ - 1\n  -\nsum( 2 ^ max by (cluster, shard_ordinal) (kube_state_metrics_shard_ordinal{job=\"\
+      kube-state-metrics\"}) ) by (cluster)\n!= 0"
+    for: 15m
+    labels:
+      rackspace_com_coreAccountID: '5002029'
+      rackspace_com_overseerID: '935811'
+      severity: critical

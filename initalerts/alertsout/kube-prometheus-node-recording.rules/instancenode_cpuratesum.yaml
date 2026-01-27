@@ -1,0 +1,9 @@
+groups:
+- name: kube-prometheus-node-recording.rules
+  rules:
+  - expr: sum(rate(node_cpu_seconds_total{mode!="idle",mode!="iowait",mode!="steal"}[3m]))
+      BY (instance)
+    labels:
+      rackspace_com_coreAccountID: '5002029'
+      rackspace_com_overseerID: '935811'
+    record: instance:node_cpu:rate:sum

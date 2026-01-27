@@ -1,0 +1,16 @@
+groups:
+- name: kubernetes-system
+  rules:
+  - alert: KubeVersionMismatch
+    annotations:
+      description: There are {{ $value }} different semantic versions of Kubernetes
+        components running on cluster {{ $labels.cluster }}.
+      runbook_url: https://runbooks.prometheus-operator.dev/runbooks/kubernetes/kubeversionmismatch
+      summary: Different semantic versions of Kubernetes components running.
+    expr: count by (cluster) (count by (git_version, cluster) (label_replace(kubernetes_build_info{job!~"kube-dns|coredns"},"git_version","$1","git_version","(v[0-9]*.[0-9]*).*")))
+      > 1
+    for: 15m
+    labels:
+      rackspace_com_coreAccountID: '5002029'
+      rackspace_com_overseerID: '935811'
+      severity: warning

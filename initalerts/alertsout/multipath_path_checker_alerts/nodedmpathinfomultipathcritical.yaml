@@ -1,0 +1,16 @@
+groups:
+- name: multipath_path_checker_alerts
+  rules:
+  - alert: NodeDmpathInfoMultipathCritical
+    annotations:
+      description: '{{ $labels.name }}
+
+        labels: {{ $labels }}'
+      summary: Multipathd paths are NOT active|ready and paths are likely orphaned
+    expr: node_dmpath_info{path_checker_state!~"active|ready"}
+    for: 2m
+    labels:
+      coreaccountid: '{{ $labels.rackspace_com_coreAccountID }}'
+      coredeviceid: '{{ $labels.rackspace_com_coreDeviceID }}'
+      node: '{{ $labels.instance }}'
+      severity: critical

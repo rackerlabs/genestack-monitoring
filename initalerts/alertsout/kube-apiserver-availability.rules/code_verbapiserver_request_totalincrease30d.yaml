@@ -1,0 +1,9 @@
+groups:
+- name: kube-apiserver-availability.rules
+  rules:
+  - expr: avg_over_time(code_verb:apiserver_request_total:increase1h[30d]) * 24 *
+      30
+    labels:
+      rackspace_com_coreAccountID: '5002029'
+      rackspace_com_overseerID: '935811'
+    record: code_verb:apiserver_request_total:increase30d

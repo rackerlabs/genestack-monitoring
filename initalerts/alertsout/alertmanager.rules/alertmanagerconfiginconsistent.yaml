@@ -1,0 +1,17 @@
+groups:
+- name: alertmanager.rules
+  rules:
+  - alert: AlertmanagerConfigInconsistent
+    annotations:
+      description: Alertmanager instances within the {{$labels.job}} cluster have
+        different configurations.
+      runbook_url: https://runbooks.prometheus-operator.dev/runbooks/alertmanager/alertmanagerconfiginconsistent
+      summary: Alertmanager instances within the same cluster have different configurations.
+    expr: "count by (namespace,service,cluster) (\n  count_values by (namespace,service,cluster)\
+      \ (\"config_hash\", alertmanager_config_hash{job=\"kube-prometheus-stack-alertmanager\"\
+      ,container=\"alertmanager\",namespace=\"prometheus\"})\n)\n!= 1"
+    for: 20m
+    labels:
+      rackspace_com_coreAccountID: '5002029'
+      rackspace_com_overseerID: '935811'
+      severity: critical

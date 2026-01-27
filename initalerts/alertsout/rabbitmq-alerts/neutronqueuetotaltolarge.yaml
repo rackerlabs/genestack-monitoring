@@ -1,0 +1,11 @@
+groups:
+- name: rabbitmq-alerts
+  rules:
+  - alert: NeutronQueueTotalToLarge
+    annotations:
+      description: Neutron vhost in RabbitMQ has too many messages. Check consumers.
+      summary: Neutron vhost has too many messages
+    expr: rabbitmq_queue_messages{vhost="neutron"} > 25
+    for: 10m
+    labels:
+      severity: warning

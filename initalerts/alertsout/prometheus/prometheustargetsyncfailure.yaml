@@ -1,0 +1,16 @@
+groups:
+- name: prometheus
+  rules:
+  - alert: PrometheusTargetSyncFailure
+    annotations:
+      description: '{{ printf "%.0f" $value }} targets in Prometheus {{$labels.namespace}}/{{$labels.pod}}
+        have failed to sync because invalid configuration was supplied.'
+      runbook_url: https://runbooks.prometheus-operator.dev/runbooks/prometheus/prometheustargetsyncfailure
+      summary: Prometheus has failed to sync targets.
+    expr: increase(prometheus_target_sync_failed_total{job="kube-prometheus-stack-prometheus",namespace="prometheus"}[30m])
+      > 0
+    for: 5m
+    labels:
+      rackspace_com_coreAccountID: '5002029'
+      rackspace_com_overseerID: '935811'
+      severity: critical

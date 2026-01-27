@@ -1,0 +1,22 @@
+groups:
+- name: alertmanager.rules
+  rules:
+  - alert: AlertmanagerMembersInconsistent
+    annotations:
+      description: Alertmanager {{ $labels.namespace }}/{{ $labels.pod}} has only
+        found {{ $value }} members of the {{$labels.job}} cluster.
+      runbook_url: https://runbooks.prometheus-operator.dev/runbooks/alertmanager/alertmanagermembersinconsistent
+      summary: A member of an Alertmanager cluster has not found all other cluster
+        members.
+    expr: "# Without max_over_time, failed scrapes could create false negatives, see\n\
+      # https://www.robustperception.io/alerting-on-gauges-in-prometheus-2-0 for details.\n\
+      \  max_over_time(alertmanager_cluster_members{job=\"kube-prometheus-stack-alertmanager\"\
+      ,container=\"alertmanager\",namespace=\"prometheus\"}[5m])\n< on (namespace,service,cluster)\
+      \ group_left\n  count by (namespace,service,cluster) (max_over_time(alertmanager_cluster_members{job=\"\
+      kube-prometheus-stack-alertmanager\",container=\"alertmanager\",namespace=\"\
+      prometheus\"}[5m]))"
+    for: 15m
+    labels:
+      rackspace_com_coreAccountID: '5002029'
+      rackspace_com_overseerID: '935811'
+      severity: critical

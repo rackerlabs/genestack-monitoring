@@ -1,0 +1,17 @@
+groups:
+- name: prometheus
+  rules:
+  - alert: PrometheusHighQueryLoad
+    annotations:
+      description: Prometheus {{$labels.namespace}}/{{$labels.pod}} query API has
+        less than 20% available capacity in its query engine for the last 15 minutes.
+      runbook_url: https://runbooks.prometheus-operator.dev/runbooks/prometheus/prometheushighqueryload
+      summary: Prometheus is reaching its maximum capacity serving concurrent requests.
+    expr: avg_over_time(prometheus_engine_queries{job="kube-prometheus-stack-prometheus",namespace="prometheus"}[5m])
+      / max_over_time(prometheus_engine_queries_concurrent_max{job="kube-prometheus-stack-prometheus",namespace="prometheus"}[5m])
+      > 0.8
+    for: 15m
+    labels:
+      rackspace_com_coreAccountID: '5002029'
+      rackspace_com_overseerID: '935811'
+      severity: warning

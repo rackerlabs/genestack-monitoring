@@ -1,0 +1,12 @@
+groups:
+- name: rabbitmq
+  rules:
+  - expr: 'count_values
+
+      by (namespace, rabbitmq_cluster, alertname, severity, instance, endpoint, pod,
+      container, persistentvolumeclaim)
+
+      ("alert_state_numeric", ALERTS:rabbitmq_alert_state_numeric)
+
+      '
+    record: ALERTS:rabbitmq_alert_state_discrete

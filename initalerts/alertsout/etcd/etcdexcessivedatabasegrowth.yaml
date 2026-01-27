@@ -1,0 +1,17 @@
+groups:
+- name: etcd
+  rules:
+  - alert: etcdExcessiveDatabaseGrowth
+    annotations:
+      description: 'etcd cluster "{{ $labels.job }}": Predicting running out of disk
+        space in the next four hours, based on write observations within the past
+        four hours on etcd instance {{ $labels.instance }}, please check as it might
+        be disruptive.'
+      summary: etcd cluster database growing very fast.
+    expr: predict_linear(etcd_mvcc_db_total_size_in_bytes{job=~".*etcd.*"}[4h], 4*60*60)
+      > etcd_server_quota_backend_bytes{job=~".*etcd.*"}
+    for: 10m
+    labels:
+      rackspace_com_coreAccountID: '5002029'
+      rackspace_com_overseerID: '935811'
+      severity: warning

@@ -1,0 +1,7 @@
+groups:
+- name: rabbitmq
+  rules:
+  - expr: 'ALERTS{rulesgroup="rabbitmq", alertstate="firing"} * 0 + 2
+
+      '
+    record: ALERTS:rabbitmq_alert_state_numeric

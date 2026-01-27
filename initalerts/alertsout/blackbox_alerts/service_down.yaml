@@ -1,0 +1,16 @@
+groups:
+- name: blackbox_alerts
+  rules:
+  - alert: Service Down
+    annotations:
+      description: 'Service probe has failed for more than two minutes.
+
+        LABELS = {{ $labels }}
+
+        '
+      summary: Service probe has failed for more than two minutes on (instance {{
+        $labels.instance }})
+    expr: probe_success == 0
+    for: 2m
+    labels:
+      severity: critical

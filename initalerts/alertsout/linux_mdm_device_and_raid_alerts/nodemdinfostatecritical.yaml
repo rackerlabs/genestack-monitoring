@@ -1,0 +1,18 @@
+groups:
+- name: linux_mdm_device_and_raid_alerts
+  rules:
+  - alert: NodeMdInfoStateCritical
+    annotations:
+      description: '{{ $labels.name }}
+
+        State:{{ $labels.State }}
+
+        LABELS: {{ $labels }}'
+      summary: Linux software MD RAID State is NOT active|clean
+    expr: node_md_info{job="node-exporter", State!~"active.*|clean.*"} > 0
+    for: 1m
+    labels:
+      coreAccountID: '{{ $labels.rackspace_com_coreAccountID }}'
+      coreDeviceID: '{{ $labels.rackspace_com_coreDeviceID }}'
+      node: '{{ $labels.instance }}'
+      severity: critical

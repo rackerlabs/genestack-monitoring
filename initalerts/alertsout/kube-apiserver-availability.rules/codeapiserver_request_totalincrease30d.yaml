@@ -1,0 +1,9 @@
+groups:
+- name: kube-apiserver-availability.rules
+  rules:
+  - expr: sum by (cluster, code) (code_verb:apiserver_request_total:increase30d{verb=~"POST|PUT|PATCH|DELETE"})
+    labels:
+      rackspace_com_coreAccountID: '5002029'
+      rackspace_com_overseerID: '935811'
+      verb: write
+    record: code:apiserver_request_total:increase30d

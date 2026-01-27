@@ -1,0 +1,11 @@
+groups:
+- name: rabbitmq-alerts
+  rules:
+  - alert: KeystoneQueueTotalToLarge
+    annotations:
+      description: Keystone vhost in RabbitMQ has too many messages. Check consumers.
+      summary: Keystone vhost has too many messages
+    expr: rabbitmq_queue_messages{vhost="keystone"} > 25
+    for: 10m
+    labels:
+      severity: warning

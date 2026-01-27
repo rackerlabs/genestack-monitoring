@@ -1,0 +1,10 @@
+groups:
+- name: k8s.rules.container_resource
+  rules:
+  - expr: "kube_pod_container_resource_requests{resource=\"memory\",job=\"kube-state-metrics\"\
+      }  * on (namespace, pod, cluster)\ngroup_left() max by (namespace, pod, cluster)\
+      \ (\n  (kube_pod_status_phase{phase=~\"Pending|Running\"} == 1)\n)"
+    labels:
+      rackspace_com_coreAccountID: '5002029'
+      rackspace_com_overseerID: '935811'
+    record: cluster:namespace:pod_memory:active:kube_pod_container_resource_requests

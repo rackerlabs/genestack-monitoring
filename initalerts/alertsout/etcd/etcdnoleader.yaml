@@ -1,0 +1,14 @@
+groups:
+- name: etcd
+  rules:
+  - alert: etcdNoLeader
+    annotations:
+      description: 'etcd cluster "{{ $labels.job }}": member {{ $labels.instance }}
+        has no leader.'
+      summary: etcd cluster has no leader.
+    expr: etcd_server_has_leader{job=~".*etcd.*"} == 0
+    for: 1m
+    labels:
+      rackspace_com_coreAccountID: '5002029'
+      rackspace_com_overseerID: '935811'
+      severity: critical

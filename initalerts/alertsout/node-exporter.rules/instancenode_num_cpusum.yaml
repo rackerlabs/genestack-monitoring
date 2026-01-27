@@ -1,0 +1,9 @@
+groups:
+- name: node-exporter.rules
+  rules:
+  - expr: "count without (cpu, mode) (\n  node_cpu_seconds_total{job=\"node-exporter\"\
+      ,mode=\"idle\"}\n)"
+    labels:
+      rackspace_com_coreAccountID: '5002029'
+      rackspace_com_overseerID: '935811'
+    record: instance:node_num_cpu:sum

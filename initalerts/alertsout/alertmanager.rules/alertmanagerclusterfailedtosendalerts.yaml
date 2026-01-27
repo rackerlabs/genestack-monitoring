@@ -1,0 +1,21 @@
+groups:
+- name: alertmanager.rules
+  rules:
+  - alert: AlertmanagerClusterFailedToSendAlerts
+    annotations:
+      description: The minimum notification failure rate to {{ $labels.integration
+        }} sent from any instance in the {{$labels.job}} cluster is {{ $value | humanizePercentage
+        }}.
+      runbook_url: https://runbooks.prometheus-operator.dev/runbooks/alertmanager/alertmanagerclusterfailedtosendalerts
+      summary: All Alertmanager instances in a cluster failed to send notifications
+        to a non-critical integration.
+    expr: "min by (namespace,service, integration) (\n  rate(alertmanager_notifications_failed_total{job=\"\
+      kube-prometheus-stack-alertmanager\",container=\"alertmanager\",namespace=\"\
+      prometheus\", integration!~`.*`}[15m])\n/\n  ignoring (reason) group_left rate(alertmanager_notifications_total{job=\"\
+      kube-prometheus-stack-alertmanager\",container=\"alertmanager\",namespace=\"\
+      prometheus\", integration!~`.*`}[15m])\n)\n> 0.01"
+    for: 5m
+    labels:
+      rackspace_com_coreAccountID: '5002029'
+      rackspace_com_overseerID: '935811'
+      severity: warning

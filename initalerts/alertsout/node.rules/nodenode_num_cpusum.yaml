@@ -1,0 +1,10 @@
+groups:
+- name: node.rules
+  rules:
+  - expr: "count by (cluster, node) (\n  node_cpu_seconds_total{mode=\"idle\",job=\"\
+      node-exporter\"}\n  * on (cluster, namespace, pod) group_left(node)\n  topk\
+      \ by (cluster, namespace, pod) (1, node_namespace_pod:kube_pod_info:)\n)"
+    labels:
+      rackspace_com_coreAccountID: '5002029'
+      rackspace_com_overseerID: '935811'
+    record: node:node_num_cpu:sum

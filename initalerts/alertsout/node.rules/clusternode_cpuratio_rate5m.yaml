@@ -1,0 +1,8 @@
+groups:
+- name: node.rules
+  rules:
+  - expr: "avg by (cluster) (\n  node:node_cpu_utilization:ratio_rate5m\n)"
+    labels:
+      rackspace_com_coreAccountID: '5002029'
+      rackspace_com_overseerID: '935811'
+    record: cluster:node_cpu:ratio_rate5m

@@ -1,0 +1,8 @@
+groups:
+- name: kube-apiserver-availability.rules
+  rules:
+  - expr: sum by (cluster, verb, scope) (cluster_verb_scope_le:apiserver_request_sli_duration_seconds_bucket:increase30d{le="+Inf"})
+    labels:
+      rackspace_com_coreAccountID: '5002029'
+      rackspace_com_overseerID: '935811'
+    record: cluster_verb_scope:apiserver_request_sli_duration_seconds_count:increase30d

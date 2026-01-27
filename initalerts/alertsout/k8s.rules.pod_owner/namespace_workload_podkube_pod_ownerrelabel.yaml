@@ -1,0 +1,28 @@
+groups:
+- name: k8s.rules.pod_owner
+  rules:
+  - expr: "group by (cluster, namespace, workload, workload_type, pod) (\n  label_join(\n\
+      \    label_join(\n      group by (cluster, namespace, job_name, pod) (\n   \
+      \     label_join(\n          kube_pod_owner{job=\"kube-state-metrics\", owner_kind=\"\
+      Job\"}\n        , \"job_name\", \"\", \"owner_name\")\n      )\n      * on (cluster,\
+      \ namespace, job_name) group_left(owner_kind, owner_name)\n      group by (cluster,\
+      \ namespace, job_name, owner_kind, owner_name) (\n        kube_job_owner{job=\"\
+      kube-state-metrics\", owner_kind!=\"Pod\", owner_kind!=\"\"}\n      )\n    ,\
+      \ \"workload\", \"\", \"owner_name\")\n  , \"workload_type\", \"\", \"owner_kind\"\
+      )\n\n  OR\n\n  label_replace(\n    label_replace(\n      label_replace(\n  \
+      \      kube_pod_owner{job=\"kube-state-metrics\", owner_kind=\"ReplicaSet\"\
+      }\n        , \"replicaset\", \"$1\", \"owner_name\", \"(.+)\"\n      )\n   \
+      \   * on (cluster, namespace, replicaset) group_left(owner_kind, owner_name)\n\
+      \      group by (cluster, namespace, replicaset, owner_kind, owner_name) (\n\
+      \        kube_replicaset_owner{job=\"kube-state-metrics\", owner_kind!=\"Deployment\"\
+      , owner_kind!=\"\"}\n      )\n    , \"workload\", \"$1\", \"owner_name\", \"\
+      (.+)\")\n    OR\n    label_replace(\n      group by (cluster, namespace, pod,\
+      \ owner_name, owner_kind) (\n        kube_pod_owner{job=\"kube-state-metrics\"\
+      , owner_kind!=\"ReplicaSet\", owner_kind!=\"DaemonSet\", owner_kind!=\"StatefulSet\"\
+      , owner_kind!=\"Job\", owner_kind!=\"Node\", owner_kind!=\"\"}\n      )\n  \
+      \    , \"workload\", \"$1\", \"owner_name\", \"(.+)\"\n    )\n  , \"workload_type\"\
+      , \"$1\", \"owner_kind\", \"(.+)\")\n)"
+    labels:
+      rackspace_com_coreAccountID: '5002029'
+      rackspace_com_overseerID: '935811'
+    record: namespace_workload_pod:kube_pod_owner:relabel

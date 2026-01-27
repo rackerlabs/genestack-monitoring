@@ -1,0 +1,16 @@
+groups:
+- name: etcd
+  rules:
+  - alert: etcdHighFsyncDurations
+    annotations:
+      description: 'etcd cluster "{{ $labels.job }}": 99th percentile fsync durations
+        are {{ $value }}s on etcd instance {{ $labels.instance }}.'
+      summary: etcd cluster 99th percentile fsync durations are too high.
+    expr: 'histogram_quantile(0.99, rate(etcd_disk_wal_fsync_duration_seconds_bucket{job=~".*etcd.*"}[5m]))
+
+      > 1'
+    for: 10m
+    labels:
+      rackspace_com_coreAccountID: '5002029'
+      rackspace_com_overseerID: '935811'
+      severity: critical

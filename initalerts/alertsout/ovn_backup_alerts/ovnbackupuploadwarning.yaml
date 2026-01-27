@@ -1,0 +1,13 @@
+groups:
+- name: ovn_backup_alerts
+  rules:
+  - alert: ovnBackupUploadWarning
+    annotations:
+      description: 'Last OVN backup not uploaded within 1 hour of scheduled run.
+
+        '
+      summary: Last OVN backup not uploaded within 1 hour of scheduled run
+    expr: time() - upload_pairs_success_timestamp{job="ovn-backup"} > 21600
+    for: 1h
+    labels:
+      severity: warning

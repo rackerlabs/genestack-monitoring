@@ -1,0 +1,16 @@
+groups:
+- name: prometheus
+  rules:
+  - alert: PrometheusDuplicateTimestamps
+    annotations:
+      description: Prometheus {{$labels.namespace}}/{{$labels.pod}} is dropping {{
+        printf "%.4g" $value  }} samples/s with different values but duplicated timestamp.
+      runbook_url: https://runbooks.prometheus-operator.dev/runbooks/prometheus/prometheusduplicatetimestamps
+      summary: Prometheus is dropping samples with duplicate timestamps.
+    expr: rate(prometheus_target_scrapes_sample_duplicate_timestamp_total{job="kube-prometheus-stack-prometheus",namespace="prometheus"}[5m])
+      > 0
+    for: 10m
+    labels:
+      rackspace_com_coreAccountID: '5002029'
+      rackspace_com_overseerID: '935811'
+      severity: warning

@@ -1,0 +1,11 @@
+groups:
+- name: rabbitmq-alerts
+  rules:
+  - alert: NovaQueueTotalToLarge
+    annotations:
+      description: Nova vhost in RabbitMQ has too many messages. Check consumers.
+      summary: Nova vhost has too many messages
+    expr: rabbitmq_queue_messages{vhost="nova"} > 25
+    for: 10m
+    labels:
+      severity: warning

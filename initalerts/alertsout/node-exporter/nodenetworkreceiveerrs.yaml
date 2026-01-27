@@ -1,0 +1,16 @@
+groups:
+- name: node-exporter
+  rules:
+  - alert: NodeNetworkReceiveErrs
+    annotations:
+      description: '{{ $labels.instance }} interface {{ $labels.device }} has encountered
+        {{ printf "%.0f" $value }} receive errors in the last two minutes.'
+      runbook_url: https://runbooks.prometheus-operator.dev/runbooks/node/nodenetworkreceiveerrs
+      summary: Network interface is reporting many receive errors.
+    expr: rate(node_network_receive_errs_total{job="node-exporter"}[2m]) / rate(node_network_receive_packets_total{job="node-exporter"}[2m])
+      > 0.01
+    for: 1h
+    labels:
+      rackspace_com_coreAccountID: '5002029'
+      rackspace_com_overseerID: '935811'
+      severity: warning

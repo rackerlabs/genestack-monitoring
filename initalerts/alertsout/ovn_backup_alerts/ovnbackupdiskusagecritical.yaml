@@ -1,0 +1,13 @@
+groups:
+- name: ovn_backup_alerts
+  rules:
+  - alert: ovnBackupDiskUsageCritical
+    annotations:
+      description: 'OVN backup volume >= 90% disk usage.
+
+        '
+      summary: OVN backup volume >= 90% disk usage
+    expr: disk_used_percent_gauge{job="ovn-backup"} > 90
+    for: 0m
+    labels:
+      severity: critical

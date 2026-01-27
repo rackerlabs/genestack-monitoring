@@ -1,0 +1,18 @@
+groups:
+- name: kubernetes-apps
+  rules:
+  - alert: KubeStatefulSetGenerationMismatch
+    annotations:
+      description: StatefulSet generation for {{ $labels.namespace }}/{{ $labels.statefulset
+        }} does not match, this indicates that the StatefulSet has failed but has
+        not been rolled back on cluster {{ $labels.cluster }}.
+      runbook_url: https://runbooks.prometheus-operator.dev/runbooks/kubernetes/kubestatefulsetgenerationmismatch
+      summary: StatefulSet generation mismatch due to possible roll-back
+    expr: "kube_statefulset_status_observed_generation{job=\"kube-state-metrics\"\
+      , namespace=~\".*\"}\n  !=\nkube_statefulset_metadata_generation{job=\"kube-state-metrics\"\
+      , namespace=~\".*\"}"
+    for: 15m
+    labels:
+      rackspace_com_coreAccountID: '5002029'
+      rackspace_com_overseerID: '935811'
+      severity: warning

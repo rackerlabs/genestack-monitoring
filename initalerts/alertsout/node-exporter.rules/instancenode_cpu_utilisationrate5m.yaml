@@ -1,0 +1,9 @@
+groups:
+- name: node-exporter.rules
+  rules:
+  - expr: "1 - avg without (cpu) (\n  sum without (mode) (rate(node_cpu_seconds_total{job=\"\
+      node-exporter\", mode=~\"idle|iowait|steal\"}[5m]))\n)"
+    labels:
+      rackspace_com_coreAccountID: '5002029'
+      rackspace_com_overseerID: '935811'
+    record: instance:node_cpu_utilisation:rate5m

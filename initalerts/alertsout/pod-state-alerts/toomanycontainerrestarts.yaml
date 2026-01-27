@@ -1,0 +1,21 @@
+groups:
+- name: pod-state-alerts
+  rules:
+  - alert: TooManyContainerRestarts
+    annotations:
+      description: 'Namespace: {{$labels.namespace}}
+
+        Pod name: {{$labels.pod}}
+
+        Container name: {{$labels.container}}
+
+        '
+      summary: Container named {{ $labels.container }} in {{ $labels.pod }} in {{
+        $labels.namespace }} has restarted too many times in a short period and needs
+        to be investigated.
+    expr: sum(increase(kube_pod_container_status_restarts_total{pod_template_hash=""}[15m]))
+      by (pod,namespace,container) > 5
+    for: 0m
+    labels:
+      app: '{{ $labels.pod }}'
+      severity: critical

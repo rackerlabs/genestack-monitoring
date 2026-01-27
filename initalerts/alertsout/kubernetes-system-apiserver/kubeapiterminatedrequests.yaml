@@ -1,0 +1,19 @@
+groups:
+- name: kubernetes-system-apiserver
+  rules:
+  - alert: KubeAPITerminatedRequests
+    annotations:
+      description: The kubernetes apiserver has terminated {{ $value | humanizePercentage
+        }} of its incoming requests on cluster {{ $labels.cluster }}.
+      runbook_url: https://runbooks.prometheus-operator.dev/runbooks/kubernetes/kubeapiterminatedrequests
+      summary: The kubernetes apiserver has terminated {{ $value | humanizePercentage
+        }} of its incoming requests.
+    expr: sum by (cluster) (rate(apiserver_request_terminations_total{job="apiserver"}[10m]))
+      / ( sum by (cluster) (rate(apiserver_request_total{job="apiserver"}[10m])) +
+      sum by (cluster) (rate(apiserver_request_terminations_total{job="apiserver"}[10m]))
+      ) > 0.20
+    for: 5m
+    labels:
+      rackspace_com_coreAccountID: '5002029'
+      rackspace_com_overseerID: '935811'
+      severity: warning

@@ -1,0 +1,17 @@
+groups:
+- name: compute_resource_alerts
+  rules:
+  - alert: InstancesStuckInFailureState
+    annotations:
+      description: 'There are instances stuck in a building or error state for a prolonged
+        period
+
+        that need to be cleaned up.
+
+        '
+      summary: Instances stuck in failure state for a prolonged period
+    expr: sum(count_over_time(openstack_nova_server_status{status=~"BUILD|ERROR"}[1h]))
+      > 0
+    for: 15m
+    labels:
+      severity: warning

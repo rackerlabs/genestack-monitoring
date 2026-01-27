@@ -1,0 +1,16 @@
+groups:
+- name: node-exporter
+  rules:
+  - alert: NodeFileDescriptorLimit
+    annotations:
+      description: File descriptors limit at {{ $labels.instance }} is currently at
+        {{ printf "%.2f" $value }}%.
+      runbook_url: https://runbooks.prometheus-operator.dev/runbooks/node/nodefiledescriptorlimit
+      summary: Kernel is predicted to exhaust file descriptors limit soon.
+    expr: "(\n  node_filefd_allocated{job=\"node-exporter\"} * 100 / node_filefd_maximum{job=\"\
+      node-exporter\"} > 90\n)"
+    for: 15m
+    labels:
+      rackspace_com_coreAccountID: '5002029'
+      rackspace_com_overseerID: '935811'
+      severity: critical

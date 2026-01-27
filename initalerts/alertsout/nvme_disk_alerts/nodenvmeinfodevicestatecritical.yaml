@@ -1,0 +1,20 @@
+groups:
+- name: nvme_disk_alerts
+  rules:
+  - alert: NodeNvmeInfoDeviceStateCritical
+    annotations:
+      description: '{{ $labels.name }}
+
+        Device: {{ $labels.device }}
+
+        State:{{ $labels.state }}
+
+        LABELS: {{ $labels }}'
+      summary: NVME device has failed. state!=live
+    expr: node_nvme_info{job="node-exporter", state!~"live"} > 0
+    for: 1m
+    labels:
+      coreAccountID: '{{ $labels.rackspace_com_coreAccountID }}'
+      coreDeviceID: '{{ $labels.rackspace_com_coreDeviceID }}'
+      node: '{{ $labels.instance }}'
+      severity: critical

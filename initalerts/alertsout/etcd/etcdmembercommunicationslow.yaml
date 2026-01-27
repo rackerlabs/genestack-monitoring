@@ -1,0 +1,17 @@
+groups:
+- name: etcd
+  rules:
+  - alert: etcdMemberCommunicationSlow
+    annotations:
+      description: 'etcd cluster "{{ $labels.job }}": member communication with {{
+        $labels.To }} is taking {{ $value }}s on etcd instance {{ $labels.instance
+        }}.'
+      summary: etcd cluster member communication is slow.
+    expr: 'histogram_quantile(0.99, rate(etcd_network_peer_round_trip_time_seconds_bucket{job=~".*etcd.*"}[5m]))
+
+      > 0.15'
+    for: 10m
+    labels:
+      rackspace_com_coreAccountID: '5002029'
+      rackspace_com_overseerID: '935811'
+      severity: warning

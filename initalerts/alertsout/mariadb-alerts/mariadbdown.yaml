@@ -1,0 +1,11 @@
+groups:
+- name: mariadb-alerts
+  rules:
+  - alert: MariaDBDown
+    annotations:
+      description: MariaDB {{$labels.job}} on {{$labels.instance}} is not up.
+      summary: MariaDB not up and running, immediate attention is required.
+    expr: mysql_up != 1
+    for: 5m
+    labels:
+      severity: critical

@@ -1,0 +1,16 @@
+groups:
+- name: etcd
+  rules:
+  - alert: etcdMembersDown
+    annotations:
+      description: 'etcd cluster "{{ $labels.job }}": members are down ({{ $value
+        }}).'
+      summary: etcd cluster members are down.
+    expr: "max without (endpoint) (\n  sum without (instance, pod) (up{job=~\".*etcd.*\"\
+      } == bool 0)\nor\n  count without (To) (\n    sum without (instance, pod) (rate(etcd_network_peer_sent_failures_total{job=~\"\
+      .*etcd.*\"}[120s])) > 0.01\n  )\n)\n> 0"
+    for: 20m
+    labels:
+      rackspace_com_coreAccountID: '5002029'
+      rackspace_com_overseerID: '935811'
+      severity: warning

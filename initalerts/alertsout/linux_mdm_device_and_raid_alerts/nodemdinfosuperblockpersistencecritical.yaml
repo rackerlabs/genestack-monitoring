@@ -1,0 +1,19 @@
+groups:
+- name: linux_mdm_device_and_raid_alerts
+  rules:
+  - alert: NodeMdInfoSuperblockPersistenceCritical
+    annotations:
+      description: '{{ $labels.name }}
+
+        Persistence:{{ $labels.Persistence }}
+
+        LABELS: {{ $labels }}'
+      summary: Linux software MD Superblock is NOT persistent
+    expr: node_md_info{job="node-exporter", Persistence!="Superblock is persistent"}
+      > 0
+    for: 1m
+    labels:
+      coreAccountID: '{{ $labels.rackspace_com_coreAccountID }}'
+      coreDeviceID: '{{ $labels.rackspace_com_coreDeviceID }}'
+      node: '{{ $labels.instance }}'
+      severity: critical

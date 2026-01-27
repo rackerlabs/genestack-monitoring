@@ -1,0 +1,21 @@
+groups:
+- name: rabbitmq
+  rules:
+  - alert: MemoryAlarm
+    annotations:
+      description: 'RabbitMQ cluster `{{ $labels.rabbitmq_cluster }}` memory alarm
+        active. Publishers are blocked.
+
+        '
+      summary: 'A RabbitMQ node reached the `vm_memory_high_watermark` threshold.
+
+        See https://www.rabbitmq.com/docs/alarms#overview, https://www.rabbitmq.com/docs/memory.
+
+        '
+    expr: "max by(rabbitmq_cluster) (\n  max_over_time(rabbitmq_alarms_memory_used_watermark[5m])\n\
+      \  * on(instance) group_left(rabbitmq_cluster) max by (instance, rabbitmq_cluster)\
+      \ (rabbitmq_identity_info)\n) > 0\n"
+    keep_firing_for: 5m
+    labels:
+      rulesgroup: rabbitmq
+      severity: warning

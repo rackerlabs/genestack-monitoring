@@ -1,0 +1,17 @@
+groups:
+- name: kubernetes-apps
+  rules:
+  - alert: KubeContainerWaiting
+    annotations:
+      description: 'pod/{{ $labels.pod }} in namespace {{ $labels.namespace }} on
+        container {{ $labels.container}} has been in waiting state for longer than
+        1 hour. (reason: "{{ $labels.reason }}") on cluster {{ $labels.cluster }}.'
+      runbook_url: https://runbooks.prometheus-operator.dev/runbooks/kubernetes/kubecontainerwaiting
+      summary: Pod container waiting longer than 1 hour
+    expr: kube_pod_container_status_waiting_reason{reason!="CrashLoopBackOff", job="kube-state-metrics",
+      namespace=~".*"} > 0
+    for: 1h
+    labels:
+      rackspace_com_coreAccountID: '5002029'
+      rackspace_com_overseerID: '935811'
+      severity: warning

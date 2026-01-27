@@ -1,0 +1,8 @@
+groups:
+- name: kube-prometheus-general.rules
+  rules:
+  - expr: count without(instance, pod, node) (up == 0)
+    labels:
+      rackspace_com_coreAccountID: '5002029'
+      rackspace_com_overseerID: '935811'
+    record: count:up0

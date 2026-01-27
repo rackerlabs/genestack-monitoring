@@ -1,0 +1,16 @@
+groups:
+- name: kube-apiserver-burnrate.rules
+  rules:
+  - expr: "(\n  (\n    # too slow\n    sum by (cluster) (rate(apiserver_request_sli_duration_seconds_count{job=\"\
+      apiserver\",verb=~\"POST|PUT|PATCH|DELETE\",subresource!~\"proxy|attach|log|exec|portforward\"\
+      }[6h]))\n    -\n    sum by (cluster) (rate(apiserver_request_sli_duration_seconds_bucket{job=\"\
+      apiserver\",verb=~\"POST|PUT|PATCH|DELETE\",subresource!~\"proxy|attach|log|exec|portforward\"\
+      ,le=~\"1(\\\\.0)?\"}[6h]))\n  )\n  +\n  sum by (cluster) (rate(apiserver_request_total{job=\"\
+      apiserver\",verb=~\"POST|PUT|PATCH|DELETE\",code=~\"5..\"}[6h]))\n)\n/\nsum\
+      \ by (cluster) (rate(apiserver_request_total{job=\"apiserver\",verb=~\"POST|PUT|PATCH|DELETE\"\
+      }[6h]))"
+    labels:
+      rackspace_com_coreAccountID: '5002029'
+      rackspace_com_overseerID: '935811'
+      verb: write
+    record: apiserver_request:burnrate6h

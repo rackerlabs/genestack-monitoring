@@ -1,0 +1,10 @@
+groups:
+- name: node.rules
+  rules:
+  - expr: "topk by (cluster, namespace, pod) (1,\n  max by (cluster, node, namespace,\
+      \ pod) (\n    label_replace(kube_pod_info{job=\"kube-state-metrics\",node!=\"\
+      \"}, \"pod\", \"$1\", \"pod\", \"(.*)\")\n))"
+    labels:
+      rackspace_com_coreAccountID: '5002029'
+      rackspace_com_overseerID: '935811'
+    record: 'node_namespace_pod:kube_pod_info:'

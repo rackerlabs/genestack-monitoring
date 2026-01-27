@@ -1,0 +1,11 @@
+groups:
+- name: node.rules
+  rules:
+  - expr: "sum(\n  node_memory_MemAvailable_bytes{job=\"node-exporter\"} or\n  (\n\
+      \    node_memory_Buffers_bytes{job=\"node-exporter\"} +\n    node_memory_Cached_bytes{job=\"\
+      node-exporter\"} +\n    node_memory_MemFree_bytes{job=\"node-exporter\"} +\n\
+      \    node_memory_Slab_bytes{job=\"node-exporter\"}\n  )\n) by (cluster)"
+    labels:
+      rackspace_com_coreAccountID: '5002029'
+      rackspace_com_overseerID: '935811'
+    record: :node_memory_MemAvailable_bytes:sum

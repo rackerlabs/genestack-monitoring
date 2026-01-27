@@ -1,0 +1,16 @@
+groups:
+- name: blackbox_alerts
+  rules:
+  - alert: TLS certificate expiring
+    annotations:
+      description: 'SSL certificate expires within 15 days.
+
+        VALUE = {{ $value }}
+
+        LABELS = {{ $labels }}
+
+        '
+      summary: SSL certificate will expire soon on (instance {{ $labels.instance }})
+    expr: (probe_ssl_earliest_cert_expiry - time()) / 86400 < 15
+    labels:
+      severity: critical

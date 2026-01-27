@@ -1,0 +1,16 @@
+groups:
+- name: kubernetes-apps
+  rules:
+  - alert: KubeJobFailed
+    annotations:
+      description: Job {{ $labels.namespace }}/{{ $labels.job_name }} failed to complete.
+        Removing failed job after investigation should clear this alert on cluster
+        {{ $labels.cluster }}.
+      runbook_url: https://runbooks.prometheus-operator.dev/runbooks/kubernetes/kubejobfailed
+      summary: Job failed to complete.
+    expr: kube_job_failed{job="kube-state-metrics", namespace=~".*"}  > 0
+    for: 15m
+    labels:
+      rackspace_com_coreAccountID: '5002029'
+      rackspace_com_overseerID: '935811'
+      severity: warning

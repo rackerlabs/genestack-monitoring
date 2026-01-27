@@ -1,0 +1,19 @@
+groups:
+- name: kubernetes-apps
+  rules:
+  - alert: KubeDeploymentRolloutStuck
+    annotations:
+      description: Rollout of deployment {{ $labels.namespace }}/{{ $labels.deployment
+        }} is not progressing for longer than 15 minutes on cluster {{ $labels.cluster
+        }}.
+      runbook_url: https://runbooks.prometheus-operator.dev/runbooks/kubernetes/kubedeploymentrolloutstuck
+      summary: Deployment rollout is not progressing.
+    expr: 'kube_deployment_status_condition{condition="Progressing", status="false",job="kube-state-metrics",
+      namespace=~".*"}
+
+      != 0'
+    for: 15m
+    labels:
+      rackspace_com_coreAccountID: '5002029'
+      rackspace_com_overseerID: '935811'
+      severity: warning

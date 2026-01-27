@@ -1,0 +1,18 @@
+groups:
+- name: kubernetes-resources
+  rules:
+  - alert: KubeCPUQuotaOvercommit
+    annotations:
+      description: Cluster {{ $labels.cluster }} has overcommitted CPU resource requests
+        for Namespaces.
+      runbook_url: https://runbooks.prometheus-operator.dev/runbooks/kubernetes/kubecpuquotaovercommit
+      summary: Cluster has overcommitted CPU resource requests.
+    expr: "sum by (cluster) (\n  min without(resource) (kube_resourcequota{job=\"\
+      kube-state-metrics\", type=\"hard\", resource=~\"(cpu|requests.cpu)\"})\n)\n\
+      /\nsum by (cluster) (\n  kube_node_status_allocatable{resource=\"cpu\", job=\"\
+      kube-state-metrics\"}\n) > 1.5"
+    for: 5m
+    labels:
+      rackspace_com_coreAccountID: '5002029'
+      rackspace_com_overseerID: '935811'
+      severity: warning
