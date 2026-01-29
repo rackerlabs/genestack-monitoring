@@ -1,0 +1,27 @@
+groups:
+- name: linux_mdm_device_and_raid_alerts
+  rules:
+  - alert: nodemdstatecritical
+    labels:
+      coreAccountID: '{{ $labels.rackspace_com_coreAccountID }}'
+      coreDeviceID: '{{ $labels.rackspace_com_coreDeviceID }}'
+      node: '{{ $labels.instance }}'
+      severity: warning
+      rackspace_com_coreAccountID: default_coreID
+      rackspace_com_overseerID: default_overseerID
+      group_name: default_group_name
+      node_name: default_node_name
+      pod_name: default_pod_name
+    expr: node_md_state{job="node-exporter", state!~"active.*|check.*"} > 0
+    for: 3m
+    annotations:
+      description: '{{ $labels.name }}
+
+        MD RAID status:{{ $value }}
+
+        MD RAID device:{{ $labels.device }}
+
+        LABELS: {{ $labels }}'
+      summary: Linux MDM RAID State is {{ $labels.state }}
+      runbook_url: default_runbook_url
+      dashboard_url: default_dashboard_url

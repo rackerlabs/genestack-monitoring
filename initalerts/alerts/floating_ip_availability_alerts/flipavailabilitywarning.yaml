@@ -1,0 +1,20 @@
+groups:
+- name: floating_ip_availability_alerts
+  rules:
+  - alert: flipavailabilitywarning
+    labels:
+      severity: warning
+      rackspace_com_coreAccountID: default_coreID
+      rackspace_com_overseerID: default_overseerID
+      group_name: default_group_name
+      node_name: default_node_name
+      pod_name: default_pod_name
+    expr: sum(last_over_time(openstack_neutron_network_ip_availabilities_total{network_name="PUBLICNET"}[1d]))
+      - sum(last_over_time(openstack_neutron_network_ip_availabilities_used{network_name="PUBLICNET"}[1d]))
+      < 100
+    for: 5m
+    annotations:
+      description: There are less than 100 floating IPs available to assign
+      summary: Floating IPs available less than one hundred
+      runbook_url: default_runbook_url
+      dashboard_url: default_dashboard_url

@@ -1,0 +1,22 @@
+groups:
+- name: node-exporter
+  rules:
+  - alert: nodeclockskewdetected
+    labels:
+      rackspace_com_coreAccountID: default_coreID
+      rackspace_com_overseerID: default_overseerID
+      severity: warning
+      group_name: default_group_name
+      node_name: default_node_name
+      pod_name: default_pod_name
+    expr: "(\n  node_timex_offset_seconds{job=\"node-exporter\"} > 0.05\nand\n  deriv(node_timex_offset_seconds{job=\"\
+      node-exporter\"}[5m]) >= 0\n)\nor\n(\n  node_timex_offset_seconds{job=\"node-exporter\"\
+      } < -0.05\nand\n  deriv(node_timex_offset_seconds{job=\"node-exporter\"}[5m])\
+      \ <= 0\n)"
+    for: 10m
+    annotations:
+      description: Clock at {{ $labels.instance }} is out of sync by more than 0.05s.
+        Ensure NTP is configured correctly on this host.
+      runbook_url: default_runbook_url
+      summary: Clock skew detected.
+      dashboard_url: default_dashboard_url

@@ -1,0 +1,21 @@
+groups:
+- name: kube-state-metrics
+  rules:
+  - alert: kubestatemetricsshardsmissing
+    labels:
+      rackspace_com_coreAccountID: default_coreID
+      rackspace_com_overseerID: default_overseerID
+      severity: warning
+      group_name: default_group_name
+      node_name: default_node_name
+      pod_name: default_pod_name
+    expr: "2^max(kube_state_metrics_total_shards{job=\"kube-state-metrics\"}) by (cluster)\
+      \ - 1\n  -\nsum( 2 ^ max by (cluster, shard_ordinal) (kube_state_metrics_shard_ordinal{job=\"\
+      kube-state-metrics\"}) ) by (cluster)\n!= 0"
+    for: 15m
+    annotations:
+      description: kube-state-metrics shards are missing, some Kubernetes objects
+        are not being exposed.
+      runbook_url: default_runbook_url
+      summary: kube-state-metrics shards are missing.
+      dashboard_url: default_dashboard_url

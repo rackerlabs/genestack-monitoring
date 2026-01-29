@@ -1,0 +1,20 @@
+groups:
+- name: node-exporter
+  rules:
+  - alert: nodebondingdegraded
+    labels:
+      rackspace_com_coreAccountID: default_coreID
+      rackspace_com_overseerID: default_overseerID
+      severity: warning
+      group_name: default_group_name
+      node_name: default_node_name
+      pod_name: default_pod_name
+    expr: (node_bonding_slaves{job="node-exporter"} - node_bonding_active{job="node-exporter"})
+      != 0
+    for: 5m
+    annotations:
+      description: Bonding interface {{ $labels.master }} on {{ $labels.instance }}
+        is in degraded state due to one or more slave failures.
+      runbook_url: default_runbook_url
+      summary: Bonding interface is degraded.
+      dashboard_url: default_dashboard_url

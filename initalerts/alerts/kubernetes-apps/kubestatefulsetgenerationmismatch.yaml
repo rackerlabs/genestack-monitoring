@@ -1,0 +1,22 @@
+groups:
+- name: kubernetes-apps
+  rules:
+  - alert: kubestatefulsetgenerationmismatch
+    labels:
+      rackspace_com_coreAccountID: default_coreID
+      rackspace_com_overseerID: default_overseerID
+      severity: warning
+      group_name: default_group_name
+      node_name: default_node_name
+      pod_name: default_pod_name
+    expr: "kube_statefulset_status_observed_generation{job=\"kube-state-metrics\"\
+      , namespace=~\".*\"}\n  !=\nkube_statefulset_metadata_generation{job=\"kube-state-metrics\"\
+      , namespace=~\".*\"}"
+    for: 15m
+    annotations:
+      description: StatefulSet generation for {{ $labels.namespace }}/{{ $labels.statefulset
+        }} does not match, this indicates that the StatefulSet has failed but has
+        not been rolled back on cluster {{ $labels.cluster }}.
+      runbook_url: default_runbook_url
+      summary: StatefulSet generation mismatch due to possible roll-back
+      dashboard_url: default_dashboard_url

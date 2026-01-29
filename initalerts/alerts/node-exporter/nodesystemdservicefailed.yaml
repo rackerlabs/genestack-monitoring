@@ -1,0 +1,19 @@
+groups:
+- name: node-exporter
+  rules:
+  - alert: nodesystemdservicefailed
+    labels:
+      rackspace_com_coreAccountID: default_coreID
+      rackspace_com_overseerID: default_overseerID
+      severity: warning
+      group_name: default_group_name
+      node_name: default_node_name
+      pod_name: default_pod_name
+    expr: node_systemd_unit_state{job="node-exporter", state="failed"} == 1
+    for: 5m
+    annotations:
+      description: Systemd service {{ $labels.name }} has entered failed state at
+        {{ $labels.instance }}
+      runbook_url: default_runbook_url
+      summary: Systemd service has entered failed state.
+      dashboard_url: default_dashboard_url

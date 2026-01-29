@@ -1,0 +1,19 @@
+groups:
+- name: pod-state-alerts
+  rules:
+  - alert: highpodrestartrate
+    labels:
+      severity: warning
+      rackspace_com_coreAccountID: default_coreID
+      rackspace_com_overseerID: default_overseerID
+      group_name: default_group_name
+      node_name: default_node_name
+      pod_name: default_pod_name
+    expr: rate(kube_pod_container_status_restarts_total[5m]) > 2
+    for: 5m
+    annotations:
+      description: Pod {{ $labels.pod }} in namespace {{ $labels.namespace }} is restarting
+        frequently, which may indicate network instability.
+      summary: High pod restart count detected
+      runbook_url: default_runbook_url
+      dashboard_url: default_dashboard_url

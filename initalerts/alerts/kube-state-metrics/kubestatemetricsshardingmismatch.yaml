@@ -1,0 +1,21 @@
+groups:
+- name: kube-state-metrics
+  rules:
+  - alert: kubestatemetricsshardingmismatch
+    labels:
+      rackspace_com_coreAccountID: default_coreID
+      rackspace_com_overseerID: default_overseerID
+      severity: warning
+      group_name: default_group_name
+      node_name: default_node_name
+      pod_name: default_pod_name
+    expr: stdvar (kube_state_metrics_total_shards{job="kube-state-metrics"}) by (cluster)
+      != 0
+    for: 15m
+    annotations:
+      description: kube-state-metrics pods are running with different --total-shards
+        configuration, some Kubernetes objects may be exposed multiple times or not
+        exposed at all.
+      runbook_url: default_runbook_url
+      summary: kube-state-metrics sharding is misconfigured.
+      dashboard_url: default_dashboard_url

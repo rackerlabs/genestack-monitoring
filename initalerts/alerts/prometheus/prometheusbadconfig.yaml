@@ -1,0 +1,24 @@
+groups:
+- name: prometheus
+  rules:
+  - alert: prometheusbadconfig
+    labels:
+      rackspace_com_coreAccountID: default_coreID
+      rackspace_com_overseerID: default_overseerID
+      severity: warning
+      group_name: default_group_name
+      node_name: default_node_name
+      pod_name: default_pod_name
+    expr: '# Without max_over_time, failed scrapes could create false negatives, see
+
+      # https://www.robustperception.io/alerting-on-gauges-in-prometheus-2-0 for details.
+
+      max_over_time(prometheus_config_last_reload_successful{job="kube-prometheus-stack-prometheus",namespace="prometheus"}[5m])
+      == 0'
+    for: 10m
+    annotations:
+      description: Prometheus {{$labels.namespace}}/{{$labels.pod}} has failed to
+        reload its configuration.
+      runbook_url: default_runbook_url
+      summary: Failed Prometheus configuration reload.
+      dashboard_url: default_dashboard_url

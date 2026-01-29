@@ -1,0 +1,21 @@
+groups:
+- name: kubernetes-system-apiserver
+  rules:
+  - alert: kubeaggregatedapidown
+    labels:
+      rackspace_com_coreAccountID: default_coreID
+      rackspace_com_overseerID: default_overseerID
+      severity: warning
+      group_name: default_group_name
+      node_name: default_node_name
+      pod_name: default_pod_name
+    expr: (1 - max by (name, namespace, cluster)(avg_over_time(aggregator_unavailable_apiservice{job="apiserver"}[10m])))
+      * 100 < 85
+    for: 5m
+    annotations:
+      description: Kubernetes aggregated API {{ $labels.name }}/{{ $labels.namespace
+        }} has been only {{ $value | humanize }}% available over the last 10m on cluster
+        {{ $labels.cluster }}.
+      runbook_url: default_runbook_url
+      summary: Kubernetes aggregated API is down.
+      dashboard_url: default_dashboard_url

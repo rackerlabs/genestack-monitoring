@@ -1,0 +1,20 @@
+groups:
+- name: kubernetes-storage
+  rules:
+  - alert: kubepersistentvolumeerrors
+    labels:
+      rackspace_com_coreAccountID: default_coreID
+      rackspace_com_overseerID: default_overseerID
+      severity: warning
+      group_name: default_group_name
+      node_name: default_node_name
+      pod_name: default_pod_name
+    expr: kube_persistentvolume_status_phase{phase=~"Failed|Pending",job="kube-state-metrics"}
+      > 0
+    for: 5m
+    annotations:
+      description: The persistent volume {{ $labels.persistentvolume }} {{ with $labels.cluster
+        -}} on Cluster {{ . }} {{- end }} has status {{ $labels.phase }}.
+      runbook_url: default_runbook_url
+      summary: PersistentVolume is having issues with provisioning.
+      dashboard_url: default_dashboard_url

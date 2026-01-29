@@ -1,0 +1,24 @@
+groups:
+- name: kubernetes-system-kubelet
+  rules:
+  - alert: kubenodenotready
+    labels:
+      rackspace_com_coreAccountID: default_coreID
+      rackspace_com_overseerID: default_overseerID
+      severity: warning
+      group_name: default_group_name
+      node_name: default_node_name
+      pod_name: default_pod_name
+    expr: 'kube_node_status_condition{job="kube-state-metrics",condition="Ready",status="true"}
+      == 0
+
+      and on (cluster, node)
+
+      kube_node_spec_unschedulable{job="kube-state-metrics"} == 0'
+    for: 15m
+    annotations:
+      description: '{{ $labels.node }} has been unready for more than 15 minutes on
+        cluster {{ $labels.cluster }}.'
+      runbook_url: default_runbook_url
+      summary: Node is not ready.
+      dashboard_url: default_dashboard_url

@@ -1,0 +1,24 @@
+groups:
+- name: node-exporter
+  rules:
+  - alert: nodefilesystemspacefillingup
+    labels:
+      rackspace_com_coreAccountID: default_coreID
+      rackspace_com_overseerID: default_overseerID
+      severity: warning
+      group_name: default_group_name
+      node_name: default_node_name
+      pod_name: default_pod_name
+    expr: "(\n  node_filesystem_avail_bytes{job=\"node-exporter\",fstype!=\"\",mountpoint!=\"\
+      \"} / node_filesystem_size_bytes{job=\"node-exporter\",fstype!=\"\",mountpoint!=\"\
+      \"} * 100 < 10\nand\n  predict_linear(node_filesystem_avail_bytes{job=\"node-exporter\"\
+      ,fstype!=\"\",mountpoint!=\"\"}[6h], 4*60*60) < 0\nand\n  node_filesystem_readonly{job=\"\
+      node-exporter\",fstype!=\"\",mountpoint!=\"\"} == 0\n)"
+    for: 1h
+    annotations:
+      description: Filesystem on {{ $labels.device }}, mounted on {{ $labels.mountpoint
+        }}, at {{ $labels.instance }} has only {{ printf "%.2f" $value }}% available
+        space left and is filling up fast.
+      runbook_url: default_runbook_url
+      summary: Filesystem is predicted to run out of space within the next 4 hours.
+      dashboard_url: default_dashboard_url

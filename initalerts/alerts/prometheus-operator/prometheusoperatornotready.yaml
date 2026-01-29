@@ -1,0 +1,20 @@
+groups:
+- name: prometheus-operator
+  rules:
+  - alert: prometheusoperatornotready
+    labels:
+      rackspace_com_coreAccountID: default_coreID
+      rackspace_com_overseerID: default_overseerID
+      severity: warning
+      group_name: default_group_name
+      node_name: default_node_name
+      pod_name: default_pod_name
+    expr: min by (cluster,controller,namespace) (max_over_time(prometheus_operator_ready{job="kube-prometheus-stack-operator",namespace="prometheus"}[5m])
+      == 0)
+    for: 5m
+    annotations:
+      description: Prometheus operator in {{ $labels.namespace }} namespace isn't
+        ready to reconcile {{ $labels.controller }} resources.
+      runbook_url: default_runbook_url
+      summary: Prometheus operator not ready
+      dashboard_url: default_dashboard_url

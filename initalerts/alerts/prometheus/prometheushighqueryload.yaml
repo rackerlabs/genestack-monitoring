@@ -1,0 +1,21 @@
+groups:
+- name: prometheus
+  rules:
+  - alert: prometheushighqueryload
+    labels:
+      rackspace_com_coreAccountID: default_coreID
+      rackspace_com_overseerID: default_overseerID
+      severity: warning
+      group_name: default_group_name
+      node_name: default_node_name
+      pod_name: default_pod_name
+    expr: avg_over_time(prometheus_engine_queries{job="kube-prometheus-stack-prometheus",namespace="prometheus"}[5m])
+      / max_over_time(prometheus_engine_queries_concurrent_max{job="kube-prometheus-stack-prometheus",namespace="prometheus"}[5m])
+      > 0.8
+    for: 15m
+    annotations:
+      description: Prometheus {{$labels.namespace}}/{{$labels.pod}} query API has
+        less than 20% available capacity in its query engine for the last 15 minutes.
+      runbook_url: default_runbook_url
+      summary: Prometheus is reaching its maximum capacity serving concurrent requests.
+      dashboard_url: default_dashboard_url

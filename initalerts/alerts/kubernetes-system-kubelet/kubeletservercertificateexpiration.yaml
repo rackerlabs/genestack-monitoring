@@ -1,0 +1,19 @@
+groups:
+- name: kubernetes-system-kubelet
+  rules:
+  - alert: kubeletservercertificateexpiration
+    labels:
+      rackspace_com_coreAccountID: default_coreID
+      rackspace_com_overseerID: default_overseerID
+      severity: warning
+      group_name: default_group_name
+      node_name: default_node_name
+      pod_name: default_pod_name
+    expr: kubelet_certificate_manager_server_ttl_seconds < 86400
+    for: 0m
+    annotations:
+      description: Server certificate for Kubelet on node {{ $labels.node }} expires
+        in {{ $value | humanizeDuration }} on cluster {{ $labels.cluster }}.
+      runbook_url: default_runbook_url
+      summary: Kubelet server certificate is about to expire.
+      dashboard_url: default_dashboard_url

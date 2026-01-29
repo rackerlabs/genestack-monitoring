@@ -1,0 +1,23 @@
+groups:
+- name: node-exporter
+  rules:
+  - alert: nodefilesystemalmostoutofspace
+    labels:
+      rackspace_com_coreAccountID: default_coreID
+      rackspace_com_overseerID: default_overseerID
+      severity: warning
+      group_name: default_group_name
+      node_name: default_node_name
+      pod_name: default_pod_name
+    expr: "(\n  node_filesystem_avail_bytes{job=\"node-exporter\",fstype!=\"\",mountpoint!=\"\
+      \"} / node_filesystem_size_bytes{job=\"node-exporter\",fstype!=\"\",mountpoint!=\"\
+      \"} * 100 < 3\nand\n  node_filesystem_readonly{job=\"node-exporter\",fstype!=\"\
+      \",mountpoint!=\"\"} == 0\n)"
+    for: 30m
+    annotations:
+      description: Filesystem on {{ $labels.device }}, mounted on {{ $labels.mountpoint
+        }}, at {{ $labels.instance }} has only {{ printf "%.2f" $value }}% available
+        space left.
+      runbook_url: default_runbook_url
+      summary: Filesystem has less than 3% space left.
+      dashboard_url: default_dashboard_url

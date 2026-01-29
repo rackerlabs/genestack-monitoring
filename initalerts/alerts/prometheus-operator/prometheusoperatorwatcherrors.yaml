@@ -1,0 +1,21 @@
+groups:
+- name: prometheus-operator
+  rules:
+  - alert: prometheusoperatorwatcherrors
+    labels:
+      rackspace_com_coreAccountID: default_coreID
+      rackspace_com_overseerID: default_overseerID
+      severity: warning
+      group_name: default_group_name
+      node_name: default_node_name
+      pod_name: default_pod_name
+    expr: (sum by (cluster,controller,namespace) (rate(prometheus_operator_watch_operations_failed_total{job="kube-prometheus-stack-operator",namespace="prometheus"}[5m]))
+      / sum by (cluster,controller,namespace) (rate(prometheus_operator_watch_operations_total{job="kube-prometheus-stack-operator",namespace="prometheus"}[5m])))
+      > 0.4
+    for: 15m
+    annotations:
+      description: Errors while performing watch operations in controller {{$labels.controller}}
+        in {{$labels.namespace}} namespace.
+      runbook_url: default_runbook_url
+      summary: Errors while performing watch operations in controller.
+      dashboard_url: default_dashboard_url

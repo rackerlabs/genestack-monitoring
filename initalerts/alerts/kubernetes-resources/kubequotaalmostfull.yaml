@@ -1,0 +1,21 @@
+groups:
+- name: kubernetes-resources
+  rules:
+  - alert: kubequotaalmostfull
+    labels:
+      rackspace_com_coreAccountID: default_coreID
+      rackspace_com_overseerID: default_overseerID
+      severity: warning
+      group_name: default_group_name
+      node_name: default_node_name
+      pod_name: default_pod_name
+    expr: "kube_resourcequota{job=\"kube-state-metrics\", type=\"used\"}\n  / ignoring(instance,\
+      \ job, type)\n(kube_resourcequota{job=\"kube-state-metrics\", type=\"hard\"\
+      } > 0)\n  > 0.9 < 1"
+    for: 15m
+    annotations:
+      description: Namespace {{ $labels.namespace }} is using {{ $value | humanizePercentage
+        }} of its {{ $labels.resource }} quota on cluster {{ $labels.cluster }}.
+      runbook_url: default_runbook_url
+      summary: Namespace quota is going to be full.
+      dashboard_url: default_dashboard_url

@@ -1,0 +1,34 @@
+groups:
+- name: rabbitmq
+  rules:
+  - alert: queuehasnoconsumers
+    labels:
+      rulesgroup: rabbitmq
+      severity: warning
+      rackspace_com_coreAccountID: default_coreID
+      rackspace_com_overseerID: default_overseerID
+      group_name: default_group_name
+      node_name: default_node_name
+      pod_name: default_pod_name
+    expr: "(\n  ((rabbitmq_detailed_queue_consumers{vhost=\"/\", queue=~\".*\"} ==\
+      \ 0) + rabbitmq_detailed_queue_messages) > 0\n) * on (instance) group_left(rabbitmq_cluster)\
+      \ max by (instance, rabbitmq_cluster) (rabbitmq_identity_info)\n"
+    for: 10m
+    annotations:
+      description: 'Over the last 10 minutes, non-empty queue `{{ $labels.queue }}`
+        with {{ $value }} messages
+
+        in virtual host `{{ $labels.vhost }}` didn''t have any consumers in
+
+        RabbitMQ cluster `{{ $labels.rabbitmq_cluster }}` in namespace `{{ $labels.namespace
+        }}`.
+
+        '
+      summary: 'Messages are sitting idle in the queue, without any processing.
+
+        This alert is highly application specific (and e.g. doesn''t make sense for
+        stream queues).
+
+        '
+      runbook_url: default_runbook_url
+      dashboard_url: default_dashboard_url

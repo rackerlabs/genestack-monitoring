@@ -1,0 +1,19 @@
+groups:
+- name: etcd
+  rules:
+  - alert: etcdnoleader
+    labels:
+      rackspace_com_coreAccountID: default_coreID
+      rackspace_com_overseerID: default_overseerID
+      severity: warning
+      group_name: default_group_name
+      node_name: default_node_name
+      pod_name: default_pod_name
+    expr: etcd_server_has_leader{job=~".*etcd.*"} == 0
+    for: 1m
+    annotations:
+      description: 'etcd cluster "{{ $labels.job }}": member {{ $labels.instance }}
+        has no leader.'
+      summary: etcd cluster has no leader.
+      runbook_url: default_runbook_url
+      dashboard_url: default_dashboard_url

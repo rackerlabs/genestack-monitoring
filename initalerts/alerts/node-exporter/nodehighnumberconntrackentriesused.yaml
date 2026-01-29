@@ -1,0 +1,20 @@
+groups:
+- name: node-exporter
+  rules:
+  - alert: nodehighnumberconntrackentriesused
+    labels:
+      rackspace_com_coreAccountID: default_coreID
+      rackspace_com_overseerID: default_overseerID
+      severity: warning
+      group_name: default_group_name
+      node_name: default_node_name
+      pod_name: default_pod_name
+    expr: (node_nf_conntrack_entries{job="node-exporter"} / node_nf_conntrack_entries_limit)
+      > 0.75
+    for: 0m
+    annotations:
+      description: '{{ $labels.instance }} {{ $value | humanizePercentage }} of conntrack
+        entries are used.'
+      runbook_url: default_runbook_url
+      summary: Number of conntrack are getting close to the limit.
+      dashboard_url: default_dashboard_url

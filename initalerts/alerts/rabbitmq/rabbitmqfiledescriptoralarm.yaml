@@ -1,0 +1,28 @@
+groups:
+- name: rabbitmq
+  rules:
+  - alert: rabbitmqfiledescriptoralarm
+    labels:
+      rulesgroup: rabbitmq
+      severity: warning
+      rackspace_com_coreAccountID: default_coreID
+      rackspace_com_overseerID: default_overseerID
+      group_name: default_group_name
+      node_name: default_node_name
+      pod_name: default_pod_name
+    expr: "max by(rabbitmq_cluster) (\n  max_over_time(rabbitmq_alarms_file_descriptor_limit[5m])\n\
+      \  * on(instance) group_left(rabbitmq_cluster) max by (instance, rabbitmq_cluster)\
+      \ (rabbitmq_identity_info)\n) > 0\n"
+    for: 0m
+    annotations:
+      description: 'RabbitMQ cluster `{{ $labels.rabbitmq_cluster }}` file descriptor
+        alarm active. Publishers are blocked.
+
+        '
+      summary: 'A RabbitMQ node ran out of file descriptors.
+
+        See https://www.rabbitmq.com/docs/alarms#file-descriptors.
+
+        '
+      runbook_url: default_runbook_url
+      dashboard_url: default_dashboard_url

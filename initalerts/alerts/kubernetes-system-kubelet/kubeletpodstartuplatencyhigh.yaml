@@ -1,0 +1,23 @@
+groups:
+- name: kubernetes-system-kubelet
+  rules:
+  - alert: kubeletpodstartuplatencyhigh
+    labels:
+      rackspace_com_coreAccountID: default_coreID
+      rackspace_com_overseerID: default_overseerID
+      severity: warning
+      group_name: default_group_name
+      node_name: default_node_name
+      pod_name: default_pod_name
+    expr: "histogram_quantile(0.99,\n  sum by (cluster, instance, le) (\n    topk\
+      \ by (cluster, instance, le, operation_type) (1,\n      rate(kubelet_pod_worker_duration_seconds_bucket{job=\"\
+      kubelet\", metrics_path=\"/metrics\"}[5m])\n    )\n  )\n)\n* on (cluster, instance)\
+      \ group_left(node)\ntopk by (cluster, instance, node) (1,\n  kubelet_node_name{job=\"\
+      kubelet\", metrics_path=\"/metrics\"}\n)\n> 60"
+    for: 15m
+    annotations:
+      description: Kubelet Pod startup 99th percentile latency is {{ $value }} seconds
+        on node {{ $labels.node }} on cluster {{ $labels.cluster }}.
+      runbook_url: default_runbook_url
+      summary: Kubelet Pod startup latency is too high.
+      dashboard_url: default_dashboard_url

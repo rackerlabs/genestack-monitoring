@@ -1,0 +1,24 @@
+groups:
+- name: alertmanager.rules
+  rules:
+  - alert: alertmanagerfailedreload
+    labels:
+      rackspace_com_coreAccountID: default_coreID
+      rackspace_com_overseerID: default_overseerID
+      severity: warning
+      group_name: default_group_name
+      node_name: default_node_name
+      pod_name: default_pod_name
+    expr: '# Without max_over_time, failed scrapes could create false negatives, see
+
+      # https://www.robustperception.io/alerting-on-gauges-in-prometheus-2-0 for details.
+
+      max_over_time(alertmanager_config_last_reload_successful{job="kube-prometheus-stack-alertmanager",container="alertmanager",namespace="prometheus"}[5m])
+      == 0'
+    for: 10m
+    annotations:
+      description: Configuration has failed to load for {{ $labels.namespace }}/{{
+        $labels.pod}}.
+      runbook_url: default_runbook_url
+      summary: Reloading an Alertmanager configuration has failed.
+      dashboard_url: default_dashboard_url

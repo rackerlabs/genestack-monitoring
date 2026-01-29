@@ -1,0 +1,21 @@
+groups:
+- name: kubernetes-system-kubelet
+  rules:
+  - alert: kubeletplegdurationhigh
+    labels:
+      rackspace_com_coreAccountID: default_coreID
+      rackspace_com_overseerID: default_overseerID
+      severity: warning
+      group_name: default_group_name
+      node_name: default_node_name
+      pod_name: default_pod_name
+    expr: node_quantile:kubelet_pleg_relist_duration_seconds:histogram_quantile{quantile="0.99"}
+      >= 10
+    for: 5m
+    annotations:
+      description: The Kubelet Pod Lifecycle Event Generator has a 99th percentile
+        duration of {{ $value }} seconds on node {{ $labels.node }} on cluster {{
+        $labels.cluster }}.
+      runbook_url: default_runbook_url
+      summary: Kubelet Pod Lifecycle Event Generator is taking too long to relist.
+      dashboard_url: default_dashboard_url

@@ -1,0 +1,50 @@
+groups:
+- name: rabbitmq
+  rules:
+  - alert: nomajorityofnodesready
+    labels:
+      rabbitmq_cluster: '{{ $labels.label_app_kubernetes_io_name }}'
+      rulesgroup: rabbitmq
+      severity: warning
+      rackspace_com_coreAccountID: default_coreID
+      rackspace_com_overseerID: default_overseerID
+      group_name: default_group_name
+      node_name: default_node_name
+      pod_name: default_pod_name
+    expr: 'kube_statefulset_status_replicas_ready * on (namespace, statefulset) group_left(label_app_kubernetes_io_name)
+      kube_statefulset_labels{label_app_kubernetes_io_component="rabbitmq"}
+
+      <=
+
+      kube_statefulset_replicas              * on (namespace, statefulset) group_left(label_app_kubernetes_io_name)
+      kube_statefulset_labels{label_app_kubernetes_io_component="rabbitmq"}
+
+      / 2
+
+      unless
+
+      kube_statefulset_replicas              * on (namespace, statefulset) group_left(label_app_kubernetes_io_name)
+      kube_statefulset_labels{label_app_kubernetes_io_component="rabbitmq"}
+
+      == 0
+
+      '
+    for: 5m
+    annotations:
+      description: 'Only `{{ $value }}` replicas are ready in StatefulSet `{{ $labels.statefulset
+        }}`
+
+        of RabbitMQ cluster `{{ $labels.label_app_kubernetes_io_name }}` in namespace
+        `{{ $labels.namespace }}`.
+
+        '
+      summary: 'No majority of nodes have been ready for the last 5 minutes.
+
+        Check the details of the pods:
+
+        `kubectl -n {{ $labels.namespace }} describe pods -l app.kubernetes.io/component=rabbitmq,app.kubernetes.io/name={{
+        $labels.label_app_kubernetes_io_name }}`
+
+        '
+      runbook_url: default_runbook_url
+      dashboard_url: default_dashboard_url

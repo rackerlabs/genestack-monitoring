@@ -1,0 +1,19 @@
+groups:
+- name: node-exporter
+  rules:
+  - alert: nodetextfilecollectorscrapeerror
+    labels:
+      rackspace_com_coreAccountID: default_coreID
+      rackspace_com_overseerID: default_overseerID
+      severity: warning
+      group_name: default_group_name
+      node_name: default_node_name
+      pod_name: default_pod_name
+    expr: node_textfile_scrape_error{job="node-exporter"} == 1
+    for: 0m
+    annotations:
+      description: Node Exporter text file collector on {{ $labels.instance }} failed
+        to scrape.
+      runbook_url: default_runbook_url
+      summary: Node Exporter text file collector failed to scrape.
+      dashboard_url: default_dashboard_url

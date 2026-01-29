@@ -1,0 +1,24 @@
+groups:
+- name: compute_resource_alerts
+  rules:
+  - alert: instancesstuckinfailurestate
+    labels:
+      severity: warning
+      rackspace_com_coreAccountID: default_coreID
+      rackspace_com_overseerID: default_overseerID
+      group_name: default_group_name
+      node_name: default_node_name
+      pod_name: default_pod_name
+    expr: sum(count_over_time(openstack_nova_server_status{status=~"BUILD|ERROR"}[1h]))
+      > 0
+    for: 15m
+    annotations:
+      description: 'There are instances stuck in a building or error state for a prolonged
+        period
+
+        that need to be cleaned up.
+
+        '
+      summary: Instances stuck in failure state for a prolonged period
+      runbook_url: default_runbook_url
+      dashboard_url: default_dashboard_url

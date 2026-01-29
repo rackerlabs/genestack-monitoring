@@ -1,0 +1,24 @@
+groups:
+- name: kubernetes-system-kubelet
+  rules:
+  - alert: kubelettoomanypods
+    labels:
+      rackspace_com_coreAccountID: default_coreID
+      rackspace_com_overseerID: default_overseerID
+      severity: warning
+      group_name: default_group_name
+      node_name: default_node_name
+      pod_name: default_pod_name
+    expr: "(\n  max by (cluster, instance) (\n    kubelet_running_pods{job=\"kubelet\"\
+      , metrics_path=\"/metrics\"} > 1\n  )\n  * on (cluster, instance) group_left(node)\n\
+      \  max by (cluster, instance, node) (\n    kubelet_node_name{job=\"kubelet\"\
+      , metrics_path=\"/metrics\"}\n  )\n)\n/ on (cluster, node) group_left()\nmax\
+      \ by (cluster, node) (\n  kube_node_status_capacity{job=\"kube-state-metrics\"\
+      , resource=\"pods\"} != 1\n) > 0.95"
+    for: 15m
+    annotations:
+      description: Kubelet '{{ $labels.node }}' is running at {{ $value | humanizePercentage
+        }} of its Pod capacity on cluster {{ $labels.cluster }}.
+      runbook_url: default_runbook_url
+      summary: Kubelet is running at capacity.
+      dashboard_url: default_dashboard_url

@@ -1,0 +1,23 @@
+groups:
+- name: kubernetes-system-kubelet
+  rules:
+  - alert: kubenodeeviction
+    labels:
+      rackspace_com_coreAccountID: default_coreID
+      rackspace_com_overseerID: default_overseerID
+      severity: warning
+      group_name: default_group_name
+      node_name: default_node_name
+      pod_name: default_pod_name
+    expr: "sum(rate(kubelet_evictions{job=\"kubelet\", metrics_path=\"/metrics\"}[15m]))\
+      \ by (cluster, eviction_signal, instance)\n* on (cluster, instance) group_left(node)\n\
+      max by (cluster, instance, node) (\n  kubelet_node_name{job=\"kubelet\", metrics_path=\"\
+      /metrics\"}\n)\n> 0"
+    for: 0s
+    annotations:
+      description: Node {{ $labels.node }} on {{ $labels.cluster }} is evicting Pods
+        due to {{ $labels.eviction_signal }}.  Eviction occurs when eviction thresholds
+        are crossed, typically caused by Pods exceeding RAM/ephemeral-storage limits.
+      runbook_url: default_runbook_url
+      summary: Node is evicting pods.
+      dashboard_url: default_dashboard_url

@@ -1,0 +1,29 @@
+groups:
+- name: prometheus
+  rules:
+  - alert: prometheusremotestoragefailures
+    labels:
+      rackspace_com_coreAccountID: default_coreID
+      rackspace_com_overseerID: default_overseerID
+      severity: warning
+      group_name: default_group_name
+      node_name: default_node_name
+      pod_name: default_pod_name
+    expr: "(\n  (rate(prometheus_remote_storage_failed_samples_total{job=\"kube-prometheus-stack-prometheus\"\
+      ,namespace=\"prometheus\"}[5m]) or rate(prometheus_remote_storage_samples_failed_total{job=\"\
+      kube-prometheus-stack-prometheus\",namespace=\"prometheus\"}[5m]))\n/\n  (\n\
+      \    (rate(prometheus_remote_storage_failed_samples_total{job=\"kube-prometheus-stack-prometheus\"\
+      ,namespace=\"prometheus\"}[5m]) or rate(prometheus_remote_storage_samples_failed_total{job=\"\
+      kube-prometheus-stack-prometheus\",namespace=\"prometheus\"}[5m]))\n  +\n  \
+      \  (rate(prometheus_remote_storage_succeeded_samples_total{job=\"kube-prometheus-stack-prometheus\"\
+      ,namespace=\"prometheus\"}[5m]) or rate(prometheus_remote_storage_samples_total{job=\"\
+      kube-prometheus-stack-prometheus\",namespace=\"prometheus\"}[5m]))\n  )\n)\n\
+      * 100\n> 1"
+    for: 15m
+    annotations:
+      description: Prometheus {{$labels.namespace}}/{{$labels.pod}} failed to send
+        {{ printf "%.1f" $value }}% of the samples to {{ $labels.remote_name}}:{{
+        $labels.url }}
+      runbook_url: default_runbook_url
+      summary: Prometheus fails to send samples to remote storage.
+      dashboard_url: default_dashboard_url

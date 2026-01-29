@@ -1,0 +1,24 @@
+groups:
+- name: node-exporter
+  rules:
+  - alert: nodememorymajorpagesfaults
+    labels:
+      rackspace_com_coreAccountID: default_coreID
+      rackspace_com_overseerID: default_overseerID
+      severity: warning
+      group_name: default_group_name
+      node_name: default_node_name
+      pod_name: default_pod_name
+    expr: rate(node_vmstat_pgmajfault{job="node-exporter"}[5m]) > 500
+    for: 15m
+    annotations:
+      description: 'Memory major pages are occurring at very high rate at {{ $labels.instance
+        }}, 500 major page faults per second for the last 15 minutes, is currently
+        at {{ printf "%.2f" $value }}.
+
+        Please check that there is enough memory available at this instance.
+
+        '
+      runbook_url: default_runbook_url
+      summary: Memory major page faults are occurring at very high rate.
+      dashboard_url: default_dashboard_url

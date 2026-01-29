@@ -1,0 +1,23 @@
+groups:
+- name: multipath_path_checker_alerts
+  rules:
+  - alert: nodedmpathinfomultipathcritical
+    labels:
+      coreaccountid: '{{ $labels.rackspace_com_coreAccountID }}'
+      coredeviceid: '{{ $labels.rackspace_com_coreDeviceID }}'
+      node: '{{ $labels.instance }}'
+      severity: warning
+      rackspace_com_coreAccountID: default_coreID
+      rackspace_com_overseerID: default_overseerID
+      group_name: default_group_name
+      node_name: default_node_name
+      pod_name: default_pod_name
+    expr: node_dmpath_info{path_checker_state!~"active|ready"}
+    for: 2m
+    annotations:
+      description: '{{ $labels.name }}
+
+        labels: {{ $labels }}'
+      summary: Multipathd paths are NOT active|ready and paths are likely orphaned
+      runbook_url: default_runbook_url
+      dashboard_url: default_dashboard_url

@@ -1,0 +1,49 @@
+groups:
+- name: rabbitmq
+  rules:
+  - alert: filedescriptorsnearlimit
+    labels:
+      rulesgroup: rabbitmq
+      severity: warning
+      rackspace_com_coreAccountID: default_coreID
+      rackspace_com_overseerID: default_overseerID
+      group_name: default_group_name
+      node_name: default_node_name
+      pod_name: default_pod_name
+    expr: 'sum by(namespace, rabbitmq_cluster, pod, rabbitmq_node) (max_over_time(rabbitmq_process_open_fds[5m])
+      * on(instance) group_left(rabbitmq_cluster, rabbitmq_node) max by (instance,
+      rabbitmq_node, rabbitmq_cluster) (rabbitmq_identity_info))
+
+      /
+
+      sum by(namespace, rabbitmq_cluster, pod, rabbitmq_node) (rabbitmq_process_max_fds
+      * on(instance) group_left(rabbitmq_cluster, rabbitmq_node) max by (instance,
+      rabbitmq_node, rabbitmq_cluster) (rabbitmq_identity_info))
+
+      > 0.8
+
+      '
+    for: 10m
+    annotations:
+      description: '`{{ $value | humanizePercentage }}` file descriptors of file
+
+        descriptor limit are used in RabbitMQ node `{{ $labels.rabbitmq_node }}`,
+
+        pod `{{ $labels.pod }}`, RabbitMQ cluster `{{ $labels.rabbitmq_cluster }}`,
+
+        namespace `{{ $labels.namespace }}`.
+
+        '
+      summary: 'More than 80% of file descriptors are used on the RabbitMQ node.
+
+        When this value reaches 100%, new connections will not be accepted and disk
+        write operations may fail.
+
+        Client libraries, peer nodes and CLI tools will not be able to connect when
+        the node runs out of available file descriptors.
+
+        See https://www.rabbitmq.com/production-checklist.html#resource-limits-file-handle-limit.
+
+        '
+      runbook_url: default_runbook_url
+      dashboard_url: default_dashboard_url

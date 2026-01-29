@@ -1,0 +1,22 @@
+groups:
+- name: kube-state-metrics
+  rules:
+  - alert: kubestatemetricswatcherrors
+    labels:
+      rackspace_com_coreAccountID: default_coreID
+      rackspace_com_overseerID: default_overseerID
+      severity: warning
+      group_name: default_group_name
+      node_name: default_node_name
+      pod_name: default_pod_name
+    expr: "(sum(rate(kube_state_metrics_watch_total{job=\"kube-state-metrics\",result=\"\
+      error\"}[5m])) by (cluster)\n  /\nsum(rate(kube_state_metrics_watch_total{job=\"\
+      kube-state-metrics\"}[5m])) by (cluster))\n> 0.01"
+    for: 15m
+    annotations:
+      description: kube-state-metrics is experiencing errors at an elevated rate in
+        watch operations. This is likely causing it to not be able to expose metrics
+        about Kubernetes objects correctly or at all.
+      runbook_url: default_runbook_url
+      summary: kube-state-metrics is experiencing errors in watch operations.
+      dashboard_url: default_dashboard_url

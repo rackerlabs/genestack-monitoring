@@ -1,0 +1,19 @@
+groups:
+- name: node-network
+  rules:
+  - alert: nodenetworkinterfaceflapping
+    labels:
+      rackspace_com_coreAccountID: default_coreID
+      rackspace_com_overseerID: default_overseerID
+      severity: warning
+      group_name: default_group_name
+      node_name: default_node_name
+      pod_name: default_pod_name
+    expr: changes(node_network_up{job="node-exporter",device!~"veth.+"}[2m]) > 2
+    for: 2m
+    annotations:
+      description: Network interface "{{ $labels.device }}" changing its up status
+        often on node-exporter {{ $labels.namespace }}/{{ $labels.pod }}
+      runbook_url: default_runbook_url
+      summary: Network interface is often changing its status
+      dashboard_url: default_dashboard_url

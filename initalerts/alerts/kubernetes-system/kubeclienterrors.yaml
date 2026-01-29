@@ -1,0 +1,22 @@
+groups:
+- name: kubernetes-system
+  rules:
+  - alert: kubeclienterrors
+    labels:
+      rackspace_com_coreAccountID: default_coreID
+      rackspace_com_overseerID: default_overseerID
+      severity: warning
+      group_name: default_group_name
+      node_name: default_node_name
+      pod_name: default_pod_name
+    expr: "(sum(rate(rest_client_requests_total{job=\"apiserver\",code=~\"5..\"}[5m]))\
+      \ by (cluster, instance, job, namespace)\n  /\nsum(rate(rest_client_requests_total{job=\"\
+      apiserver\"}[5m])) by (cluster, instance, job, namespace))\n> 0.01"
+    for: 15m
+    annotations:
+      description: Kubernetes API server client '{{ $labels.job }}/{{ $labels.instance
+        }}' is experiencing {{ $value | humanizePercentage }} errors on cluster {{
+        $labels.cluster }}.
+      runbook_url: default_runbook_url
+      summary: Kubernetes API server client is experiencing errors.
+      dashboard_url: default_dashboard_url

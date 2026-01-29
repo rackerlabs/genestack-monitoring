@@ -1,0 +1,25 @@
+groups:
+- name: linux_mdm_device_and_raid_alerts
+  rules:
+  - alert: nodemdinfofaileddevicecritical
+    labels:
+      coreAccountID: '{{ $labels.rackspace_com_coreAccountID }}'
+      coreDeviceID: '{{ $labels.rackspace_com_coreDeviceID }}'
+      node: '{{ $labels.instance }}'
+      severity: warning
+      rackspace_com_coreAccountID: default_coreID
+      rackspace_com_overseerID: default_overseerID
+      group_name: default_group_name
+      node_name: default_node_name
+      pod_name: default_pod_name
+    expr: node_md_info{job="node-exporter", FailedDevices!="0"} > 0
+    for: 2m
+    annotations:
+      description: '{{ $labels.name }}
+
+        Number MD Failed:{{ $labels.FailedDevices }}
+
+        LABELS: {{ $labels }}'
+      summary: NVME device on Linux software RAID failure info
+      runbook_url: default_runbook_url
+      dashboard_url: default_dashboard_url

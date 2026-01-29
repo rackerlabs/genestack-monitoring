@@ -1,0 +1,27 @@
+groups:
+- name: kubernetes-apps
+  rules:
+  - alert: kubedaemonsetrolloutstuck
+    labels:
+      rackspace_com_coreAccountID: default_coreID
+      rackspace_com_overseerID: default_overseerID
+      severity: warning
+      group_name: default_group_name
+      node_name: default_node_name
+      pod_name: default_pod_name
+    expr: "(\n  (\n    kube_daemonset_status_current_number_scheduled{job=\"kube-state-metrics\"\
+      , namespace=~\".*\"}\n      !=\n    kube_daemonset_status_desired_number_scheduled{job=\"\
+      kube-state-metrics\", namespace=~\".*\"}\n  ) or (\n    kube_daemonset_status_number_misscheduled{job=\"\
+      kube-state-metrics\", namespace=~\".*\"}\n      !=\n    0\n  ) or (\n    kube_daemonset_status_updated_number_scheduled{job=\"\
+      kube-state-metrics\", namespace=~\".*\"}\n      !=\n    kube_daemonset_status_desired_number_scheduled{job=\"\
+      kube-state-metrics\", namespace=~\".*\"}\n  ) or (\n    kube_daemonset_status_number_available{job=\"\
+      kube-state-metrics\", namespace=~\".*\"}\n      !=\n    kube_daemonset_status_desired_number_scheduled{job=\"\
+      kube-state-metrics\", namespace=~\".*\"}\n  )\n) and (\n  changes(kube_daemonset_status_updated_number_scheduled{job=\"\
+      kube-state-metrics\", namespace=~\".*\"}[5m])\n    ==\n  0\n)"
+    for: 15m
+    annotations:
+      description: DaemonSet {{ $labels.namespace }}/{{ $labels.daemonset }} has not
+        finished or progressed for at least 15m on cluster {{ $labels.cluster }}.
+      runbook_url: default_runbook_url
+      summary: DaemonSet rollout is stuck.
+      dashboard_url: default_dashboard_url

@@ -1,0 +1,24 @@
+groups:
+- name: prometheus
+  rules:
+  - alert: prometheusnotificationqueuerunningfull
+    labels:
+      rackspace_com_coreAccountID: default_coreID
+      rackspace_com_overseerID: default_overseerID
+      severity: warning
+      group_name: default_group_name
+      node_name: default_node_name
+      pod_name: default_pod_name
+    expr: "# Without min_over_time, failed scrapes could create false negatives, see\n\
+      # https://www.robustperception.io/alerting-on-gauges-in-prometheus-2-0 for details.\n\
+      (\n  predict_linear(prometheus_notifications_queue_length{job=\"kube-prometheus-stack-prometheus\"\
+      ,namespace=\"prometheus\"}[5m], 60 * 30)\n>\n  min_over_time(prometheus_notifications_queue_capacity{job=\"\
+      kube-prometheus-stack-prometheus\",namespace=\"prometheus\"}[5m])\n)"
+    for: 15m
+    annotations:
+      description: Alert notification queue of Prometheus {{$labels.namespace}}/{{$labels.pod}}
+        is running full.
+      runbook_url: default_runbook_url
+      summary: Prometheus alert notification queue predicted to run full in less than
+        30m.
+      dashboard_url: default_dashboard_url

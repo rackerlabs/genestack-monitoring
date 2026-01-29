@@ -1,0 +1,34 @@
+groups:
+- name: general.rules
+  rules:
+  - alert: infoinhibitor
+    labels:
+      rackspace_com_coreAccountID: default_coreID
+      rackspace_com_overseerID: default_overseerID
+      severity: warning
+      group_name: default_group_name
+      node_name: default_node_name
+      pod_name: default_pod_name
+    expr: ALERTS{severity = "info"} == 1 unless on (namespace) ALERTS{alertname !=
+      "InfoInhibitor", severity =~ "warning|critical", alertstate="firing"} == 1
+    for: 0m
+    annotations:
+      description: 'This is an alert that is used to inhibit info alerts.
+
+        By themselves, the info-level alerts are sometimes very noisy, but they are
+        relevant when combined with
+
+        other alerts.
+
+        This alert fires whenever there''s a severity="info" alert, and stops firing
+        when another alert with a
+
+        severity of ''warning'' or ''critical'' starts firing on the same namespace.
+
+        This alert should be routed to a null receiver and configured to inhibit alerts
+        with severity="info".
+
+        '
+      runbook_url: default_runbook_url
+      summary: Info-level alert inhibition.
+      dashboard_url: default_dashboard_url

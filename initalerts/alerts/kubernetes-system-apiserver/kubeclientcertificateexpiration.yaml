@@ -1,0 +1,25 @@
+groups:
+- name: kubernetes-system-apiserver
+  rules:
+  - alert: kubeclientcertificateexpiration
+    labels:
+      rackspace_com_coreAccountID: default_coreID
+      rackspace_com_overseerID: default_overseerID
+      severity: warning
+      group_name: default_group_name
+      node_name: default_node_name
+      pod_name: default_pod_name
+    expr: 'histogram_quantile(0.01, sum without (namespace, service, endpoint) (rate(apiserver_client_certificate_expiration_seconds_bucket{job="apiserver"}[5m])))
+      < 86400
+
+      and
+
+      on (job, cluster, instance) apiserver_client_certificate_expiration_seconds_count{job="apiserver"}
+      > 0'
+    for: 5m
+    annotations:
+      description: A client certificate used to authenticate to kubernetes apiserver
+        is expiring in less than 24.0 hours on cluster {{ $labels.cluster }}.
+      runbook_url: default_runbook_url
+      summary: Client certificate is about to expire.
+      dashboard_url: default_dashboard_url

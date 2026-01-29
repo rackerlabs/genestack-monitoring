@@ -1,0 +1,22 @@
+groups:
+- name: node-exporter
+  rules:
+  - alert: nodememoryhighutilization
+    labels:
+      rackspace_com_coreAccountID: default_coreID
+      rackspace_com_overseerID: default_overseerID
+      severity: warning
+      group_name: default_group_name
+      node_name: default_node_name
+      pod_name: default_pod_name
+    expr: 100 - (node_memory_MemAvailable_bytes{job="node-exporter"} / node_memory_MemTotal_bytes{job="node-exporter"}
+      * 100) > 90
+    for: 15m
+    annotations:
+      description: 'Memory is filling up at {{ $labels.instance }}, has been above
+        90% for the last 15 minutes, is currently at {{ printf "%.2f" $value }}%.
+
+        '
+      runbook_url: default_runbook_url
+      summary: Host is running out of memory.
+      dashboard_url: default_dashboard_url

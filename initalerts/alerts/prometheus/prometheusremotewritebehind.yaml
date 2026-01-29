@@ -1,0 +1,24 @@
+groups:
+- name: prometheus
+  rules:
+  - alert: prometheusremotewritebehind
+    labels:
+      rackspace_com_coreAccountID: default_coreID
+      rackspace_com_overseerID: default_overseerID
+      severity: warning
+      group_name: default_group_name
+      node_name: default_node_name
+      pod_name: default_pod_name
+    expr: "# Without max_over_time, failed scrapes could create false negatives, see\n\
+      # https://www.robustperception.io/alerting-on-gauges-in-prometheus-2-0 for details.\n\
+      (\n  max_over_time(prometheus_remote_storage_queue_highest_timestamp_seconds{job=\"\
+      kube-prometheus-stack-prometheus\",namespace=\"prometheus\"}[5m])\n-\n  max_over_time(prometheus_remote_storage_queue_highest_sent_timestamp_seconds{job=\"\
+      kube-prometheus-stack-prometheus\",namespace=\"prometheus\"}[5m])\n)\n> 120"
+    for: 15m
+    annotations:
+      description: Prometheus {{$labels.namespace}}/{{$labels.pod}} remote write is
+        {{ printf "%.1f" $value }}s behind for {{ $labels.remote_name}}:{{ $labels.url
+        }}.
+      runbook_url: default_runbook_url
+      summary: Prometheus remote write is behind.
+      dashboard_url: default_dashboard_url

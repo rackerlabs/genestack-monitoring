@@ -1,0 +1,21 @@
+groups:
+- name: prometheus-operator
+  rules:
+  - alert: prometheusoperatorlisterrors
+    labels:
+      rackspace_com_coreAccountID: default_coreID
+      rackspace_com_overseerID: default_overseerID
+      severity: warning
+      group_name: default_group_name
+      node_name: default_node_name
+      pod_name: default_pod_name
+    expr: (sum by (cluster,controller,namespace) (rate(prometheus_operator_list_operations_failed_total{job="kube-prometheus-stack-operator",namespace="prometheus"}[10m]))
+      / sum by (cluster,controller,namespace) (rate(prometheus_operator_list_operations_total{job="kube-prometheus-stack-operator",namespace="prometheus"}[10m])))
+      > 0.4
+    for: 15m
+    annotations:
+      description: Errors while performing List operations in controller {{$labels.controller}}
+        in {{$labels.namespace}} namespace.
+      runbook_url: default_runbook_url
+      summary: Errors while performing list operations in controller.
+      dashboard_url: default_dashboard_url

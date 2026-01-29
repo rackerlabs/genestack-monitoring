@@ -1,0 +1,27 @@
+groups:
+- name: kubernetes-apps
+  rules:
+  - alert: kubehpareplicasmismatch
+    labels:
+      rackspace_com_coreAccountID: default_coreID
+      rackspace_com_overseerID: default_overseerID
+      severity: warning
+      group_name: default_group_name
+      node_name: default_node_name
+      pod_name: default_pod_name
+    expr: "(kube_horizontalpodautoscaler_status_desired_replicas{job=\"kube-state-metrics\"\
+      , namespace=~\".*\"}\n  !=\nkube_horizontalpodautoscaler_status_current_replicas{job=\"\
+      kube-state-metrics\", namespace=~\".*\"})\n  and\n(kube_horizontalpodautoscaler_status_current_replicas{job=\"\
+      kube-state-metrics\", namespace=~\".*\"}\n  >\nkube_horizontalpodautoscaler_spec_min_replicas{job=\"\
+      kube-state-metrics\", namespace=~\".*\"})\n  and\n(kube_horizontalpodautoscaler_status_current_replicas{job=\"\
+      kube-state-metrics\", namespace=~\".*\"}\n  <\nkube_horizontalpodautoscaler_spec_max_replicas{job=\"\
+      kube-state-metrics\", namespace=~\".*\"})\n  and\nchanges(kube_horizontalpodautoscaler_status_current_replicas{job=\"\
+      kube-state-metrics\", namespace=~\".*\"}[15m]) == 0"
+    for: 15m
+    annotations:
+      description: HPA {{ $labels.namespace }}/{{ $labels.horizontalpodautoscaler  }}
+        has not matched the desired number of replicas for longer than 15 minutes
+        on cluster {{ $labels.cluster }}.
+      runbook_url: default_runbook_url
+      summary: HPA has not matched desired number of replicas.
+      dashboard_url: default_dashboard_url

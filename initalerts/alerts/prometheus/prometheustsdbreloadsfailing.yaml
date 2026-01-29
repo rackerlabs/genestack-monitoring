@@ -1,0 +1,20 @@
+groups:
+- name: prometheus
+  rules:
+  - alert: prometheustsdbreloadsfailing
+    labels:
+      rackspace_com_coreAccountID: default_coreID
+      rackspace_com_overseerID: default_overseerID
+      severity: warning
+      group_name: default_group_name
+      node_name: default_node_name
+      pod_name: default_pod_name
+    expr: increase(prometheus_tsdb_reloads_failures_total{job="kube-prometheus-stack-prometheus",namespace="prometheus"}[3h])
+      > 0
+    for: 4h
+    annotations:
+      description: Prometheus {{$labels.namespace}}/{{$labels.pod}} has detected {{$value
+        | humanize}} reload failures over the last 3h.
+      runbook_url: default_runbook_url
+      summary: Prometheus has issues reloading blocks from disk.
+      dashboard_url: default_dashboard_url

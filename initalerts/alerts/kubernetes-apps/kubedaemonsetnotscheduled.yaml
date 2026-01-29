@@ -1,0 +1,21 @@
+groups:
+- name: kubernetes-apps
+  rules:
+  - alert: kubedaemonsetnotscheduled
+    labels:
+      rackspace_com_coreAccountID: default_coreID
+      rackspace_com_overseerID: default_overseerID
+      severity: warning
+      group_name: default_group_name
+      node_name: default_node_name
+      pod_name: default_pod_name
+    expr: "kube_daemonset_status_desired_number_scheduled{job=\"kube-state-metrics\"\
+      , namespace=~\".*\"}\n  -\nkube_daemonset_status_current_number_scheduled{job=\"\
+      kube-state-metrics\", namespace=~\".*\"} > 0"
+    for: 10m
+    annotations:
+      description: '{{ $value }} Pods of DaemonSet {{ $labels.namespace }}/{{ $labels.daemonset
+        }} are not scheduled on cluster {{ $labels.cluster }}.'
+      runbook_url: default_runbook_url
+      summary: DaemonSet pods are not scheduled.
+      dashboard_url: default_dashboard_url

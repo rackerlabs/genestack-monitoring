@@ -1,0 +1,20 @@
+groups:
+- name: prometheus-operator
+  rules:
+  - alert: prometheusoperatornodelookuperrors
+    labels:
+      rackspace_com_coreAccountID: default_coreID
+      rackspace_com_overseerID: default_overseerID
+      severity: warning
+      group_name: default_group_name
+      node_name: default_node_name
+      pod_name: default_pod_name
+    expr: rate(prometheus_operator_node_address_lookup_errors_total{job="kube-prometheus-stack-operator",namespace="prometheus"}[5m])
+      > 0.1
+    for: 10m
+    annotations:
+      description: Errors while reconciling Prometheus in {{ $labels.namespace }}
+        Namespace.
+      runbook_url: default_runbook_url
+      summary: Errors while reconciling Prometheus.
+      dashboard_url: default_dashboard_url

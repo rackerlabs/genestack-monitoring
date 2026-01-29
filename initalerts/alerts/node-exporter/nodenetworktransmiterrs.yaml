@@ -1,0 +1,20 @@
+groups:
+- name: node-exporter
+  rules:
+  - alert: nodenetworktransmiterrs
+    labels:
+      rackspace_com_coreAccountID: default_coreID
+      rackspace_com_overseerID: default_overseerID
+      severity: warning
+      group_name: default_group_name
+      node_name: default_node_name
+      pod_name: default_pod_name
+    expr: rate(node_network_transmit_errs_total{job="node-exporter"}[2m]) / rate(node_network_transmit_packets_total{job="node-exporter"}[2m])
+      > 0.01
+    for: 1h
+    annotations:
+      description: '{{ $labels.instance }} interface {{ $labels.device }} has encountered
+        {{ printf "%.0f" $value }} transmit errors in the last two minutes.'
+      runbook_url: default_runbook_url
+      summary: Network interface is reporting many transmit errors.
+      dashboard_url: default_dashboard_url

@@ -1,0 +1,23 @@
+groups:
+- name: kubernetes-apps
+  rules:
+  - alert: kubedeploymentrolloutstuck
+    labels:
+      rackspace_com_coreAccountID: default_coreID
+      rackspace_com_overseerID: default_overseerID
+      severity: warning
+      group_name: default_group_name
+      node_name: default_node_name
+      pod_name: default_pod_name
+    expr: 'kube_deployment_status_condition{condition="Progressing", status="false",job="kube-state-metrics",
+      namespace=~".*"}
+
+      != 0'
+    for: 15m
+    annotations:
+      description: Rollout of deployment {{ $labels.namespace }}/{{ $labels.deployment
+        }} is not progressing for longer than 15 minutes on cluster {{ $labels.cluster
+        }}.
+      runbook_url: default_runbook_url
+      summary: Deployment rollout is not progressing.
+      dashboard_url: default_dashboard_url

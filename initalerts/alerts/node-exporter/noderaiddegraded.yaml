@@ -1,0 +1,22 @@
+groups:
+- name: node-exporter
+  rules:
+  - alert: noderaiddegraded
+    labels:
+      rackspace_com_coreAccountID: default_coreID
+      rackspace_com_overseerID: default_overseerID
+      severity: warning
+      group_name: default_group_name
+      node_name: default_node_name
+      pod_name: default_pod_name
+    expr: node_md_disks_required{job="node-exporter",device=~"(/dev/)?(mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|md.+|dasd.+)"}
+      - ignoring (state) (node_md_disks{state="active",job="node-exporter",device=~"(/dev/)?(mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|md.+|dasd.+)"})
+      > 0
+    for: 15m
+    annotations:
+      description: RAID array '{{ $labels.device }}' at {{ $labels.instance }} is
+        in degraded state due to one or more disks failures. Number of spare drives
+        is insufficient to fix issue automatically.
+      runbook_url: default_runbook_url
+      summary: RAID Array is degraded.
+      dashboard_url: default_dashboard_url

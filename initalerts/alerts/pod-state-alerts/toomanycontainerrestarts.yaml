@@ -1,0 +1,28 @@
+groups:
+- name: pod-state-alerts
+  rules:
+  - alert: toomanycontainerrestarts
+    labels:
+      app: '{{ $labels.pod }}'
+      severity: warning
+      rackspace_com_coreAccountID: default_coreID
+      rackspace_com_overseerID: default_overseerID
+      group_name: default_group_name
+      node_name: default_node_name
+      pod_name: default_pod_name
+    expr: sum(increase(kube_pod_container_status_restarts_total{pod_template_hash=""}[15m]))
+      by (pod,namespace,container) > 5
+    for: 0m
+    annotations:
+      description: 'Namespace: {{$labels.namespace}}
+
+        Pod name: {{$labels.pod}}
+
+        Container name: {{$labels.container}}
+
+        '
+      summary: Container named {{ $labels.container }} in {{ $labels.pod }} in {{
+        $labels.namespace }} has restarted too many times in a short period and needs
+        to be investigated.
+      runbook_url: default_runbook_url
+      dashboard_url: default_dashboard_url

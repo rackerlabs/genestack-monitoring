@@ -1,0 +1,22 @@
+groups:
+- name: kubernetes-apps
+  rules:
+  - alert: kubejobnotcompleted
+    labels:
+      rackspace_com_coreAccountID: default_coreID
+      rackspace_com_overseerID: default_overseerID
+      severity: warning
+      group_name: default_group_name
+      node_name: default_node_name
+      pod_name: default_pod_name
+    expr: "time() - max by (namespace, job_name, cluster) (kube_job_status_start_time{job=\"\
+      kube-state-metrics\", namespace=~\".*\"}\n  and\nkube_job_status_active{job=\"\
+      kube-state-metrics\", namespace=~\".*\"} > 0) > 43200"
+    for: 0m
+    annotations:
+      description: Job {{ $labels.namespace }}/{{ $labels.job_name }} is taking more
+        than {{ "43200" | humanizeDuration }} to complete on cluster {{ $labels.cluster
+        }}.
+      runbook_url: default_runbook_url
+      summary: Job did not complete in time
+      dashboard_url: default_dashboard_url

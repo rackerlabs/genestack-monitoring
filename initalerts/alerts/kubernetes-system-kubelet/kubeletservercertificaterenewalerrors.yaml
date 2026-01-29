@@ -1,0 +1,20 @@
+groups:
+- name: kubernetes-system-kubelet
+  rules:
+  - alert: kubeletservercertificaterenewalerrors
+    labels:
+      rackspace_com_coreAccountID: default_coreID
+      rackspace_com_overseerID: default_overseerID
+      severity: warning
+      group_name: default_group_name
+      node_name: default_node_name
+      pod_name: default_pod_name
+    expr: increase(kubelet_server_expiration_renew_errors[5m]) > 0
+    for: 15m
+    annotations:
+      description: Kubelet on node {{ $labels.node }} has failed to renew its server
+        certificate ({{ $value | humanize }} errors in the last 5 minutes) on cluster
+        {{ $labels.cluster }}.
+      runbook_url: default_runbook_url
+      summary: Kubelet has failed to renew its server certificate.
+      dashboard_url: default_dashboard_url

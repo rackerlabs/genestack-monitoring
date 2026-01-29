@@ -1,0 +1,25 @@
+groups:
+- name: kube-apiserver-slos
+  rules:
+  - alert: kubeapierrorbudgetburn
+    labels:
+      long: 3d
+      rackspace_com_coreAccountID: default_coreID
+      rackspace_com_overseerID: default_overseerID
+      severity: warning
+      short: 6h
+      group_name: default_group_name
+      node_name: default_node_name
+      pod_name: default_pod_name
+    expr: 'sum by (cluster) (apiserver_request:burnrate3d) > (1.00 * 0.01000)
+
+      and on (cluster)
+
+      sum by (cluster) (apiserver_request:burnrate6h) > (1.00 * 0.01000)'
+    for: 3h
+    annotations:
+      description: The API server is burning too much error budget on cluster {{ $labels.cluster
+        }}.
+      runbook_url: default_runbook_url
+      summary: The API server is burning too much error budget.
+      dashboard_url: default_dashboard_url

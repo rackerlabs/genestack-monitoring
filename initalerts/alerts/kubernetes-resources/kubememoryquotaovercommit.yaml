@@ -1,0 +1,22 @@
+groups:
+- name: kubernetes-resources
+  rules:
+  - alert: kubememoryquotaovercommit
+    labels:
+      rackspace_com_coreAccountID: default_coreID
+      rackspace_com_overseerID: default_overseerID
+      severity: warning
+      group_name: default_group_name
+      node_name: default_node_name
+      pod_name: default_pod_name
+    expr: "sum by (cluster) (\n  min without(resource) (kube_resourcequota{job=\"\
+      kube-state-metrics\", type=\"hard\", resource=~\"(memory|requests.memory)\"\
+      })\n)\n/\nsum by (cluster) (\n  kube_node_status_allocatable{resource=\"memory\"\
+      , job=\"kube-state-metrics\"}\n) > 1.5"
+    for: 5m
+    annotations:
+      description: Cluster {{ $labels.cluster }} has overcommitted memory resource
+        requests for Namespaces.
+      runbook_url: default_runbook_url
+      summary: Cluster has overcommitted memory resource requests.
+      dashboard_url: default_dashboard_url

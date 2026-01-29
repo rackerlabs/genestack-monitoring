@@ -1,0 +1,26 @@
+groups:
+- name: kubernetes-apps
+  rules:
+  - alert: kubestatefulsetupdatenotrolledout
+    labels:
+      rackspace_com_coreAccountID: default_coreID
+      rackspace_com_overseerID: default_overseerID
+      severity: warning
+      group_name: default_group_name
+      node_name: default_node_name
+      pod_name: default_pod_name
+    expr: "(\n  max by (namespace, statefulset, job, cluster) (\n    kube_statefulset_status_current_revision{job=\"\
+      kube-state-metrics\", namespace=~\".*\"}\n      unless\n    kube_statefulset_status_update_revision{job=\"\
+      kube-state-metrics\", namespace=~\".*\"}\n  )\n    * on (namespace, statefulset,\
+      \ job, cluster)\n  (\n    kube_statefulset_replicas{job=\"kube-state-metrics\"\
+      , namespace=~\".*\"}\n      !=\n    kube_statefulset_status_replicas_updated{job=\"\
+      kube-state-metrics\", namespace=~\".*\"}\n  )\n)  and on (namespace, statefulset,\
+      \ job, cluster) (\n  changes(kube_statefulset_status_replicas_updated{job=\"\
+      kube-state-metrics\", namespace=~\".*\"}[5m])\n    ==\n  0\n)"
+    for: 15m
+    annotations:
+      description: StatefulSet {{ $labels.namespace }}/{{ $labels.statefulset }} update
+        has not been rolled out on cluster {{ $labels.cluster }}.
+      runbook_url: default_runbook_url
+      summary: StatefulSet update has not been rolled out.
+      dashboard_url: default_dashboard_url

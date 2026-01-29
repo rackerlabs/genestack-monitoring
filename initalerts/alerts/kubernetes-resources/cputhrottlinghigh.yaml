@@ -1,0 +1,25 @@
+groups:
+- name: kubernetes-resources
+  rules:
+  - alert: cputhrottlinghigh
+    labels:
+      rackspace_com_coreAccountID: default_coreID
+      rackspace_com_overseerID: default_overseerID
+      severity: warning
+      group_name: default_group_name
+      node_name: default_node_name
+      pod_name: default_pod_name
+    expr: "sum(increase(container_cpu_cfs_throttled_periods_total{container!=\"\"\
+      , job=\"kubelet\", metrics_path=\"/metrics/cadvisor\", }[5m])) without (id,\
+      \ metrics_path, name, image, endpoint, job, node)\n  / on (cluster, namespace,\
+      \ pod, container, instance) group_left\nsum(increase(container_cpu_cfs_periods_total{job=\"\
+      kubelet\", metrics_path=\"/metrics/cadvisor\", }[5m])) without (id, metrics_path,\
+      \ name, image, endpoint, job, node)\n  > ( 25 / 100 )"
+    for: 15m
+    annotations:
+      description: '{{ $value | humanizePercentage }} throttling of CPU in namespace
+        {{ $labels.namespace }} for container {{ $labels.container }} in pod {{ $labels.pod
+        }} on cluster {{ $labels.cluster }}.'
+      runbook_url: default_runbook_url
+      summary: Processes experience elevated CPU throttling.
+      dashboard_url: default_dashboard_url

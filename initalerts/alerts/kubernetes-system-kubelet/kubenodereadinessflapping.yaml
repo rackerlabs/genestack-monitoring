@@ -1,0 +1,24 @@
+groups:
+- name: kubernetes-system-kubelet
+  rules:
+  - alert: kubenodereadinessflapping
+    labels:
+      rackspace_com_coreAccountID: default_coreID
+      rackspace_com_overseerID: default_overseerID
+      severity: warning
+      group_name: default_group_name
+      node_name: default_node_name
+      pod_name: default_pod_name
+    expr: 'sum(changes(kube_node_status_condition{job="kube-state-metrics",status="true",condition="Ready"}[15m]))
+      by (cluster, node) > 2
+
+      and on (cluster, node)
+
+      kube_node_spec_unschedulable{job="kube-state-metrics"} == 0'
+    for: 15m
+    annotations:
+      description: The readiness status of node {{ $labels.node }} has changed {{
+        $value }} times in the last 15 minutes on cluster {{ $labels.cluster }}.
+      runbook_url: default_runbook_url
+      summary: Node readiness status is flapping.
+      dashboard_url: default_dashboard_url

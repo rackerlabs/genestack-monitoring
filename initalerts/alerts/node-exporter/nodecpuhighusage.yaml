@@ -1,0 +1,22 @@
+groups:
+- name: node-exporter
+  rules:
+  - alert: nodecpuhighusage
+    labels:
+      rackspace_com_coreAccountID: default_coreID
+      rackspace_com_overseerID: default_overseerID
+      severity: warning
+      group_name: default_group_name
+      node_name: default_node_name
+      pod_name: default_pod_name
+    expr: sum without(mode) (avg without (cpu) (rate(node_cpu_seconds_total{job="node-exporter",
+      mode!~"idle|iowait"}[2m]))) * 100 > 90
+    for: 15m
+    annotations:
+      description: 'CPU usage at {{ $labels.instance }} has been above 90% for the
+        last 15 minutes, is currently at {{ printf "%.2f" $value }}%.
+
+        '
+      runbook_url: default_runbook_url
+      summary: High CPU usage.
+      dashboard_url: default_dashboard_url

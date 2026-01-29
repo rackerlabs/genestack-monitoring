@@ -1,0 +1,21 @@
+groups:
+- name: kubernetes-system-apiserver
+  rules:
+  - alert: kubeaggregatedapierrors
+    labels:
+      rackspace_com_coreAccountID: default_coreID
+      rackspace_com_overseerID: default_overseerID
+      severity: warning
+      group_name: default_group_name
+      node_name: default_node_name
+      pod_name: default_pod_name
+    expr: sum by (cluster, instance, name, reason)(increase(aggregator_unavailable_apiservice_total{job="apiserver"}[1m]))
+      > 0
+    for: 10m
+    annotations:
+      description: Kubernetes aggregated API {{ $labels.instance }}/{{ $labels.name
+        }} has reported {{ $labels.reason }} errors on cluster {{ $labels.cluster
+        }}.
+      runbook_url: default_runbook_url
+      summary: Kubernetes aggregated API has reported errors.
+      dashboard_url: default_dashboard_url

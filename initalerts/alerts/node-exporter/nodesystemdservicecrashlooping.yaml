@@ -1,0 +1,21 @@
+groups:
+- name: node-exporter
+  rules:
+  - alert: nodesystemdservicecrashlooping
+    labels:
+      rackspace_com_coreAccountID: default_coreID
+      rackspace_com_overseerID: default_overseerID
+      severity: warning
+      group_name: default_group_name
+      node_name: default_node_name
+      pod_name: default_pod_name
+    expr: increase(node_systemd_service_restart_total{job="node-exporter"}[5m]) >
+      2
+    for: 15m
+    annotations:
+      description: Systemd service {{ $labels.name }} has being restarted too many
+        times at {{ $labels.instance }} for the last 15 minutes. Please check if service
+        is crash looping.
+      runbook_url: default_runbook_url
+      summary: Systemd service keeps restaring, possibly crash looping.
+      dashboard_url: default_dashboard_url

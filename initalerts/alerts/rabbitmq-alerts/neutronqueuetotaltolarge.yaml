@@ -1,0 +1,18 @@
+groups:
+- name: rabbitmq-alerts
+  rules:
+  - alert: neutronqueuetotaltolarge
+    labels:
+      severity: warning
+      rackspace_com_coreAccountID: default_coreID
+      rackspace_com_overseerID: default_overseerID
+      group_name: default_group_name
+      node_name: default_node_name
+      pod_name: default_pod_name
+    expr: rabbitmq_queue_messages{vhost="neutron"} > 25
+    for: 10m
+    annotations:
+      description: Neutron vhost in RabbitMQ has too many messages. Check consumers.
+      summary: Neutron vhost has too many messages
+      runbook_url: default_runbook_url
+      dashboard_url: default_dashboard_url
