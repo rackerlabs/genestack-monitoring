@@ -1,0 +1,32 @@
+global:
+  resolve_timeout: 5m
+
+route:
+  group_by: ['alertname', 'cluster', 'service']
+  group_wait: 10s
+  group_interval: 10s
+  repeat_interval: 12h
+  receiver: 'default-receiver'
+
+receivers:
+  - name: 'default-receiver'
+    # Configure your receivers here (email, slack, pagerduty, etc.)
+
+inhibit_rules:
+  # When a host is down, suppress all other node alerts for that host
+  - source_match:
+      group_name: node-host-down
+    target_match_re:
+      group_name: ^(node-bonding-degraded|node-clock-not-synchronising|node-clock-skew-detected|node-cpu-high-usage|node-disk-io-saturation|node-file-descriptor-limit|node-filesystem-almost-out-of-files|node-filesystem-almost-out-of-space|node-filesystem-files-filling-up|node-filesystem-space-filling-up|node-high-number-conntrack-entries-used|node-memory-high-utilization|node-memory-major-pages-faults|node-network-interface-flapping|node-network-receive-errs|node-network-transmit-errs|node-raid-degraded|node-raid-disk-failure|node-system-saturation|node-systemd-service-crash-looping|node-systemd-service-failed|node-textfile-collector-scrape-error)$
+    equal:
+      - instance
+      - node_hostname
+
+  # When a Kubernetes node is NotReady, suppress node-level and pod-level alerts from that node
+  - source_match:
+      group_name: kube-node-not-ready
+    target_match_re:
+      group_name: ^(kubelet-down|kubelet-too-many-pods|kubelet-pleg-duration-high|kubelet-pod-startup-latency-high|kubelet-client-certificate-expiration|kubelet-client-certificate-renewal-errors|kubelet-server-certificate-expiration|kubelet-server-certificate-renewal-errors|kube-proxy-down|cpu-throttling-high|kube-node-pressure|kube-node-unreachable|kube-node-readiness-flapping|kube-node-eviction|kube-pod-not-ready|kube-pod-crash-looping|kube-container-waiting)$
+    equal:
+      - node
+      - instance
