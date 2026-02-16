@@ -1,0 +1,66 @@
+graph LR
+    subgraph "📊 TELEMETRY SOURCES"
+        T[🔍 Traces<br/>Apps with Auto-Instrumentation<br/>Jaeger/Zipkin Clients<br/>OTLP Apps]
+        M[📈 Metrics<br/>K8s Cluster Components<br/>Node Exporter<br/>Kubelet Stats<br/>Kube-State-Metrics]
+        L[📝 Logs<br/>K8s Container Logs<br/>17 OpenStack Services]
+    end
+
+    subgraph "🔧 OTEL COLLECTOR DAEMONSET"
+        subgraph "Receivers"
+            TR[Trace Receivers<br/>• OTLP: 4317/4318<br/>• Jaeger: 14250/14268/6831<br/>• Zipkin: 9411]
+            MR[Metrics Receivers<br/>• OTLP<br/>• Prometheus<br/>• Host Metrics<br/>• Kubelet Stats]
+            LR[Logs Receivers<br/>• filelog/k8s<br/>• filelog/openstack_*]
+        end
+
+        subgraph "Processors"
+            P[• Memory Limiter 80%<br/>• Batch 1024/10s<br/>• K8s Attributes<br/>• Resource Detection]
+        end
+
+        subgraph "Exporters"
+            TE[Tempo<br/>tempo:4317]
+            ME[Prometheus<br/>prom-server:80<br/>+ endpoint :8889]
+            LE[Loki<br/>loki-gateway/otlp]
+            DE[Debug<br/>verbose logs]
+        end
+    end
+
+    subgraph "💾 STORAGE BACKENDS"
+        TEMPO[Grafana Tempo<br/>Distributed Tracing]
+        PROM[Prometheus<br/>Time-Series Metrics]
+        LOKI[Grafana Loki<br/>Log Aggregation]
+    end
+
+    subgraph "📺 VISUALIZATION"
+        GRAF[Grafana<br/>Unified Dashboards<br/>Logs + Metrics + Traces]
+    end
+
+    T --> TR
+    M --> MR
+    L --> LR
+
+    TR --> P
+    MR --> P
+    LR --> P
+
+    P --> TE
+    P --> ME
+    P --> LE
+    P --> DE
+
+    TE --> TEMPO
+    ME --> PROM
+    LE --> LOKI
+
+    TEMPO --> GRAF
+    PROM --> GRAF
+    LOKI --> GRAF
+
+    classDef sources fill:#e1f5ff,stroke:#01579b,stroke-width:3px
+    classDef collector fill:#fff3e0,stroke:#e65100,stroke-width:3px
+    classDef storage fill:#fce4ec,stroke:#880e4f,stroke-width:3px
+    classDef viz fill:#fff9c4,stroke:#f57f17,stroke-width:4px
+
+    class T,M,L sources
+    class TR,MR,LR,P,TE,ME,LE,DE collector
+    class TEMPO,PROM,LOKI storage
+    class GRAF viz
