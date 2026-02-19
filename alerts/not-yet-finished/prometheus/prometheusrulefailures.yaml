@@ -1,0 +1,20 @@
+groups:
+- name: prometheus
+  rules:
+  - alert: prometheusrulefailures
+    labels:
+      rackspace_com_coreAccountID: default_coreID
+      rackspace_com_overseerID: default_overseerID
+      severity: warning
+      group_name: default_group_name
+      node_name: default_node_name
+      pod_name: default_pod_name
+    expr: increase(prometheus_rule_evaluation_failures_total{job="kube-prometheus-stack-prometheus",namespace="prometheus"}[5m])
+      > 0
+    for: 15m
+    annotations:
+      description: Prometheus {{$labels.namespace}}/{{$labels.pod}} has failed to
+        evaluate {{ printf "%.0f" $value }} rules in the last 5m.
+      runbook_url: default_runbook_url
+      summary: Prometheus is failing rule evaluations.
+      dashboard_url: default_dashboard_url

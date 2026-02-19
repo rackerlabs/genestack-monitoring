@@ -1,0 +1,45 @@
+groups:
+- name: rabbitmq
+  rules:
+  - alert: containerrestarts
+    labels:
+      rabbitmq_cluster: '{{ $labels.rabbitmq_cluster }}'
+      rulesgroup: rabbitmq
+      severity: warning
+      rackspace_com_coreAccountID: default_coreID
+      rackspace_com_overseerID: default_overseerID
+      group_name: default_group_name
+      node_name: default_node_name
+      pod_name: default_pod_name
+    expr: 'increase(kube_pod_container_status_restarts_total[10m])
+
+      * on(namespace, pod, container) group_left(rabbitmq_cluster) max by (namespace,
+      pod, container, rabbitmq_cluster) (rabbitmq_identity_info)
+
+      >= 1
+
+      '
+    for: 5m
+    annotations:
+      description: 'Over the last 10 minutes, container `{{ $labels.container }}`
+
+        restarted `{{ $value | printf "%.0f" }}` times in pod `{{ $labels.pod }}`
+        of RabbitMQ cluster
+
+        `{{ $labels.rabbitmq_cluster }}` in namespace `{{ $labels.namespace }}`.
+
+        '
+      summary: 'Investigate why the container got restarted.
+
+        Check the logs of the current container: `kubectl -n {{ $labels.namespace
+        }} logs {{ $labels.pod }}`
+
+        Check the logs of the previous container: `kubectl -n {{ $labels.namespace
+        }} logs {{ $labels.pod }} --previous`
+
+        Check the last state of the container: `kubectl -n {{ $labels.namespace }}
+        get pod {{ $labels.pod }} -o jsonpath=''{.status.containerStatuses[].lastState}''`
+
+        '
+      runbook_url: default_runbook_url
+      dashboard_url: default_dashboard_url

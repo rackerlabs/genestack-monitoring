@@ -1,0 +1,22 @@
+groups:
+- name: prometheus
+  rules:
+  - alert: prometheuserrorsendingalertstoanyalertmanager
+    labels:
+      rackspace_com_coreAccountID: default_coreID
+      rackspace_com_overseerID: default_overseerID
+      severity: warning
+      group_name: default_group_name
+      node_name: default_node_name
+      pod_name: default_pod_name
+    expr: "min without (alertmanager) (\n  rate(prometheus_notifications_errors_total{job=\"\
+      kube-prometheus-stack-prometheus\",namespace=\"prometheus\",alertmanager!~``}[5m])\n\
+      /\n  rate(prometheus_notifications_sent_total{job=\"kube-prometheus-stack-prometheus\"\
+      ,namespace=\"prometheus\",alertmanager!~``}[5m])\n)\n* 100\n> 3"
+    for: 15m
+    annotations:
+      description: '{{ printf "%.1f" $value }}% minimum errors while sending alerts
+        from Prometheus {{$labels.namespace}}/{{$labels.pod}} to any Alertmanager.'
+      runbook_url: default_runbook_url
+      summary: Prometheus encounters more than 3% errors sending alerts to any Alertmanager.
+      dashboard_url: default_dashboard_url

@@ -1,0 +1,20 @@
+groups:
+- name: mariadb-alerts
+  rules:
+  - alert: mysqltoomanyconnections(>80%)
+    labels:
+      severity: warning
+      rackspace_com_coreAccountID: default_coreID
+      rackspace_com_overseerID: default_overseerID
+      group_name: default_group_name
+      node_name: default_node_name
+      pod_name: default_pod_name
+    expr: max_over_time(mysql_global_status_threads_connected[1m]) / mysql_global_variables_max_connections
+      * 100 > 80
+    for: 2m
+    annotations:
+      description: "More than 80% of MySQL connections are in use on {{ $labels.instance\
+        \ }}\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+      summary: MySQL too many connections (> 80%) (instance {{ $labels.instance }})
+      runbook_url: default_runbook_url
+      dashboard_url: default_dashboard_url

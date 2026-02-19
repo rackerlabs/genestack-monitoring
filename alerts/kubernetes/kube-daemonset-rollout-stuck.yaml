@@ -1,0 +1,51 @@
+additionalPrometheusRulesMap:
+  kube-daemonset-rollout-stuck:
+    groups:
+      - name: kube-daemonset-rollout-stuck
+        rules:
+          # NOTE: kube_daemonset_status_updated_number_scheduled and kube_daemonset_status_number_available may not be available in OTel
+          # Consider using Prometheus receiver for kube-state-metrics or enabling optional metrics
+          - alert: kube-daemonset-rollout-stuck-warning
+            expr: >-
+              ( ( k8s.daemonset.current_scheduled_nodes{job="otelcol-k8scluster", namespace=~".*"} != k8s.daemonset.desired_scheduled_nodes{job="otelcol-k8scluster", namespace=~".*"} )
+
+              or ( k8s.daemonset.misscheduled_nodes{job="otelcol-k8scluster", namespace=~".*"} != 0 )
+
+              or ( kube_daemonset_status_updated_number_scheduled{job="kube-state-metrics", namespace=~".*"} != k8s.daemonset.desired_scheduled_nodes{job="otelcol-k8scluster", namespace=~".*"} )
+
+              or ( kube_daemonset_status_number_available{job="kube-state-metrics", namespace=~".*"} != k8s.daemonset.desired_scheduled_nodes{job="otelcol-k8scluster", namespace=~".*"} ) )
+
+              and ( changes(kube_daemonset_status_updated_number_scheduled{job="kube-state-metrics", namespace=~".*"}[5m]) == 0 )
+            for: 5m
+            labels:
+              severity: warning
+              group_name: kube-daemonset-rollout-stuck
+              node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+            annotations:
+              description: DaemonSet {{ $labels.namespace }}/{{ $labels.daemonset }} has not finished or progressed for at least 5 minutes on cluster {{ $labels.cluster }}.
+              runbook_url: default_runbook_url
+              summary: DaemonSet rollout is stuck.
+              dashboard_url: default_dashboard_url
+          # NOTE: kube_daemonset_status_updated_number_scheduled and kube_daemonset_status_number_available may not be available in OTel
+          # Consider using Prometheus receiver for kube-state-metrics or enabling optional metrics
+          - alert: kube-daemonset-rollout-stuck-critical
+            expr: >-
+              ( ( k8s.daemonset.current_scheduled_nodes{job="otelcol-k8scluster", namespace=~".*"} != k8s.daemonset.desired_scheduled_nodes{job="otelcol-k8scluster", namespace=~".*"} )
+
+              or ( k8s.daemonset.misscheduled_nodes{job="otelcol-k8scluster", namespace=~".*"} != 0 )
+
+              or ( kube_daemonset_status_updated_number_scheduled{job="kube-state-metrics", namespace=~".*"} != k8s.daemonset.desired_scheduled_nodes{job="otelcol-k8scluster", namespace=~".*"} )
+
+              or ( kube_daemonset_status_number_available{job="kube-state-metrics", namespace=~".*"} != k8s.daemonset.desired_scheduled_nodes{job="otelcol-k8scluster", namespace=~".*"} ) )
+
+              and ( changes(kube_daemonset_status_updated_number_scheduled{job="kube-state-metrics", namespace=~".*"}[5m]) == 0 )
+            for: 15m
+            labels:
+              severity: critical
+              group_name: kube-daemonset-rollout-stuck
+              node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+            annotations:
+              description: DaemonSet {{ $labels.namespace }}/{{ $labels.daemonset }} has not finished or progressed for at least 15 minutes on cluster {{ $labels.cluster }}.
+              runbook_url: default_runbook_url
+              summary: DaemonSet rollout is stuck.
+              dashboard_url: default_dashboard_url

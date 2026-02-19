@@ -1,0 +1,20 @@
+groups:
+- name: etcd
+  rules:
+  - alert: etcdinsufficientmembers
+    labels:
+      rackspace_com_coreAccountID: default_coreID
+      rackspace_com_overseerID: default_overseerID
+      severity: warning
+      group_name: default_group_name
+      node_name: default_node_name
+      pod_name: default_pod_name
+    expr: sum(up{job=~".*etcd.*"} == bool 1) without (instance, pod) < ((count(up{job=~".*etcd.*"})
+      without (instance, pod) + 1) / 2)
+    for: 3m
+    annotations:
+      description: 'etcd cluster "{{ $labels.job }}": insufficient members ({{ $value
+        }}).'
+      summary: etcd cluster has insufficient number of members.
+      runbook_url: default_runbook_url
+      dashboard_url: default_dashboard_url

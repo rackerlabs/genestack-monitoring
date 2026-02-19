@@ -1,0 +1,43 @@
+groups:
+- name: rabbitmq
+  rules:
+  - alert: highconnectionchurn
+    labels:
+      rulesgroup: rabbitmq
+      severity: warning
+      rackspace_com_coreAccountID: default_coreID
+      rackspace_com_overseerID: default_overseerID
+      group_name: default_group_name
+      node_name: default_node_name
+      pod_name: default_pod_name
+    expr: "(\n  sum by (namespace, rabbitmq_cluster) (\n    rate(rabbitmq_connections_closed_total[5m])\n\
+      \    * on (instance) group_left (rabbitmq_cluster) max by (instance, rabbitmq_cluster)\
+      \ (rabbitmq_identity_info)\n  )\n  +\n  sum by (namespace, rabbitmq_cluster)\
+      \ (\n    rate(rabbitmq_connections_opened_total[5m])\n    * on (instance) group_left\
+      \ (rabbitmq_cluster) max by (instance, rabbitmq_cluster) (rabbitmq_identity_info)\n\
+      \  )\n)\n/\nsum by (namespace, rabbitmq_cluster) (\n  rabbitmq_connections\n\
+      \  * on (instance) group_left (rabbitmq_cluster) max by (instance, rabbitmq_cluster)\
+      \ (rabbitmq_identity_info)\n)\n> 0.1\nunless\nsum by (namespace, rabbitmq_cluster)\
+      \ (\n  rabbitmq_connections\n  * on (instance) group_left (rabbitmq_cluster)\
+      \ max by (instance, rabbitmq_cluster) (rabbitmq_identity_info)\n)\n< 100\n"
+    for: 10m
+    annotations:
+      description: 'Over the last 5 minutes, `{{ $value | humanizePercentage }}`
+
+        of total connections are closed or opened per second in RabbitMQ cluster `{{
+        $labels.rabbitmq_cluster }}`
+
+        in namespace `{{ $labels.namespace }}`.
+
+        '
+      summary: 'More than 10% of total connections are churning.
+
+        This means that client application connections are short-lived instead of
+        long-lived.
+
+        Read https://www.rabbitmq.com/connections.html#high-connection-churn to understand
+        why this is an anti-pattern.
+
+        '
+      runbook_url: default_runbook_url
+      dashboard_url: default_dashboard_url

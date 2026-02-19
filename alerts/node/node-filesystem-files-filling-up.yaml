@@ -1,0 +1,35 @@
+additionalPrometheusRulesMap:
+  node-filesystem-files-filling-up:
+    groups:
+      - name: node-filesystem-files-filling-up
+        rules:
+          - alert: node-filesystem-files-filling-up-warning
+            expr: >-
+              ( system_filesystem_inodes_usage{job="otelcol-hostmetrics",fstype!="",mountpoint!="",state="free"} / (system_filesystem_inodes_usage{job="otelcol-hostmetrics",fstype!="",mountpoint!="",state="free"} + system_filesystem_inodes_usage{job="otelcol-hostmetrics",fstype!="",mountpoint!="",state="used"}) * 100 < 20
+
+              and predict_linear(system_filesystem_inodes_usage{job="otelcol-hostmetrics",fstype!="",mountpoint!="",state="free"}[6h], 4*60*60) < 0 )
+            for: 1h
+            labels:
+              severity: warning
+              group_name: node-filesystem-files-filling-up
+              node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+            annotations:
+              description: Filesystem on {{ $labels.device }}, mounted on {{ $labels.mountpoint }}, at {{ $labels.instance }} has only {{ printf "%.2f" $value }}% available inodes left and is filling up fast.
+              runbook_url: default_runbook_url
+              summary: Filesystem is predicted to run out of inodes within the next 4 hours.
+              dashboard_url: default_dashboard_url
+          - alert: node-filesystem-files-filling-up-critical
+            expr: >-
+              ( system_filesystem_inodes_usage{job="otelcol-hostmetrics",fstype!="",mountpoint!="",state="free"} / (system_filesystem_inodes_usage{job="otelcol-hostmetrics",fstype!="",mountpoint!="",state="free"} + system_filesystem_inodes_usage{job="otelcol-hostmetrics",fstype!="",mountpoint!="",state="used"}) * 100 < 20
+
+              and predict_linear(system_filesystem_inodes_usage{job="otelcol-hostmetrics",fstype!="",mountpoint!="",state="free"}[6h], 4*60*60) < 0 )
+            for: 1h
+            labels:
+              severity: critical
+              group_name: node-filesystem-files-filling-up
+              node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+            annotations:
+              description: Filesystem on {{ $labels.device }}, mounted on {{ $labels.mountpoint }}, at {{ $labels.instance }} has only {{ printf "%.2f" $value }}% available inodes left and is filling up fast.
+              runbook_url: default_runbook_url
+              summary: Filesystem is predicted to run out of inodes within the next 4 hours.
+              dashboard_url: default_dashboard_url

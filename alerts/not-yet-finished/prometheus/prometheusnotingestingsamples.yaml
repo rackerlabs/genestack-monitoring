@@ -1,0 +1,24 @@
+groups:
+- name: prometheus
+  rules:
+  - alert: prometheusnotingestingsamples
+    labels:
+      rackspace_com_coreAccountID: default_coreID
+      rackspace_com_overseerID: default_overseerID
+      severity: warning
+      group_name: default_group_name
+      node_name: default_node_name
+      pod_name: default_pod_name
+    expr: "(\n  sum without(type) (rate(prometheus_tsdb_head_samples_appended_total{job=\"\
+      kube-prometheus-stack-prometheus\",namespace=\"prometheus\"}[5m])) <= 0\nand\n\
+      \  (\n    sum without(scrape_job) (prometheus_target_metadata_cache_entries{job=\"\
+      kube-prometheus-stack-prometheus\",namespace=\"prometheus\"}) > 0\n  or\n  \
+      \  sum without(rule_group) (prometheus_rule_group_rules{job=\"kube-prometheus-stack-prometheus\"\
+      ,namespace=\"prometheus\"}) > 0\n  )\n)"
+    for: 10m
+    annotations:
+      description: Prometheus {{$labels.namespace}}/{{$labels.pod}} is not ingesting
+        samples.
+      runbook_url: default_runbook_url
+      summary: Prometheus is not ingesting samples.
+      dashboard_url: default_dashboard_url

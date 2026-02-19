@@ -1,0 +1,25 @@
+groups:
+- name: mariadb-alerts
+  rules:
+  - alert: mysqlrestarted
+    labels:
+      severity: warning
+      rackspace_com_coreAccountID: default_coreID
+      rackspace_com_overseerID: default_overseerID
+      group_name: default_group_name
+      node_name: default_node_name
+      pod_name: default_pod_name
+    expr: mysql_global_status_uptime < 60
+    for: 0m
+    annotations:
+      description: 'MySQL has just been restarted, less than one minute ago on {{
+        $labels.instance }}.
+
+        VALUE = {{ $value }}
+
+        LABELS = {{ $labels }}
+
+        '
+      summary: MySQL restarted (instance {{ $labels.instance }})
+      runbook_url: default_runbook_url
+      dashboard_url: default_dashboard_url

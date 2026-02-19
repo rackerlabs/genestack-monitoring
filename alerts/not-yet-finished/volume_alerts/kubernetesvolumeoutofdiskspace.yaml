@@ -1,0 +1,25 @@
+groups:
+- name: volume_alerts
+  rules:
+  - alert: kubernetesvolumeoutofdiskspace
+    labels:
+      severity: warning
+      rackspace_com_coreAccountID: default_coreID
+      rackspace_com_overseerID: default_overseerID
+      group_name: default_group_name
+      node_name: default_node_name
+      pod_name: default_pod_name
+    expr: kubelet_volume_stats_available_bytes / kubelet_volume_stats_capacity_bytes
+      * 100 < 20
+    for: 2m
+    annotations:
+      description: 'Volume is almost full (< 20% left).
+
+        VALUE = {{ $value }}
+
+        LABELS = {{ $labels }}
+
+        '
+      summary: Kubernetes Volume out of disk space (instance {{ $labels.instance }})
+      runbook_url: default_runbook_url
+      dashboard_url: default_dashboard_url

@@ -1,0 +1,31 @@
+additionalPrometheusRulesMap:
+  kube-daemonset-not-scheduled:
+    groups:
+      - name: kube-daemonset-not-scheduled
+        rules:
+          - alert: kube-daemonset-not-scheduled-warning
+            expr: >-
+              k8s.daemonset.desired_scheduled_nodes{job="otelcol-k8scluster", namespace=~".*"} - k8s.daemonset.current_scheduled_nodes{job="otelcol-k8scluster", namespace=~".*"} > 0
+            for: 5m
+            labels:
+              severity: warning
+              group_name: kube-daemonset-not-scheduled
+              node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+            annotations:
+              description: "{{ $value }} Pods of DaemonSet {{ $labels.namespace }}/{{ $labels.daemonset }} are not scheduled on cluster {{ $labels.cluster }}."
+              runbook_url: default_runbook_url
+              summary: DaemonSet pods are not scheduled.
+              dashboard_url: default_dashboard_url
+          - alert: kube-daemonset-not-scheduled-critical
+            expr: >-
+              k8s.daemonset.desired_scheduled_nodes{job="otelcol-k8scluster", namespace=~".*"} - k8s.daemonset.current_scheduled_nodes{job="otelcol-k8scluster", namespace=~".*"} > 0
+            for: 15m
+            labels:
+              severity: critical
+              group_name: kube-daemonset-not-scheduled
+              node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+            annotations:
+              description: "{{ $value }} Pods of DaemonSet {{ $labels.namespace }}/{{ $labels.daemonset }} are not scheduled on cluster {{ $labels.cluster }}."
+              runbook_url: default_runbook_url
+              summary: DaemonSet pods are not scheduled.
+              dashboard_url: default_dashboard_url

@@ -1,0 +1,20 @@
+groups:
+- name: mariadb-alerts
+  rules:
+  - alert: mysqlslavereplicationlag
+    labels:
+      severity: warning
+      rackspace_com_coreAccountID: default_coreID
+      rackspace_com_overseerID: default_overseerID
+      group_name: default_group_name
+      node_name: default_node_name
+      pod_name: default_pod_name
+    expr: ( (mysql_slave_status_seconds_behind_master - mysql_slave_status_sql_delay)
+      and ON (instance) mysql_slave_status_master_server_id > 0 ) > 30
+    for: 1m
+    annotations:
+      description: "MySQL replication lag on {{ $labels.instance }}\n  VALUE = {{\
+        \ $value }}\n  LABELS = {{ $labels }}"
+      summary: MySQL Slave replication lag (instance {{ $labels.instance }})
+      runbook_url: default_runbook_url
+      dashboard_url: default_dashboard_url

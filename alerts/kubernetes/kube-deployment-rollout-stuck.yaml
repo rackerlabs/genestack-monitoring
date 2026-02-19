@@ -1,0 +1,33 @@
+additionalPrometheusRulesMap:
+  kube-deployment-rollout-stuck:
+    groups:
+      - name: kube-deployment-rollout-stuck
+        rules:
+          # NOTE: kube_deployment_status_condition metric may not be available in OTel k8sclusterreceiver
+          # Consider enabling optional metrics or using Prometheus receiver for kube-state-metrics
+          - alert: kube-deployment-rollout-stuck-warning
+            expr: kube_deployment_status_condition{condition="Progressing", status="false",job="kube-state-metrics", namespace=~".*"} != 0
+            for: 5m
+            labels:
+              severity: warning
+              group_name: kube-deployment-rollout-stuck
+              node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+            annotations:
+              description: Rollout of deployment {{ $labels.namespace }}/{{ $labels.deployment }} is not progressing for longer than 5 minutes on cluster {{ $labels.cluster }}.
+              runbook_url: default_runbook_url
+              summary: Deployment rollout is not progressing.
+              dashboard_url: default_dashboard_url
+          # NOTE: kube_deployment_status_condition metric may not be available in OTel k8sclusterreceiver
+          # Consider enabling optional metrics or using Prometheus receiver for kube-state-metrics
+          - alert: kube-deployment-rollout-stuck-critical
+            expr: kube_deployment_status_condition{condition="Progressing", status="false",job="kube-state-metrics", namespace=~".*"} != 0
+            for: 15m
+            labels:
+              severity: critical
+              group_name: kube-deployment-rollout-stuck
+              node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+            annotations:
+              description: Rollout of deployment {{ $labels.namespace }}/{{ $labels.deployment }} is not progressing for longer than 15 minutes on cluster {{ $labels.cluster }}.
+              runbook_url: default_runbook_url
+              summary: Deployment rollout is not progressing.
+              dashboard_url: default_dashboard_url

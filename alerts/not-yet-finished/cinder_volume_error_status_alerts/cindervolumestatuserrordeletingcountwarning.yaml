@@ -1,0 +1,27 @@
+groups:
+- name: cinder_volume_error_status_alerts
+  rules:
+  - alert: cindervolumestatuserrordeletingcountwarning
+    labels:
+      severity: warning
+      rackspace_com_coreAccountID: default_coreID
+      rackspace_com_overseerID: default_overseerID
+      group_name: default_group_name
+      node_name: default_node_name
+      pod_name: default_pod_name
+    expr: 'count((openstack_cinder_volume_status{status="error_deleting"} offset 4m)
+
+      and
+
+      openstack_cinder_volume_status{status="error_deleting", job="os-metrics-prometheus-openstack-exporter"})
+      >= 0
+
+      '
+    for: 1m
+    annotations:
+      description: 'There are {{ $value }} Cinder volumes in error_deleting state.
+
+        LABELS: {{ $labels }}'
+      summary: There are {{ $value }} Cinder volumes in error_deleting state
+      runbook_url: default_runbook_url
+      dashboard_url: default_dashboard_url

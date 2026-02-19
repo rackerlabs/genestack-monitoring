@@ -1,0 +1,35 @@
+additionalPrometheusRulesMap:
+  node-network-receive-errs:
+    groups:
+      - name: node-network-receive-errs
+        rules:
+          - alert: node-network-receive-errs-warning
+            expr: >-
+              rate(system_network_errors_total{job="otelcol-hostmetrics",direction="receive"}[2m]) /
+
+              rate(system_network_packets_total{job="otelcol-hostmetrics",direction="receive"}[2m]) > 0.01
+            for: 1h
+            labels:
+              severity: warning
+              group_name: node-network-receive-errs
+              node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+            annotations:
+              description: '{{ $labels.instance }} interface {{ $labels.device }} has encountered {{ printf "%.0f" $value }} receive errors in the last two minutes.'
+              runbook_url: default_runbook_url
+              summary: Network interface is reporting many receive errors.
+              dashboard_url: default_dashboard_url
+          - alert: node-network-receive-errs-critical
+            expr: >-
+              rate(system_network_errors_total{job="otelcol-hostmetrics",direction="receive"}[2m]) /
+
+              rate(system_network_packets_total{job="otelcol-hostmetrics",direction="receive"}[2m]) > 0.01
+            for: 1h
+            labels:
+              severity: critical
+              group_name: node-network-receive-errs
+              node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+            annotations:
+              description: '{{ $labels.instance }} interface {{ $labels.device }} has encountered {{ printf "%.0f" $value }} receive errors in the last two minutes.'
+              runbook_url: default_runbook_url
+              summary: Network interface is reporting many receive errors.
+              dashboard_url: default_dashboard_url

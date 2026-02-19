@@ -1,0 +1,35 @@
+additionalPrometheusRulesMap:
+  kube-pod-crash-looping:
+    groups:
+      - name: kube-pod-crash-looping
+        rules:
+          # NOTE: Uses k8s.container.status.reason which is an optional metric in k8sclusterreceiver
+          # May need to enable optional metrics in OTel collector configuration
+          - alert: kube-pod-crash-looping-warning
+            expr: >-
+              max_over_time(k8s.container.status.reason{reason="CrashLoopBackOff", job="otelcol-k8scluster", namespace=~".*"}[5m]) >= 1
+            for: 5m
+            labels:
+              severity: warning
+              group_name: kube-pod-crash-looping
+              node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+            annotations:
+              description: 'Pod {{ $labels.namespace }}/{{ $labels.pod }} ({{ $labels.container }}) is in waiting state (reason: "CrashLoopBackOff") on cluster {{ $labels.cluster }}.'
+              runbook_url: default_runbook_url
+              summary: Pod is crash looping.
+              dashboard_url: default_dashboard_url
+          # NOTE: Uses k8s.container.status.reason which is an optional metric in k8sclusterreceiver
+          # May need to enable optional metrics in OTel collector configuration
+          - alert: kube-pod-crash-looping-critical
+            expr: >-
+              max_over_time(k8s.container.status.reason{reason="CrashLoopBackOff", job="otelcol-k8scluster", namespace=~".*"}[5m]) >= 1
+            for: 15m
+            labels:
+              severity: critical
+              group_name: kube-pod-crash-looping
+              node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+            annotations:
+              description: 'Pod {{ $labels.namespace }}/{{ $labels.pod }} ({{ $labels.container }}) is in waiting state (reason: "CrashLoopBackOff") on cluster {{ $labels.cluster }}.'
+              runbook_url: default_runbook_url
+              summary: Pod is crash looping.
+              dashboard_url: default_dashboard_url

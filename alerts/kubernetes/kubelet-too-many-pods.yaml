@@ -1,0 +1,35 @@
+additionalPrometheusRulesMap:
+  kubelet-too-many-pods:
+    groups:
+      - name: kubelet-too-many-pods
+        rules:
+          # NOTE: kubelet metrics come from kubelet (kubeletstatsreceiver), keep job="kubelet"
+          # kube_node_status_capacity may not be available in OTel k8sclusterreceiver - consider Prometheus receiver
+          - alert: kubelet-too-many-pods-warning
+            expr: >-
+              ( max by (cluster, instance) ( kubelet_running_pods{job="kubelet", metrics_path="/metrics"} > 1 ) * on (cluster, instance) group_left(node) max by (cluster, instance, node) ( kubelet_node_name{job="kubelet", metrics_path="/metrics"} ) ) / on (cluster, node) group_left() max by (cluster, node) ( kube_node_status_capacity{job="kube-state-metrics", resource="pods"} != 1 ) > 0.95
+            for: 5m
+            labels:
+              severity: warning
+              group_name: kubelet-too-many-pods
+              node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+            annotations:
+              description: Kubelet '{{ $labels.node }}' is running at {{ $value | humanizePercentage }} of its Pod capacity on cluster {{ $labels.cluster }}.
+              runbook_url: default_runbook_url
+              summary: Kubelet is running at capacity.
+              dashboard_url: default_dashboard_url
+          # NOTE: kubelet metrics come from kubelet (kubeletstatsreceiver), keep job="kubelet"
+          # kube_node_status_capacity may not be available in OTel k8sclusterreceiver - consider Prometheus receiver
+          - alert: kubelet-too-many-pods-critical
+            expr: >-
+              ( max by (cluster, instance) ( kubelet_running_pods{job="kubelet", metrics_path="/metrics"} > 1 ) * on (cluster, instance) group_left(node) max by (cluster, instance, node) ( kubelet_node_name{job="kubelet", metrics_path="/metrics"} ) ) / on (cluster, node) group_left() max by (cluster, node) ( kube_node_status_capacity{job="kube-state-metrics", resource="pods"} != 1 ) > 0.95
+            for: 15m
+            labels:
+              severity: critical
+              group_name: kubelet-too-many-pods
+              node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+            annotations:
+              description: Kubelet '{{ $labels.node }}' is running at {{ $value | humanizePercentage }} of its Pod capacity on cluster {{ $labels.cluster }}.
+              runbook_url: default_runbook_url
+              summary: Kubelet is running at capacity.
+              dashboard_url: default_dashboard_url

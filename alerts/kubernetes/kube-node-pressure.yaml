@@ -1,0 +1,39 @@
+additionalPrometheusRulesMap:
+  kube-node-pressure:
+    groups:
+      - name: kube-node-pressure
+        rules:
+          # NOTE: k8s.node.condition is an optional metric that needs enabling with node.condition_type_to_report
+          # kube_node_spec_unschedulable may not be available in OTel k8sclusterreceiver
+          - alert: kube-node-pressure-warning
+            expr: >-
+              k8s.node.condition{job="otelcol-k8scluster",condition=~"(MemoryPressure|DiskPressure|PIDPressure)",status="true"} == 1
+
+              and on (cluster, node) kube_node_spec_unschedulable{job="kube-state-metrics"} == 0
+            for: 5m
+            labels:
+              severity: warning
+              group_name: kube-node-pressure
+              node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+            annotations:
+              description: "{{ $labels.node }} on cluster {{ $labels.cluster }} has active Condition {{ $labels.condition }}. This is caused by resource usage exceeding eviction thresholds."
+              runbook_url: default_runbook_url
+              summary: Node has as active Condition.
+              dashboard_url: default_dashboard_url
+          # NOTE: k8s.node.condition is an optional metric that needs enabling with node.condition_type_to_report
+          # kube_node_spec_unschedulable may not be available in OTel k8sclusterreceiver
+          - alert: kube-node-pressure-critical
+            expr: >-
+              k8s.node.condition{job="otelcol-k8scluster",condition=~"(MemoryPressure|DiskPressure|PIDPressure)",status="true"} == 1
+
+              and on (cluster, node) kube_node_spec_unschedulable{job="kube-state-metrics"} == 0
+            for: 15m
+            labels:
+              severity: critical
+              group_name: kube-node-pressure
+              node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+            annotations:
+              description: "{{ $labels.node }} on cluster {{ $labels.cluster }} has active Condition {{ $labels.condition }}. This is caused by resource usage exceeding eviction thresholds."
+              runbook_url: default_runbook_url
+              summary: Node has as active Condition.
+              dashboard_url: default_dashboard_url

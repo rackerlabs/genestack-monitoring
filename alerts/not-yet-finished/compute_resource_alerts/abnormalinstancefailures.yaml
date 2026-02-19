@@ -1,0 +1,28 @@
+groups:
+- name: compute_resource_alerts
+  rules:
+  - alert: abnormalinstancefailures
+    labels:
+      severity: warning
+      rackspace_com_coreAccountID: default_coreID
+      rackspace_com_overseerID: default_overseerID
+      group_name: default_group_name
+      node_name: default_node_name
+      pod_name: default_pod_name
+    expr: 'count(count(last_over_time(openstack_nova_server_status{status=~"BUILD|ERROR"}[60m]))
+      by (id)) /
+
+      count(count(last_over_time(openstack_nova_server_status{status="ACTIVE"}[60m]))
+      by (id)) * 100 >= 20
+
+      '
+    for: 0m
+    annotations:
+      description: 'This indicates a major problem building compute instances.
+
+        View logs and take action to resolve the build failures.
+
+        '
+      summary: Instance build failure rate is abnormally high
+      runbook_url: default_runbook_url
+      dashboard_url: default_dashboard_url

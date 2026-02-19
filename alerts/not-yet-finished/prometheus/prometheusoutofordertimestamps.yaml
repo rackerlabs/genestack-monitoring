@@ -1,0 +1,20 @@
+groups:
+- name: prometheus
+  rules:
+  - alert: prometheusoutofordertimestamps
+    labels:
+      rackspace_com_coreAccountID: default_coreID
+      rackspace_com_overseerID: default_overseerID
+      severity: warning
+      group_name: default_group_name
+      node_name: default_node_name
+      pod_name: default_pod_name
+    expr: rate(prometheus_target_scrapes_sample_out_of_order_total{job="kube-prometheus-stack-prometheus",namespace="prometheus"}[5m])
+      > 0
+    for: 10m
+    annotations:
+      description: Prometheus {{$labels.namespace}}/{{$labels.pod}} is dropping {{
+        printf "%.4g" $value  }} samples/s with timestamps arriving out of order.
+      runbook_url: default_runbook_url
+      summary: Prometheus drops samples with out-of-order timestamps.
+      dashboard_url: default_dashboard_url

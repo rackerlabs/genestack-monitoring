@@ -1,0 +1,39 @@
+additionalPrometheusRulesMap:
+  kube-statefulset-update-not-rolled-out:
+    groups:
+      - name: kube-statefulset-update-not-rolled-out
+        rules:
+          # NOTE: Revision metrics (current_revision, update_revision) may not be available in OTel k8sclusterreceiver
+          # Consider using Prometheus receiver for kube-state-metrics or enabling optional metrics
+          - alert: kube-statefulset-update-not-rolled-out-warning
+            expr: >-
+              ( max by (namespace, statefulset, job, cluster) ( kube_statefulset_status_current_revision{job="kube-state-metrics", namespace=~".*"} unless kube_statefulset_status_update_revision{job="kube-state-metrics", namespace=~".*"} ) * on (namespace, statefulset, job, cluster) ( k8s.statefulset.desired_pods{job="otelcol-k8scluster", namespace=~".*"} != k8s.statefulset.updated_pods{job="otelcol-k8scluster", namespace=~".*"} ) )
+
+              and on (namespace, statefulset, job, cluster) ( changes(k8s.statefulset.updated_pods{job="otelcol-k8scluster", namespace=~".*"}[5m]) == 0 )
+            for: 5m
+            labels:
+              severity: warning
+              group_name: kube-statefulset-update-not-rolled-out
+              node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+            annotations:
+              description: StatefulSet {{ $labels.namespace }}/{{ $labels.statefulset }} update has not been rolled out on cluster {{ $labels.cluster }}.
+              runbook_url: default_runbook_url
+              summary: StatefulSet update has not been rolled out.
+              dashboard_url: default_dashboard_url
+          # NOTE: Revision metrics (current_revision, update_revision) may not be available in OTel k8sclusterreceiver
+          # Consider using Prometheus receiver for kube-state-metrics or enabling optional metrics
+          - alert: kube-statefulset-update-not-rolled-out-critical
+            expr: >-
+              ( max by (namespace, statefulset, job, cluster) ( kube_statefulset_status_current_revision{job="kube-state-metrics", namespace=~".*"} unless kube_statefulset_status_update_revision{job="kube-state-metrics", namespace=~".*"} ) * on (namespace, statefulset, job, cluster) ( k8s.statefulset.desired_pods{job="otelcol-k8scluster", namespace=~".*"} != k8s.statefulset.updated_pods{job="otelcol-k8scluster", namespace=~".*"} ) )
+
+              and on (namespace, statefulset, job, cluster) ( changes(k8s.statefulset.updated_pods{job="otelcol-k8scluster", namespace=~".*"}[5m]) == 0 )
+            for: 15m
+            labels:
+              severity: critical
+              group_name: kube-statefulset-update-not-rolled-out
+              node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+            annotations:
+              description: StatefulSet {{ $labels.namespace }}/{{ $labels.statefulset }} update has not been rolled out on cluster {{ $labels.cluster }}.
+              runbook_url: default_runbook_url
+              summary: StatefulSet update has not been rolled out.
+              dashboard_url: default_dashboard_url

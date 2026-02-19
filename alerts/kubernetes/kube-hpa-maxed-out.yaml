@@ -1,0 +1,31 @@
+additionalPrometheusRulesMap:
+  kube-hpa-maxed-out:
+    groups:
+      - name: kube-hpa-maxed-out
+        rules:
+          - alert: kube-hpa-maxed-out-warning
+            expr: >-
+              k8s.hpa.current_replicas{job="otelcol-k8scluster", namespace=~".*"} == k8s.hpa.max_replicas{job="otelcol-k8scluster", namespace=~".*"}
+            for: 5m
+            labels:
+              severity: warning
+              group_name: kube-hpa-maxed-out
+              node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+            annotations:
+              description: HPA {{ $labels.namespace }}/{{ $labels.horizontalpodautoscaler  }} has been running at max replicas for longer than 5 minutes on cluster {{ $labels.cluster }}.
+              runbook_url: default_runbook_url
+              summary: HPA is running at max replicas
+              dashboard_url: default_dashboard_url
+          - alert: kube-hpa-maxed-out-critical
+            expr: >-
+              k8s.hpa.current_replicas{job="otelcol-k8scluster", namespace=~".*"} == k8s.hpa.max_replicas{job="otelcol-k8scluster", namespace=~".*"}
+            for: 15m
+            labels:
+              severity: critical
+              group_name: kube-hpa-maxed-out
+              node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+            annotations:
+              description: HPA {{ $labels.namespace }}/{{ $labels.horizontalpodautoscaler  }} has been running at max replicas for longer than 15 minutes on cluster {{ $labels.cluster }}.
+              runbook_url: default_runbook_url
+              summary: HPA is running at max replicas
+              dashboard_url: default_dashboard_url

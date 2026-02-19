@@ -1,0 +1,22 @@
+groups:
+- name: pod-state-alerts
+  rules:
+  - alert: kubepodnotreadycritical
+    labels:
+      severity: warning
+      rackspace_com_coreAccountID: default_coreID
+      rackspace_com_overseerID: default_overseerID
+      group_name: default_group_name
+      node_name: default_node_name
+      pod_name: default_pod_name
+    expr: sum by(namespace, pod) ( max by(namespace, pod) (kube_pod_status_phase{job="kube-state-metrics",namespace=~".*",phase=~"Pending|Unknown",
+      namespace=~".*"}) * on(namespace, pod) group_left(owner_kind) topk by(namespace,
+      pod) (1, max by(namespace, pod, owner_kind) (kube_pod_owner{owner_kind!="Job"}))
+      ) > 0
+    for: 10m
+    annotations:
+      description: Pod {{ $labels.namespace }}/{{ $labels.pod }} has been in a non-ready
+        state for longer than 5 minutes.
+      summary: Pod has been in a non-ready state for more than 5 minutes.
+      runbook_url: default_runbook_url
+      dashboard_url: default_dashboard_url

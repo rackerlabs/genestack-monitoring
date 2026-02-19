@@ -1,0 +1,24 @@
+groups:
+- name: prometheus
+  rules:
+  - alert: prometheusnotconnectedtoalertmanagers
+    labels:
+      rackspace_com_coreAccountID: default_coreID
+      rackspace_com_overseerID: default_overseerID
+      severity: warning
+      group_name: default_group_name
+      node_name: default_node_name
+      pod_name: default_pod_name
+    expr: '# Without max_over_time, failed scrapes could create false negatives, see
+
+      # https://www.robustperception.io/alerting-on-gauges-in-prometheus-2-0 for details.
+
+      max_over_time(prometheus_notifications_alertmanagers_discovered{job="kube-prometheus-stack-prometheus",namespace="prometheus"}[5m])
+      < 1'
+    for: 10m
+    annotations:
+      description: Prometheus {{$labels.namespace}}/{{$labels.pod}} is not connected
+        to any Alertmanagers.
+      runbook_url: default_runbook_url
+      summary: Prometheus is not connected to any Alertmanagers.
+      dashboard_url: default_dashboard_url

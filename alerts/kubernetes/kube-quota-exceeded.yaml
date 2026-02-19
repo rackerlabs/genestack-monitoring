@@ -1,0 +1,31 @@
+additionalPrometheusRulesMap:
+  kube-quota-exceeded:
+    groups:
+      - name: kube-quota-exceeded
+        rules:
+          - alert: kube-quota-exceeded-warning
+            expr: >-
+              k8s.resource_quota.used{job="otelcol-k8scluster"} / ignoring(instance, job) (k8s.resource_quota.hard_limit{job="otelcol-k8scluster"} > 0) > 1
+            for: 5m
+            labels:
+              severity: warning
+              group_name: kube-quota-exceeded
+              node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+            annotations:
+              description: Namespace {{ $labels.namespace }} is using {{ $value | humanizePercentage }} of its {{ $labels.resource }} quota on cluster {{ $labels.cluster }}.
+              runbook_url: default_runbook_url
+              summary: Namespace quota has exceeded the limits.
+              dashboard_url: default_dashboard_url
+          - alert: kube-quota-exceeded-critical
+            expr: >-
+              k8s.resource_quota.used{job="otelcol-k8scluster"} / ignoring(instance, job) (k8s.resource_quota.hard_limit{job="otelcol-k8scluster"} > 0) > 1
+            for: 15m
+            labels:
+              severity: critical
+              group_name: kube-quota-exceeded
+              node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+            annotations:
+              description: Namespace {{ $labels.namespace }} is using {{ $value | humanizePercentage }} of its {{ $labels.resource }} quota on cluster {{ $labels.cluster }}.
+              runbook_url: default_runbook_url
+              summary: Namespace quota has exceeded the limits.
+              dashboard_url: default_dashboard_url

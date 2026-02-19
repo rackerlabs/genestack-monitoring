@@ -1,0 +1,56 @@
+groups:
+- name: rabbitmq
+  rules:
+  - alert: lowdiskwatermarkpredicted
+    labels:
+      rulesgroup: rabbitmq
+      severity: warning
+      rackspace_com_coreAccountID: default_coreID
+      rackspace_com_overseerID: default_overseerID
+      group_name: default_group_name
+      node_name: default_node_name
+      pod_name: default_pod_name
+    expr: "(\n  predict_linear(rabbitmq_disk_space_available_bytes[24h], 60*60*24)\
+      \ * on (instance) group_left(rabbitmq_cluster, rabbitmq_node) max by (instance,\
+      \ rabbitmq_node, rabbitmq_cluster) (rabbitmq_identity_info)\n  <\n  rabbitmq_disk_space_available_limit_bytes\
+      \ * on (instance) group_left(rabbitmq_cluster, rabbitmq_node) max by (instance,\
+      \ rabbitmq_node, rabbitmq_cluster) (rabbitmq_identity_info)\n)\nand\n(\n  count_over_time(rabbitmq_disk_space_available_limit_bytes[2h]\
+      \ offset 22h) * on (instance) group_left(rabbitmq_cluster, rabbitmq_node) max\
+      \ by (instance, rabbitmq_node, rabbitmq_cluster) (rabbitmq_identity_info)\n\
+      \  >\n  0\n)\n"
+    for: 60m
+    annotations:
+      description: 'The predicted free disk space in 24 hours from now is `{{ $value
+        | humanize1024 }}B`
+
+        in RabbitMQ node `{{ $labels.rabbitmq_node }}`, pod `{{ $labels.pod }}`,
+
+        RabbitMQ cluster `{{ $labels.rabbitmq_cluster }}`, namespace `{{ $labels.namespace
+        }}`.
+
+        '
+      summary: 'Based on the trend of available disk space over the past 24 hours,
+        it''s predicted that, in 24 hours from now, a disk alarm will be triggered
+        since the free disk space will drop below the free disk space limit.
+
+        This alert is reported for the partition where the RabbitMQ data directory
+        is stored.
+
+        When the disk alarm will be triggered, all publishing connections across all
+        cluster nodes will be blocked.
+
+        See
+
+        https://www.rabbitmq.com/alarms.html,
+
+        https://www.rabbitmq.com/disk-alarms.html,
+
+        https://www.rabbitmq.com/production-checklist.html#resource-limits-disk-space,
+
+        https://www.rabbitmq.com/persistence-conf.html,
+
+        https://www.rabbitmq.com/connection-blocked.html.
+
+        '
+      runbook_url: default_runbook_url
+      dashboard_url: default_dashboard_url

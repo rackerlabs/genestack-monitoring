@@ -1,0 +1,31 @@
+additionalPrometheusRulesMap:
+  node-filesystem-almost-out-of-files:
+    groups:
+      - name: node-filesystem-almost-out-of-files
+        rules:
+          - alert: node-filesystem-almost-out-of-files-warning
+            expr: >-
+              ( system_filesystem_inodes_usage{job="otelcol-hostmetrics",fstype!="",mountpoint!="",state="free"} / (system_filesystem_inodes_usage{job="otelcol-hostmetrics",fstype!="",mountpoint!="",state="free"} + system_filesystem_inodes_usage{job="otelcol-hostmetrics",fstype!="",mountpoint!="",state="used"}) * 100 < 3 )
+            for: 1h
+            labels:
+              severity: warning
+              group_name: node-filesystem-almost-out-of-files
+              node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+            annotations:
+              description: Filesystem on {{ $labels.device }}, mounted on {{ $labels.mountpoint }}, at {{ $labels.instance }} has only {{ printf "%.2f" $value }}% available inodes left.
+              runbook_url: default_runbook_url
+              summary: Filesystem has less than 3% inodes left.
+              dashboard_url: default_dashboard_url
+          - alert: node-filesystem-almost-out-of-files-critical
+            expr: >-
+              ( system_filesystem_inodes_usage{job="otelcol-hostmetrics",fstype!="",mountpoint!="",state="free"} / (system_filesystem_inodes_usage{job="otelcol-hostmetrics",fstype!="",mountpoint!="",state="free"} + system_filesystem_inodes_usage{job="otelcol-hostmetrics",fstype!="",mountpoint!="",state="used"}) * 100 < 3 )
+            for: 1h
+            labels:
+              severity: critical
+              group_name: node-filesystem-almost-out-of-files
+              node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+            annotations:
+              description: Filesystem on {{ $labels.device }}, mounted on {{ $labels.mountpoint }}, at {{ $labels.instance }} has only {{ printf "%.2f" $value }}% available inodes left.
+              runbook_url: default_runbook_url
+              summary: Filesystem has less than 3% inodes left.
+              dashboard_url: default_dashboard_url

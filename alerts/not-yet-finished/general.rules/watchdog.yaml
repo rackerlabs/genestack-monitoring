@@ -1,0 +1,31 @@
+groups:
+- name: general.rules
+  rules:
+  - alert: watchdog
+    labels:
+      rackspace_com_coreAccountID: default_coreID
+      rackspace_com_overseerID: default_overseerID
+      severity: warning
+      group_name: default_group_name
+      node_name: default_node_name
+      pod_name: default_pod_name
+    expr: vector(1)
+    for: 0m
+    annotations:
+      description: 'This is an alert meant to ensure that the entire alerting pipeline
+        is functional.
+
+        This alert is always firing, therefore it should always be firing in Alertmanager
+
+        and always fire against a receiver. There are integrations with various notification
+
+        mechanisms that send a notification when this alert is not firing. For example
+        the
+
+        "DeadMansSnitch" integration in PagerDuty.
+
+        '
+      runbook_url: default_runbook_url
+      summary: An alert that should always be firing to certify that Alertmanager
+        is working properly.
+      dashboard_url: default_dashboard_url

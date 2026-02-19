@@ -1,0 +1,29 @@
+additionalPrometheusRulesMap:
+  node-network-interface-flapping:
+    groups:
+      - name: node-network-interface-flapping
+        rules:
+          - alert: node-network-interface-flapping-warning
+            expr: changes(system_network_up{job="otelcol-hostmetrics",device!~"veth.+"}[2m]) > 2
+            for: 2m
+            labels:
+              severity: warning
+              group_name: node-network-interface-flapping
+              node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+            annotations:
+              description: Network interface "{{ $labels.device }}" changing its up status often on node-exporter {{ $labels.namespace }}/{{ $labels.pod }}
+              runbook_url: default_runbook_url
+              summary: Network interface is often changing its status
+              dashboard_url: default_dashboard_url
+          - alert: node-network-interface-flapping-critical
+            expr: changes(system_network_up{job="otelcol-hostmetrics",device!~"veth.+"}[2m]) > 2
+            for: 2m
+            labels:
+              severity: critical
+              group_name: node-network-interface-flapping
+              node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+            annotations:
+              description: Network interface "{{ $labels.device }}" changing its up status often on node-exporter {{ $labels.namespace }}/{{ $labels.pod }}
+              runbook_url: default_runbook_url
+              summary: Network interface is often changing its status
+              dashboard_url: default_dashboard_url

@@ -1,0 +1,22 @@
+groups:
+- name: prometheus
+  rules:
+  - alert: prometheustargetlimithit
+    labels:
+      rackspace_com_coreAccountID: default_coreID
+      rackspace_com_overseerID: default_overseerID
+      severity: warning
+      group_name: default_group_name
+      node_name: default_node_name
+      pod_name: default_pod_name
+    expr: increase(prometheus_target_scrape_pool_exceeded_target_limit_total{job="kube-prometheus-stack-prometheus",namespace="prometheus"}[5m])
+      > 0
+    for: 15m
+    annotations:
+      description: Prometheus {{$labels.namespace}}/{{$labels.pod}} has dropped {{
+        printf "%.0f" $value }} targets because the number of targets exceeded the
+        configured target_limit.
+      runbook_url: default_runbook_url
+      summary: Prometheus has dropped targets because some scrape configs have exceeded
+        the targets limit.
+      dashboard_url: default_dashboard_url

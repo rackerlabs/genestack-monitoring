@@ -1,0 +1,21 @@
+groups:
+- name: prometheus
+  rules:
+  - alert: prometheusscrapebodysizelimithit
+    labels:
+      rackspace_com_coreAccountID: default_coreID
+      rackspace_com_overseerID: default_overseerID
+      severity: warning
+      group_name: default_group_name
+      node_name: default_node_name
+      pod_name: default_pod_name
+    expr: increase(prometheus_target_scrapes_exceeded_body_size_limit_total{job="kube-prometheus-stack-prometheus",namespace="prometheus"}[5m])
+      > 0
+    for: 15m
+    annotations:
+      description: Prometheus {{$labels.namespace}}/{{$labels.pod}} has failed {{
+        printf "%.0f" $value }} scrapes in the last 5m because some targets exceeded
+        the configured body_size_limit.
+      runbook_url: default_runbook_url
+      summary: Prometheus has dropped some targets that exceeded body size limit.
+      dashboard_url: default_dashboard_url

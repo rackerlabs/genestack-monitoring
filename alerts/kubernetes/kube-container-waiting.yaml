@@ -1,0 +1,33 @@
+additionalPrometheusRulesMap:
+  kube-container-waiting:
+    groups:
+      - name: kube-container-waiting
+        rules:
+          # NOTE: Uses k8s.container.status.reason which is an optional metric in k8sclusterreceiver
+          # May need to enable optional metrics in OTel collector configuration
+          - alert: kube-container-waiting-warning
+            expr: k8s.container.status.reason{reason!="CrashLoopBackOff", job="otelcol-k8scluster", namespace=~".*"} > 0
+            for: 5m
+            labels:
+              severity: warning
+              group_name: kube-container-waiting
+              node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+            annotations:
+              description: 'pod/{{ $labels.pod }} in namespace {{ $labels.namespace }} on container {{ $labels.container}} has been in waiting state for longer than 5 minutes. (reason: "{{ $labels.reason }}") on cluster {{ $labels.cluster }}.'
+              runbook_url: default_runbook_url
+              summary: Pod container waiting longer than 5 minutes
+              dashboard_url: default_dashboard_url
+          # NOTE: Uses k8s.container.status.reason which is an optional metric in k8sclusterreceiver
+          # May need to enable optional metrics in OTel collector configuration
+          - alert: kube-container-waiting-critical
+            expr: k8s.container.status.reason{reason!="CrashLoopBackOff", job="otelcol-k8scluster", namespace=~".*"} > 0
+            for: 15m
+            labels:
+              severity: critical
+              group_name: kube-container-waiting
+              node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+            annotations:
+              description: 'pod/{{ $labels.pod }} in namespace {{ $labels.namespace }} on container {{ $labels.container}} has been in waiting state for longer than 15 minutes. (reason: "{{ $labels.reason }}") on cluster {{ $labels.cluster }}.'
+              runbook_url: default_runbook_url
+              summary: Pod container waiting longer than 15 minutes
+              dashboard_url: default_dashboard_url

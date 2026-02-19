@@ -1,0 +1,23 @@
+groups:
+- name: etcd
+  rules:
+  - alert: etcdhighnumberofleaderchanges
+    labels:
+      rackspace_com_coreAccountID: default_coreID
+      rackspace_com_overseerID: default_overseerID
+      severity: warning
+      group_name: default_group_name
+      node_name: default_node_name
+      pod_name: default_pod_name
+    expr: increase((max without (instance, pod) (etcd_server_leader_changes_seen_total{job=~".*etcd.*"})
+      or 0*absent(etcd_server_leader_changes_seen_total{job=~".*etcd.*"}))[15m:1m])
+      >= 4
+    for: 5m
+    annotations:
+      description: 'etcd cluster "{{ $labels.job }}": {{ $value }} leader changes
+        within the last 15 minutes. Frequent elections may be a sign of insufficient
+        resources, high network latency, or disruptions by other components and should
+        be investigated.'
+      summary: etcd cluster has high number of leader changes.
+      runbook_url: default_runbook_url
+      dashboard_url: default_dashboard_url

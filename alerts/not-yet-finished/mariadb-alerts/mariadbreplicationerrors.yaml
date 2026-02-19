@@ -1,0 +1,21 @@
+groups:
+- name: mariadb-alerts
+  rules:
+  - alert: mariadbreplicationerrors
+    labels:
+      severity: warning
+      rackspace_com_coreAccountID: default_coreID
+      rackspace_com_overseerID: default_overseerID
+      group_name: default_group_name
+      node_name: default_node_name
+      pod_name: default_pod_name
+    expr: mysql_slave_status_last_sql_errno != 0 or mysql_slave_status_last_io_errno
+      != 0 or mysql_slave_status_last_errno != 0
+    for: 5m
+    annotations:
+      description: MariaDB {{$labels.job}} on {{$labels.instance}} is reporting replication
+        errors.
+      summary: MariaDB is reporting replication errors from {{$labels.instance}},
+        immediate attention is required.
+      runbook_url: default_runbook_url
+      dashboard_url: default_dashboard_url
