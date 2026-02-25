@@ -13,4 +13,5 @@ repos:
     rev: v1.35.1
     hooks:
       - id: yamllint
+        exclude: ^docs/.*\.md$
         args: ['-c', '.yamllint.yml']

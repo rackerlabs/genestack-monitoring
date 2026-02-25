@@ -11,3 +11,6 @@ rules:
   new-line-at-end-of-file: enable
 ignore: |
   helm/**/templates/**
+  *.md
+  **/*.md
+  docs/**

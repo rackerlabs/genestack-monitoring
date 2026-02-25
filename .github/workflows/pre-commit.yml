@@ -2,9 +2,15 @@ name: Pre-commit and YAML Lint
 
 on:
   pull_request:
+    paths-ignore:
+      - '**/*.md'
+      - 'docs/**'
     branches:
       - main
   push:
+    paths-ignore:
+      - '**/*.md'
+      - 'docs/**'
     branches:
       - main
 
