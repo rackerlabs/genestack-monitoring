@@ -1,27 +1,29 @@
-groups:
-  - name: node-exporter
-    rules:
-      - alert: node-memory-high-utilization-warning
-        expr: system_memory_utilization{job="otelcol-hostmetrics"} * 100 > 70
-        for: 5m
-        labels:
-          severity: warning
-          group_name: node-memory-high-utilization
-          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
-        annotations:
-          description: Memory usage on {{ $labels.node_hostname }} has been above 70% for 5 minutes; current usage is {{ printf "%.2f" $value }}%.
-          runbook_url: https://docs.rackspacecloud.com/alerting-info/
-          summary: Host memory utilization is high.
-          dashboard_url: https://{{ $externalLabels.alert_dashboard }}/node-memory ?var-cluster={{ $externalLabels.cluster }} &var-node={{ $labels.node_hostname }}
-      - alert: node-memory-high-utilization-critical
-        expr: system_memory_utilization{job="otelcol-hostmetrics"} * 100 > 90
-        for: 15m
-        labels:
-          severity: critical
-          group_name: node-memory-high-utilization
-          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
-        annotations:
-          description: Memory usage on {{ $labels.node_hostname }} has been above 90% for 15 minutes; current usage is {{ printf "%.2f" $value }}%.
-          runbook_url: https://docs.rackspacecloud.com/alerting-info/
-          summary: Host is running out of memory.
-          dashboard_url: https://{{ $externalLabels.alert_dashboard }}/node-memory ?var-cluster={{ $externalLabels.cluster }} &var-node={{ $labels.node_hostname }}
+additionalPrometheusRulesMap:
+  node-memory-high-utilization:
+    groups:
+      - name: node-memory-high-utilization
+        rules:
+          - alert: node-memory-high-utilization-warning
+            expr: system_memory_utilization{job="otelcol-hostmetrics"} * 100 > 70
+            for: 5m
+            labels:
+              severity: warning
+              group_name: node-memory-high-utilization
+              node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+            annotations:
+              description: Memory usage on {{ $labels.node_hostname }} has been above 70% for 5 minutes; current usage is {{ printf "%.2f" $value }}%.
+              runbook_url: https://docs.rackspacecloud.com/alerting-info/
+              summary: Host memory utilization is high.
+              dashboard_url: https://{{ $externalLabels.alert_dashboard }}/node-memory ?var-cluster={{ $externalLabels.cluster }} &var-node={{ $labels.node_hostname }}
+          - alert: node-memory-high-utilization-critical
+            expr: system_memory_utilization{job="otelcol-hostmetrics"} * 100 > 90
+            for: 15m
+            labels:
+              severity: critical
+              group_name: node-memory-high-utilization
+              node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+            annotations:
+              description: Memory usage on {{ $labels.node_hostname }} has been above 90% for 15 minutes; current usage is {{ printf "%.2f" $value }}%.
+              runbook_url: https://docs.rackspacecloud.com/alerting-info/
+              summary: Host is running out of memory.
+              dashboard_url: https://{{ $externalLabels.alert_dashboard }}/node-memory ?var-cluster={{ $externalLabels.cluster }} &var-node={{ $labels.node_hostname }}

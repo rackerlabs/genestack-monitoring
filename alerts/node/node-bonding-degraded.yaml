@@ -1,27 +1,29 @@
-groups:
-  - name: node-exporter
-    rules:
-      - alert: node-bonding-degraded-warning
-        expr: (node_bonding_slaves{job="otelcol-hostmetrics"} - node_bonding_active{job="otelcol-hostmetrics"}) != 0
-        for: 5m
-        labels:
-          severity: warning
-          group_name: node-bonding-degraded
-          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
-        annotations:
-          description: Bonding interface {{ $labels.master }} on {{ $labels.instance }} is in degraded state due to one or more slave failures.
-          runbook_url: default_runbook_url
-          summary: Bonding interface is degraded.
-          dashboard_url: default_dashboard_url
-      - alert: node-bonding-degraded-critical
-        expr: (node_bonding_slaves{job="otelcol-hostmetrics"} - node_bonding_active{job="otelcol-hostmetrics"}) != 0
-        for: 15m
-        labels:
-          severity: critical
-          group_name: node-bonding-degraded
-          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
-        annotations:
-          description: Bonding interface {{ $labels.master }} on {{ $labels.instance }} is in degraded state due to one or more slave failures.
-          runbook_url: default_runbook_url
-          summary: Bonding interface is degraded.
-          dashboard_url: default_dashboard_url
+additionalPrometheusRulesMap:
+  node-bonding-degraded:
+    groups:
+      - name: node-bonding-degraded
+        rules:
+          - alert: node-bonding-degraded-warning
+            expr: (node_bonding_slaves{job="otelcol-hostmetrics"} - node_bonding_active{job="otelcol-hostmetrics"}) != 0
+            for: 5m
+            labels:
+              severity: warning
+              group_name: node-bonding-degraded
+              node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+            annotations:
+              description: Bonding interface {{ $labels.master }} on {{ $labels.instance }} is in degraded state due to one or more slave failures.
+              runbook_url: default_runbook_url
+              summary: Bonding interface is degraded.
+              dashboard_url: default_dashboard_url
+          - alert: node-bonding-degraded-critical
+            expr: (node_bonding_slaves{job="otelcol-hostmetrics"} - node_bonding_active{job="otelcol-hostmetrics"}) != 0
+            for: 15m
+            labels:
+              severity: critical
+              group_name: node-bonding-degraded
+              node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+            annotations:
+              description: Bonding interface {{ $labels.master }} on {{ $labels.instance }} is in degraded state due to one or more slave failures.
+              runbook_url: default_runbook_url
+              summary: Bonding interface is degraded.
+              dashboard_url: default_dashboard_url

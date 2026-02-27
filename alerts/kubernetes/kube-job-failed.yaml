@@ -1,27 +1,29 @@
-groups:
-  - name: kubernetes
-    rules:
-      - alert: kube-job-failed-warning
-        expr: k8s.job.failed_pods{job="otelcol-k8scluster", namespace=~".*"} > 0
-        for: 5m
-        labels:
-          severity: warning
-          group_name: kube-job-failed
-          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
-        annotations:
-          description: Job {{ $labels.namespace }}/{{ $labels.job_name }} failed to complete. Removing failed job after investigation should clear this alert on cluster {{ $labels.cluster }}.
-          runbook_url: default_runbook_url
-          summary: Job failed to complete.
-          dashboard_url: default_dashboard_url
-      - alert: kube-job-failed-critical
-        expr: k8s.job.failed_pods{job="otelcol-k8scluster", namespace=~".*"} > 0
-        for: 15m
-        labels:
-          severity: critical
-          group_name: kube-job-failed
-          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
-        annotations:
-          description: Job {{ $labels.namespace }}/{{ $labels.job_name }} failed to complete. Removing failed job after investigation should clear this alert on cluster {{ $labels.cluster }}.
-          runbook_url: default_runbook_url
-          summary: Job failed to complete.
-          dashboard_url: default_dashboard_url
+additionalPrometheusRulesMap:
+  kube-job-failed:
+    groups:
+      - name: kube-job-failed
+        rules:
+          - alert: kube-job-failed-warning
+            expr: k8s.job.failed_pods{job="otelcol-k8scluster", namespace=~".*"} > 0
+            for: 5m
+            labels:
+              severity: warning
+              group_name: kube-job-failed
+              node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+            annotations:
+              description: Job {{ $labels.namespace }}/{{ $labels.job_name }} failed to complete. Removing failed job after investigation should clear this alert on cluster {{ $labels.cluster }}.
+              runbook_url: default_runbook_url
+              summary: Job failed to complete.
+              dashboard_url: default_dashboard_url
+          - alert: kube-job-failed-critical
+            expr: k8s.job.failed_pods{job="otelcol-k8scluster", namespace=~".*"} > 0
+            for: 15m
+            labels:
+              severity: critical
+              group_name: kube-job-failed
+              node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+            annotations:
+              description: Job {{ $labels.namespace }}/{{ $labels.job_name }} failed to complete. Removing failed job after investigation should clear this alert on cluster {{ $labels.cluster }}.
+              runbook_url: default_runbook_url
+              summary: Job failed to complete.
+              dashboard_url: default_dashboard_url

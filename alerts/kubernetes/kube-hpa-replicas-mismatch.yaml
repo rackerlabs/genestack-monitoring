@@ -1,41 +1,43 @@
-groups:
-  - name: kubernetes
-    rules:
-      - alert: kube-hpa-replicas-mismatch-warning
-        expr: >-
-          (k8s.hpa.desired_replicas{job="otelcol-k8scluster", namespace=~".*"} != k8s.hpa.current_replicas{job="otelcol-k8scluster", namespace=~".*"})
+additionalPrometheusRulesMap:
+  kube-hpa-replicas-mismatch:
+    groups:
+      - name: kube-hpa-replicas-mismatch
+        rules:
+          - alert: kube-hpa-replicas-mismatch-warning
+            expr: >-
+              (k8s.hpa.desired_replicas{job="otelcol-k8scluster", namespace=~".*"} != k8s.hpa.current_replicas{job="otelcol-k8scluster", namespace=~".*"})
 
-          and (k8s.hpa.current_replicas{job="otelcol-k8scluster", namespace=~".*"} > k8s.hpa.min_replicas{job="otelcol-k8scluster", namespace=~".*"})
+              and (k8s.hpa.current_replicas{job="otelcol-k8scluster", namespace=~".*"} > k8s.hpa.min_replicas{job="otelcol-k8scluster", namespace=~".*"})
 
-          and (k8s.hpa.current_replicas{job="otelcol-k8scluster", namespace=~".*"} < k8s.hpa.max_replicas{job="otelcol-k8scluster", namespace=~".*"})
+              and (k8s.hpa.current_replicas{job="otelcol-k8scluster", namespace=~".*"} < k8s.hpa.max_replicas{job="otelcol-k8scluster", namespace=~".*"})
 
-          and changes(k8s.hpa.current_replicas{job="otelcol-k8scluster", namespace=~".*"}[15m]) == 0
-        for: 5m
-        labels:
-          severity: warning
-          group_name: kube-hpa-replicas-mismatch
-          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
-        annotations:
-          description: HPA {{ $labels.namespace }}/{{ $labels.horizontalpodautoscaler  }} has not matched the desired number of replicas for longer than 5 minutes on cluster {{ $labels.cluster }}.
-          runbook_url: default_runbook_url
-          summary: HPA has not matched desired number of replicas.
-          dashboard_url: default_dashboard_url
-      - alert: kube-hpa-replicas-mismatch-critical
-        expr: >-
-          (k8s.hpa.desired_replicas{job="otelcol-k8scluster", namespace=~".*"} != k8s.hpa.current_replicas{job="otelcol-k8scluster", namespace=~".*"})
+              and changes(k8s.hpa.current_replicas{job="otelcol-k8scluster", namespace=~".*"}[15m]) == 0
+            for: 5m
+            labels:
+              severity: warning
+              group_name: kube-hpa-replicas-mismatch
+              node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+            annotations:
+              description: HPA {{ $labels.namespace }}/{{ $labels.horizontalpodautoscaler  }} has not matched the desired number of replicas for longer than 5 minutes on cluster {{ $labels.cluster }}.
+              runbook_url: default_runbook_url
+              summary: HPA has not matched desired number of replicas.
+              dashboard_url: default_dashboard_url
+          - alert: kube-hpa-replicas-mismatch-critical
+            expr: >-
+              (k8s.hpa.desired_replicas{job="otelcol-k8scluster", namespace=~".*"} != k8s.hpa.current_replicas{job="otelcol-k8scluster", namespace=~".*"})
 
-          and (k8s.hpa.current_replicas{job="otelcol-k8scluster", namespace=~".*"} > k8s.hpa.min_replicas{job="otelcol-k8scluster", namespace=~".*"})
+              and (k8s.hpa.current_replicas{job="otelcol-k8scluster", namespace=~".*"} > k8s.hpa.min_replicas{job="otelcol-k8scluster", namespace=~".*"})
 
-          and (k8s.hpa.current_replicas{job="otelcol-k8scluster", namespace=~".*"} < k8s.hpa.max_replicas{job="otelcol-k8scluster", namespace=~".*"})
+              and (k8s.hpa.current_replicas{job="otelcol-k8scluster", namespace=~".*"} < k8s.hpa.max_replicas{job="otelcol-k8scluster", namespace=~".*"})
 
-          and changes(k8s.hpa.current_replicas{job="otelcol-k8scluster", namespace=~".*"}[15m]) == 0
-        for: 15m
-        labels:
-          severity: critical
-          group_name: kube-hpa-replicas-mismatch
-          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
-        annotations:
-          description: HPA {{ $labels.namespace }}/{{ $labels.horizontalpodautoscaler  }} has not matched the desired number of replicas for longer than 15 minutes on cluster {{ $labels.cluster }}.
-          runbook_url: default_runbook_url
-          summary: HPA has not matched desired number of replicas.
-          dashboard_url: default_dashboard_url
+              and changes(k8s.hpa.current_replicas{job="otelcol-k8scluster", namespace=~".*"}[15m]) == 0
+            for: 15m
+            labels:
+              severity: critical
+              group_name: kube-hpa-replicas-mismatch
+              node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+            annotations:
+              description: HPA {{ $labels.namespace }}/{{ $labels.horizontalpodautoscaler  }} has not matched the desired number of replicas for longer than 15 minutes on cluster {{ $labels.cluster }}.
+              runbook_url: default_runbook_url
+              summary: HPA has not matched desired number of replicas.
+              dashboard_url: default_dashboard_url

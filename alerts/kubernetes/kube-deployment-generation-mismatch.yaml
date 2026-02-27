@@ -1,33 +1,35 @@
-groups:
-  - name: kubernetes
-    rules:
-      # NOTE: Generation mismatch metrics (metadata_generation vs observed_generation) may not be available in OTel k8sclusterreceiver
-      # Consider using Prometheus receiver for kube-state-metrics or enabling optional metrics
-      - alert: kube-deployment-generation-mismatch-warning
-        expr: >-
-          kube_deployment_status_observed_generation{job="kube-state-metrics", namespace=~".*"} != kube_deployment_metadata_generation{job="kube-state-metrics", namespace=~".*"}
-        for: 5m
-        labels:
-          severity: warning
-          group_name: kube-deployment-generation-mismatch
-          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
-        annotations:
-          description: Deployment generation for {{ $labels.namespace }}/{{ $labels.deployment }} does not match, this indicates that the Deployment has failed but has not been rolled back on cluster {{ $labels.cluster }}.
-          runbook_url: default_runbook_url
-          summary: Deployment generation mismatch due to possible roll-back
-          dashboard_url: default_dashboard_url
-      # NOTE: Generation mismatch metrics (metadata_generation vs observed_generation) may not be available in OTel k8sclusterreceiver
-      # Consider using Prometheus receiver for kube-state-metrics or enabling optional metrics
-      - alert: kube-deployment-generation-mismatch-critical
-        expr: >-
-          kube_deployment_status_observed_generation{job="kube-state-metrics", namespace=~".*"} != kube_deployment_metadata_generation{job="kube-state-metrics", namespace=~".*"}
-        for: 15m
-        labels:
-          severity: critical
-          group_name: kube-deployment-generation-mismatch
-          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
-        annotations:
-          description: Deployment generation for {{ $labels.namespace }}/{{ $labels.deployment }} does not match, this indicates that the Deployment has failed but has not been rolled back on cluster {{ $labels.cluster }}.
-          runbook_url: default_runbook_url
-          summary: Deployment generation mismatch due to possible roll-back
-          dashboard_url: default_dashboard_url
+additionalPrometheusRulesMap:
+  kube-deployment-generation-mismatch:
+    groups:
+      - name: kube-deployment-generation-mismatch
+        rules:
+          # NOTE: Generation mismatch metrics (metadata_generation vs observed_generation) may not be available in OTel k8sclusterreceiver
+          # Consider using Prometheus receiver for kube-state-metrics or enabling optional metrics
+          - alert: kube-deployment-generation-mismatch-warning
+            expr: >-
+              kube_deployment_status_observed_generation{job="kube-state-metrics", namespace=~".*"} != kube_deployment_metadata_generation{job="kube-state-metrics", namespace=~".*"}
+            for: 5m
+            labels:
+              severity: warning
+              group_name: kube-deployment-generation-mismatch
+              node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+            annotations:
+              description: Deployment generation for {{ $labels.namespace }}/{{ $labels.deployment }} does not match, this indicates that the Deployment has failed but has not been rolled back on cluster {{ $labels.cluster }}.
+              runbook_url: default_runbook_url
+              summary: Deployment generation mismatch due to possible roll-back
+              dashboard_url: default_dashboard_url
+          # NOTE: Generation mismatch metrics (metadata_generation vs observed_generation) may not be available in OTel k8sclusterreceiver
+          # Consider using Prometheus receiver for kube-state-metrics or enabling optional metrics
+          - alert: kube-deployment-generation-mismatch-critical
+            expr: >-
+              kube_deployment_status_observed_generation{job="kube-state-metrics", namespace=~".*"} != kube_deployment_metadata_generation{job="kube-state-metrics", namespace=~".*"}
+            for: 15m
+            labels:
+              severity: critical
+              group_name: kube-deployment-generation-mismatch
+              node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+            annotations:
+              description: Deployment generation for {{ $labels.namespace }}/{{ $labels.deployment }} does not match, this indicates that the Deployment has failed but has not been rolled back on cluster {{ $labels.cluster }}.
+              runbook_url: default_runbook_url
+              summary: Deployment generation mismatch due to possible roll-back
+              dashboard_url: default_dashboard_url

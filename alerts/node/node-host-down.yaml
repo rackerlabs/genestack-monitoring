@@ -1,27 +1,29 @@
-groups:
-  - name: node-exporter
-    rules:
-      - alert: node-host-down-warning
-        expr: up{job="otelcol-hostmetrics"} == 0
-        for: 5m
-        labels:
-          severity: warning
-          group_name: node-host-down
-          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
-        annotations:
-          description: 'Host {{ $labels.instance }} is down or OpenTelemetry collector is not reporting metrics for 5 minutes.'
-          runbook_url: default_runbook_url
-          summary: Host is down or metrics collection has stopped.
-          dashboard_url: default_dashboard_url
-      - alert: node-host-down-critical
-        expr: up{job="otelcol-hostmetrics"} == 0
-        for: 15m
-        labels:
-          severity: critical
-          group_name: node-host-down
-          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
-        annotations:
-          description: 'Host {{ $labels.instance }} is down or OpenTelemetry collector is not reporting metrics for 15 minutes.'
-          runbook_url: default_runbook_url
-          summary: Host is down or metrics collection has stopped.
-          dashboard_url: default_dashboard_url
+additionalPrometheusRulesMap:
+  node-host-down:
+    groups:
+      - name: node-host-down
+        rules:
+          - alert: node-host-down-warning
+            expr: up{job="otelcol-hostmetrics"} == 0
+            for: 5m
+            labels:
+              severity: warning
+              group_name: node-host-down
+              node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+            annotations:
+              description: "Host {{ $labels.instance }} is down or OpenTelemetry collector is not reporting metrics for 5 minutes."
+              runbook_url: default_runbook_url
+              summary: Host is down or metrics collection has stopped.
+              dashboard_url: default_dashboard_url
+          - alert: node-host-down-critical
+            expr: up{job="otelcol-hostmetrics"} == 0
+            for: 15m
+            labels:
+              severity: critical
+              group_name: node-host-down
+              node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+            annotations:
+              description: "Host {{ $labels.instance }} is down or OpenTelemetry collector is not reporting metrics for 15 minutes."
+              runbook_url: default_runbook_url
+              summary: Host is down or metrics collection has stopped.
+              dashboard_url: default_dashboard_url

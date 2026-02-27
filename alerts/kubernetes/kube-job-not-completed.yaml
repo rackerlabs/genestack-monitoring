@@ -1,37 +1,39 @@
-groups:
-  - name: kubernetes
-    rules:
-      # NOTE: kube_job_status_start_time may not be available in OTel k8sclusterreceiver
-      # Consider using Prometheus receiver for kube-state-metrics or enabling optional metrics
-      - alert: kube-job-not-completed-warning
-        expr: >-
-          time() - max by (namespace, job_name, cluster) (kube_job_status_start_time{job="kube-state-metrics", namespace=~".*"}
+additionalPrometheusRulesMap:
+  kube-job-not-completed:
+    groups:
+      - name: kube-job-not-completed
+        rules:
+          # NOTE: kube_job_status_start_time may not be available in OTel k8sclusterreceiver
+          # Consider using Prometheus receiver for kube-state-metrics or enabling optional metrics
+          - alert: kube-job-not-completed-warning
+            expr: >-
+              time() - max by (namespace, job_name, cluster) (kube_job_status_start_time{job="kube-state-metrics", namespace=~".*"}
 
-          and k8s.job.active_pods{job="otelcol-k8scluster", namespace=~".*"} > 0) > 43200
-        for: 5m
-        labels:
-          severity: warning
-          group_name: kube-job-not-completed
-          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
-        annotations:
-          description: Job {{ $labels.namespace }}/{{ $labels.job_name }} is taking more than {{ "43200" | humanizeDuration }} to complete on cluster {{ $labels.cluster }}.
-          runbook_url: default_runbook_url
-          summary: Job did not complete in time
-          dashboard_url: default_dashboard_url
-      # NOTE: kube_job_status_start_time may not be available in OTel k8sclusterreceiver
-      # Consider using Prometheus receiver for kube-state-metrics or enabling optional metrics
-      - alert: kube-job-not-completed-critical
-        expr: >-
-          time() - max by (namespace, job_name, cluster) (kube_job_status_start_time{job="kube-state-metrics", namespace=~".*"}
+              and k8s.job.active_pods{job="otelcol-k8scluster", namespace=~".*"} > 0) > 43200
+            for: 5m
+            labels:
+              severity: warning
+              group_name: kube-job-not-completed
+              node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+            annotations:
+              description: Job {{ $labels.namespace }}/{{ $labels.job_name }} is taking more than {{ "43200" | humanizeDuration }} to complete on cluster {{ $labels.cluster }}.
+              runbook_url: default_runbook_url
+              summary: Job did not complete in time
+              dashboard_url: default_dashboard_url
+          # NOTE: kube_job_status_start_time may not be available in OTel k8sclusterreceiver
+          # Consider using Prometheus receiver for kube-state-metrics or enabling optional metrics
+          - alert: kube-job-not-completed-critical
+            expr: >-
+              time() - max by (namespace, job_name, cluster) (kube_job_status_start_time{job="kube-state-metrics", namespace=~".*"}
 
-          and k8s.job.active_pods{job="otelcol-k8scluster", namespace=~".*"} > 0) > 43200
-        for: 15m
-        labels:
-          severity: critical
-          group_name: kube-job-not-completed
-          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
-        annotations:
-          description: Job {{ $labels.namespace }}/{{ $labels.job_name }} is taking more than {{ "43200" | humanizeDuration }} to complete on cluster {{ $labels.cluster }}.
-          runbook_url: default_runbook_url
-          summary: Job did not complete in time
-          dashboard_url: default_dashboard_url
+              and k8s.job.active_pods{job="otelcol-k8scluster", namespace=~".*"} > 0) > 43200
+            for: 15m
+            labels:
+              severity: critical
+              group_name: kube-job-not-completed
+              node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+            annotations:
+              description: Job {{ $labels.namespace }}/{{ $labels.job_name }} is taking more than {{ "43200" | humanizeDuration }} to complete on cluster {{ $labels.cluster }}.
+              runbook_url: default_runbook_url
+              summary: Job did not complete in time
+              dashboard_url: default_dashboard_url

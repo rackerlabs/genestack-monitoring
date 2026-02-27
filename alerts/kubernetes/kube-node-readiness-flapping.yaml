@@ -1,37 +1,39 @@
-groups:
-  - name: kubernetes
-    rules:
-      # NOTE: k8s.node.condition is an optional metric that needs enabling with node.condition_type_to_report
-      # kube_node_spec_unschedulable may not be available in OTel k8sclusterreceiver
-      - alert: kube-node-readiness-flapping-warning
-        expr: >-
-          sum(changes(k8s.node.condition{job="otelcol-k8scluster",status="true",condition="Ready"}[15m])) by (cluster, node) > 2
+additionalPrometheusRulesMap:
+  kube-node-readiness-flapping:
+    groups:
+      - name: kube-node-readiness-flapping
+        rules:
+          # NOTE: k8s.node.condition is an optional metric that needs enabling with node.condition_type_to_report
+          # kube_node_spec_unschedulable may not be available in OTel k8sclusterreceiver
+          - alert: kube-node-readiness-flapping-warning
+            expr: >-
+              sum(changes(k8s.node.condition{job="otelcol-k8scluster",status="true",condition="Ready"}[15m])) by (cluster, node) > 2
 
-          and on (cluster, node) kube_node_spec_unschedulable{job="kube-state-metrics"} == 0
-        for: 5m
-        labels:
-          severity: warning
-          group_name: kube-node-readiness-flapping
-          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
-        annotations:
-          description: The readiness status of node {{ $labels.node }} has changed {{ $value }} times in the last 15 minutes on cluster {{ $labels.cluster }}.
-          runbook_url: default_runbook_url
-          summary: Node readiness status is flapping.
-          dashboard_url: default_dashboard_url
-      # NOTE: k8s.node.condition is an optional metric that needs enabling with node.condition_type_to_report
-      # kube_node_spec_unschedulable may not be available in OTel k8sclusterreceiver
-      - alert: kube-node-readiness-flapping-critical
-        expr: >-
-          sum(changes(k8s.node.condition{job="otelcol-k8scluster",status="true",condition="Ready"}[15m])) by (cluster, node) > 2
+              and on (cluster, node) kube_node_spec_unschedulable{job="kube-state-metrics"} == 0
+            for: 5m
+            labels:
+              severity: warning
+              group_name: kube-node-readiness-flapping
+              node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+            annotations:
+              description: The readiness status of node {{ $labels.node }} has changed {{ $value }} times in the last 15 minutes on cluster {{ $labels.cluster }}.
+              runbook_url: default_runbook_url
+              summary: Node readiness status is flapping.
+              dashboard_url: default_dashboard_url
+          # NOTE: k8s.node.condition is an optional metric that needs enabling with node.condition_type_to_report
+          # kube_node_spec_unschedulable may not be available in OTel k8sclusterreceiver
+          - alert: kube-node-readiness-flapping-critical
+            expr: >-
+              sum(changes(k8s.node.condition{job="otelcol-k8scluster",status="true",condition="Ready"}[15m])) by (cluster, node) > 2
 
-          and on (cluster, node) kube_node_spec_unschedulable{job="kube-state-metrics"} == 0
-        for: 15m
-        labels:
-          severity: critical
-          group_name: kube-node-readiness-flapping
-          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
-        annotations:
-          description: The readiness status of node {{ $labels.node }} has changed {{ $value }} times in the last 15 minutes on cluster {{ $labels.cluster }}.
-          runbook_url: default_runbook_url
-          summary: Node readiness status is flapping.
-          dashboard_url: default_dashboard_url
+              and on (cluster, node) kube_node_spec_unschedulable{job="kube-state-metrics"} == 0
+            for: 15m
+            labels:
+              severity: critical
+              group_name: kube-node-readiness-flapping
+              node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+            annotations:
+              description: The readiness status of node {{ $labels.node }} has changed {{ $value }} times in the last 15 minutes on cluster {{ $labels.cluster }}.
+              runbook_url: default_runbook_url
+              summary: Node readiness status is flapping.
+              dashboard_url: default_dashboard_url

@@ -1,33 +1,35 @@
-groups:
-  - name: kubernetes
-    rules:
-      # NOTE: kube_node_status_allocatable may not be available in OTel k8sclusterreceiver
-      # Consider using Prometheus receiver for kube-state-metrics
-      - alert: kube-memory-quota-overcommit-warning
-        expr: >-
-          sum by (cluster) ( min without(resource) (k8s.resource_quota.hard_limit{job="otelcol-k8scluster", resource=~"(memory|requests.memory)"}) ) / sum by (cluster) ( kube_node_status_allocatable{resource="memory", job="kube-state-metrics"} ) > 1.5
-        for: 5m
-        labels:
-          severity: warning
-          group_name: kube-memory-quota-overcommit
-          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
-        annotations:
-          description: Cluster {{ $labels.cluster }} has overcommitted memory resource requests for Namespaces.
-          runbook_url: default_runbook_url
-          summary: Cluster has overcommitted memory resource requests.
-          dashboard_url: default_dashboard_url
-      # NOTE: kube_node_status_allocatable may not be available in OTel k8sclusterreceiver
-      # Consider using Prometheus receiver for kube-state-metrics
-      - alert: kube-memory-quota-overcommit-critical
-        expr: >-
-          sum by (cluster) ( min without(resource) (k8s.resource_quota.hard_limit{job="otelcol-k8scluster", resource=~"(memory|requests.memory)"}) ) / sum by (cluster) ( kube_node_status_allocatable{resource="memory", job="kube-state-metrics"} ) > 1.5
-        for: 15m
-        labels:
-          severity: critical
-          group_name: kube-memory-quota-overcommit
-          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
-        annotations:
-          description: Cluster {{ $labels.cluster }} has overcommitted memory resource requests for Namespaces.
-          runbook_url: default_runbook_url
-          summary: Cluster has overcommitted memory resource requests.
-          dashboard_url: default_dashboard_url
+additionalPrometheusRulesMap:
+  kube-memory-quota-overcommit:
+    groups:
+      - name: kube-memory-quota-overcommit
+        rules:
+          # NOTE: kube_node_status_allocatable may not be available in OTel k8sclusterreceiver
+          # Consider using Prometheus receiver for kube-state-metrics
+          - alert: kube-memory-quota-overcommit-warning
+            expr: >-
+              sum by (cluster) ( min without(resource) (k8s.resource_quota.hard_limit{job="otelcol-k8scluster", resource=~"(memory|requests.memory)"}) ) / sum by (cluster) ( kube_node_status_allocatable{resource="memory", job="kube-state-metrics"} ) > 1.5
+            for: 5m
+            labels:
+              severity: warning
+              group_name: kube-memory-quota-overcommit
+              node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+            annotations:
+              description: Cluster {{ $labels.cluster }} has overcommitted memory resource requests for Namespaces.
+              runbook_url: default_runbook_url
+              summary: Cluster has overcommitted memory resource requests.
+              dashboard_url: default_dashboard_url
+          # NOTE: kube_node_status_allocatable may not be available in OTel k8sclusterreceiver
+          # Consider using Prometheus receiver for kube-state-metrics
+          - alert: kube-memory-quota-overcommit-critical
+            expr: >-
+              sum by (cluster) ( min without(resource) (k8s.resource_quota.hard_limit{job="otelcol-k8scluster", resource=~"(memory|requests.memory)"}) ) / sum by (cluster) ( kube_node_status_allocatable{resource="memory", job="kube-state-metrics"} ) > 1.5
+            for: 15m
+            labels:
+              severity: critical
+              group_name: kube-memory-quota-overcommit
+              node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+            annotations:
+              description: Cluster {{ $labels.cluster }} has overcommitted memory resource requests for Namespaces.
+              runbook_url: default_runbook_url
+              summary: Cluster has overcommitted memory resource requests.
+              dashboard_url: default_dashboard_url

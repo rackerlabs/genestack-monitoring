@@ -1,29 +1,31 @@
-groups:
-  - name: kubernetes
-    rules:
-      - alert: kube-quota-almost-full-warning
-        expr: >-
-          k8s.resource_quota.used{job="otelcol-k8scluster"} / ignoring(instance, job) (k8s.resource_quota.hard_limit{job="otelcol-k8scluster"} > 0) > 0.9 < 1
-        for: 5m
-        labels:
-          severity: warning
-          group_name: kube-quota-almost-full
-          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
-        annotations:
-          description: Namespace {{ $labels.namespace }} is using {{ $value | humanizePercentage }} of its {{ $labels.resource }} quota on cluster {{ $labels.cluster }}.
-          runbook_url: default_runbook_url
-          summary: Namespace quota is going to be full.
-          dashboard_url: default_dashboard_url
-      - alert: kube-quota-almost-full-critical
-        expr: >-
-          k8s.resource_quota.used{job="otelcol-k8scluster"} / ignoring(instance, job) (k8s.resource_quota.hard_limit{job="otelcol-k8scluster"} > 0) > 0.9 < 1
-        for: 15m
-        labels:
-          severity: critical
-          group_name: kube-quota-almost-full
-          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
-        annotations:
-          description: Namespace {{ $labels.namespace }} is using {{ $value | humanizePercentage }} of its {{ $labels.resource }} quota on cluster {{ $labels.cluster }}.
-          runbook_url: default_runbook_url
-          summary: Namespace quota is going to be full.
-          dashboard_url: default_dashboard_url
+additionalPrometheusRulesMap:
+  kube-quota-almost-full:
+    groups:
+      - name: kube-quota-almost-full
+        rules:
+          - alert: kube-quota-almost-full-warning
+            expr: >-
+              k8s.resource_quota.used{job="otelcol-k8scluster"} / ignoring(instance, job) (k8s.resource_quota.hard_limit{job="otelcol-k8scluster"} > 0) > 0.9 < 1
+            for: 5m
+            labels:
+              severity: warning
+              group_name: kube-quota-almost-full
+              node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+            annotations:
+              description: Namespace {{ $labels.namespace }} is using {{ $value | humanizePercentage }} of its {{ $labels.resource }} quota on cluster {{ $labels.cluster }}.
+              runbook_url: default_runbook_url
+              summary: Namespace quota is going to be full.
+              dashboard_url: default_dashboard_url
+          - alert: kube-quota-almost-full-critical
+            expr: >-
+              k8s.resource_quota.used{job="otelcol-k8scluster"} / ignoring(instance, job) (k8s.resource_quota.hard_limit{job="otelcol-k8scluster"} > 0) > 0.9 < 1
+            for: 15m
+            labels:
+              severity: critical
+              group_name: kube-quota-almost-full
+              node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+            annotations:
+              description: Namespace {{ $labels.namespace }} is using {{ $value | humanizePercentage }} of its {{ $labels.resource }} quota on cluster {{ $labels.cluster }}.
+              runbook_url: default_runbook_url
+              summary: Namespace quota is going to be full.
+              dashboard_url: default_dashboard_url

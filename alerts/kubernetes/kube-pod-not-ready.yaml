@@ -1,33 +1,35 @@
-groups:
-  - name: kubernetes
-    rules:
-      # NOTE: k8s.pod.phase uses numeric values: 1=Pending, 2=Running, 3=Succeeded, 4=Failed, 5=Unknown
-      # kube_pod_owner may need to use k8s resource attributes instead
-      - alert: kube-pod-not-ready-warning
-        expr: >-
-          sum by (namespace, pod, cluster) ( max by (namespace, pod, cluster) ( k8s.pod.phase{job="otelcol-k8scluster", namespace=~".*"} == 1 or k8s.pod.phase{job="otelcol-k8scluster", namespace=~".*"} == 4 or k8s.pod.phase{job="otelcol-k8scluster", namespace=~".*"} == 5 ) * on (namespace, pod, cluster) group_left(owner_kind) topk by (namespace, pod, cluster) ( 1, max by (namespace, pod, owner_kind, cluster) (kube_pod_owner{owner_kind!="Job"}) ) ) > 0
-        for: 5m
-        labels:
-          severity: warning
-          group_name: kube-pod-not-ready
-          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
-        annotations:
-          description: Pod {{ $labels.namespace }}/{{ $labels.pod }} has been in a non-ready state for longer than 5 minutes on cluster {{ $labels.cluster }}.
-          runbook_url: default_runbook_url
-          summary: Pod has been in a non-ready state for more than 5 minutes.
-          dashboard_url: default_dashboard_url
-      # NOTE: k8s.pod.phase uses numeric values: 1=Pending, 2=Running, 3=Succeeded, 4=Failed, 5=Unknown
-      # kube_pod_owner may need to use k8s resource attributes instead
-      - alert: kube-pod-not-ready-critical
-        expr: >-
-          sum by (namespace, pod, cluster) ( max by (namespace, pod, cluster) ( k8s.pod.phase{job="otelcol-k8scluster", namespace=~".*"} == 1 or k8s.pod.phase{job="otelcol-k8scluster", namespace=~".*"} == 4 or k8s.pod.phase{job="otelcol-k8scluster", namespace=~".*"} == 5 ) * on (namespace, pod, cluster) group_left(owner_kind) topk by (namespace, pod, cluster) ( 1, max by (namespace, pod, owner_kind, cluster) (kube_pod_owner{owner_kind!="Job"}) ) ) > 0
-        for: 15m
-        labels:
-          severity: critical
-          group_name: kube-pod-not-ready
-          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
-        annotations:
-          description: Pod {{ $labels.namespace }}/{{ $labels.pod }} has been in a non-ready state for longer than 15 minutes on cluster {{ $labels.cluster }}.
-          runbook_url: default_runbook_url
-          summary: Pod has been in a non-ready state for more than 15 minutes.
-          dashboard_url: default_dashboard_url
+additionalPrometheusRulesMap:
+  kube-pod-not-ready:
+    groups:
+      - name: kube-pod-not-ready
+        rules:
+          # NOTE: k8s.pod.phase uses numeric values: 1=Pending, 2=Running, 3=Succeeded, 4=Failed, 5=Unknown
+          # kube_pod_owner may need to use k8s resource attributes instead
+          - alert: kube-pod-not-ready-warning
+            expr: >-
+              sum by (namespace, pod, cluster) ( max by (namespace, pod, cluster) ( k8s.pod.phase{job="otelcol-k8scluster", namespace=~".*"} == 1 or k8s.pod.phase{job="otelcol-k8scluster", namespace=~".*"} == 4 or k8s.pod.phase{job="otelcol-k8scluster", namespace=~".*"} == 5 ) * on (namespace, pod, cluster) group_left(owner_kind) topk by (namespace, pod, cluster) ( 1, max by (namespace, pod, owner_kind, cluster) (kube_pod_owner{owner_kind!="Job"}) ) ) > 0
+            for: 5m
+            labels:
+              severity: warning
+              group_name: kube-pod-not-ready
+              node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+            annotations:
+              description: Pod {{ $labels.namespace }}/{{ $labels.pod }} has been in a non-ready state for longer than 5 minutes on cluster {{ $labels.cluster }}.
+              runbook_url: default_runbook_url
+              summary: Pod has been in a non-ready state for more than 5 minutes.
+              dashboard_url: default_dashboard_url
+          # NOTE: k8s.pod.phase uses numeric values: 1=Pending, 2=Running, 3=Succeeded, 4=Failed, 5=Unknown
+          # kube_pod_owner may need to use k8s resource attributes instead
+          - alert: kube-pod-not-ready-critical
+            expr: >-
+              sum by (namespace, pod, cluster) ( max by (namespace, pod, cluster) ( k8s.pod.phase{job="otelcol-k8scluster", namespace=~".*"} == 1 or k8s.pod.phase{job="otelcol-k8scluster", namespace=~".*"} == 4 or k8s.pod.phase{job="otelcol-k8scluster", namespace=~".*"} == 5 ) * on (namespace, pod, cluster) group_left(owner_kind) topk by (namespace, pod, cluster) ( 1, max by (namespace, pod, owner_kind, cluster) (kube_pod_owner{owner_kind!="Job"}) ) ) > 0
+            for: 15m
+            labels:
+              severity: critical
+              group_name: kube-pod-not-ready
+              node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+            annotations:
+              description: Pod {{ $labels.namespace }}/{{ $labels.pod }} has been in a non-ready state for longer than 15 minutes on cluster {{ $labels.cluster }}.
+              runbook_url: default_runbook_url
+              summary: Pod has been in a non-ready state for more than 15 minutes.
+              dashboard_url: default_dashboard_url

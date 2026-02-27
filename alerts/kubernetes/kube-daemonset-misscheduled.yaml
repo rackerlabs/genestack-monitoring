@@ -1,27 +1,29 @@
-groups:
-  - name: kubernetes
-    rules:
-      - alert: kube-daemonset-misscheduled-warning
-        expr: k8s.daemonset.misscheduled_nodes{job="otelcol-k8scluster", namespace=~".*"} > 0
-        for: 5m
-        labels:
-          severity: warning
-          group_name: kube-daemonset-misscheduled
-          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
-        annotations:
-          description: "{{ $value }} Pods of DaemonSet {{ $labels.namespace }}/{{ $labels.daemonset }} are running where they are not supposed to run on cluster {{ $labels.cluster }}."
-          runbook_url: default_runbook_url
-          summary: DaemonSet pods are misscheduled.
-          dashboard_url: default_dashboard_url
-      - alert: kube-daemonset-misscheduled-critical
-        expr: k8s.daemonset.misscheduled_nodes{job="otelcol-k8scluster", namespace=~".*"} > 0
-        for: 15m
-        labels:
-          severity: critical
-          group_name: kube-daemonset-misscheduled
-          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
-        annotations:
-          description: "{{ $value }} Pods of DaemonSet {{ $labels.namespace }}/{{ $labels.daemonset }} are running where they are not supposed to run on cluster {{ $labels.cluster }}."
-          runbook_url: default_runbook_url
-          summary: DaemonSet pods are misscheduled.
-          dashboard_url: default_dashboard_url
+additionalPrometheusRulesMap:
+  kube-daemonset-misscheduled:
+    groups:
+      - name: kube-daemonset-misscheduled
+        rules:
+          - alert: kube-daemonset-misscheduled-warning
+            expr: k8s.daemonset.misscheduled_nodes{job="otelcol-k8scluster", namespace=~".*"} > 0
+            for: 5m
+            labels:
+              severity: warning
+              group_name: kube-daemonset-misscheduled
+              node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+            annotations:
+              description: "{{ $value }} Pods of DaemonSet {{ $labels.namespace }}/{{ $labels.daemonset }} are running where they are not supposed to run on cluster {{ $labels.cluster }}."
+              runbook_url: default_runbook_url
+              summary: DaemonSet pods are misscheduled.
+              dashboard_url: default_dashboard_url
+          - alert: kube-daemonset-misscheduled-critical
+            expr: k8s.daemonset.misscheduled_nodes{job="otelcol-k8scluster", namespace=~".*"} > 0
+            for: 15m
+            labels:
+              severity: critical
+              group_name: kube-daemonset-misscheduled
+              node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+            annotations:
+              description: "{{ $value }} Pods of DaemonSet {{ $labels.namespace }}/{{ $labels.daemonset }} are running where they are not supposed to run on cluster {{ $labels.cluster }}."
+              runbook_url: default_runbook_url
+              summary: DaemonSet pods are misscheduled.
+              dashboard_url: default_dashboard_url
