@@ -1,0 +1,33 @@
+additionalPrometheusRulesMap:
+  openstack-cinder-volume-status-error-counter:
+    groups:
+    - name: openstack-cinder-volume-status-error-counter
+      rules:
+      - alert: openstack-cinder-volume-status-error-counter-warning
+        expr: openstack_cinder_volume_status_counter{status="error", job="os-metrics-prometheus-openstack-exporter"} > 0
+        for: 1m
+        labels:
+          severity: warning
+          group_name: openstack-cinder-volume-status-error-counter
+          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+        annotations:
+          description: 'There are {{ $value }} Cinder volumes in error state.
+
+            LABELS: {{ $labels }}'
+          runbook_url: default_runbook_url
+          summary: There are {{ $value }} Cinder volumes in error state
+          dashboard_url: default_dashboard_url
+      - alert: openstack-cinder-volume-status-error-counter-critical
+        expr: openstack_cinder_volume_status_counter{status="error", job="os-metrics-prometheus-openstack-exporter"} > 0
+        for: 5m
+        labels:
+          severity: critical
+          group_name: openstack-cinder-volume-status-error-counter
+          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+        annotations:
+          description: 'There are {{ $value }} Cinder volumes in error state.
+
+            LABELS: {{ $labels }}'
+          runbook_url: default_runbook_url
+          summary: There are {{ $value }} Cinder volumes in error state
+          dashboard_url: default_dashboard_url

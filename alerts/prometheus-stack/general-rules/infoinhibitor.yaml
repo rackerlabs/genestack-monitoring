@@ -1,0 +1,29 @@
+additionalPrometheusRulesMap:
+  infoinhibitor:
+    groups:
+    - name: infoinhibitor
+      rules:
+      - alert: infoinhibitor-warning
+        expr: ALERTS{severity = "info"} == 1 unless on (namespace) ALERTS{alertname != "InfoInhibitor", severity =~ "warning|critical", alertstate="firing"} == 1
+        for: 0m
+        labels:
+          severity: warning
+          group_name: infoinhibitor
+          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+        annotations:
+          description: 'This is an alert that is used to inhibit info alerts.
+
+            By themselves, the info-level alerts are sometimes very noisy, but they are relevant when combined with
+
+            other alerts.
+
+            This alert fires whenever there''s a severity="info" alert, and stops firing when another alert with a
+
+            severity of ''warning'' or ''critical'' starts firing on the same namespace.
+
+            This alert should be routed to a null receiver and configured to inhibit alerts with severity="info".
+
+            '
+          runbook_url: default_runbook_url
+          summary: Info-level alert inhibition.
+          dashboard_url: default_dashboard_url

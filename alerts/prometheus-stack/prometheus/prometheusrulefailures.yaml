@@ -1,0 +1,29 @@
+additionalPrometheusRulesMap:
+  prometheusrulefailures:
+    groups:
+    - name: prometheusrulefailures
+      rules:
+      - alert: prometheusrulefailures-warning
+        expr: increase(prometheus_rule_evaluation_failures_total{job="kube-prometheus-stack-prometheus",namespace="prometheus"}[5m]) > 0
+        for: 15m
+        labels:
+          severity: warning
+          group_name: prometheusrulefailures
+          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+        annotations:
+          description: Prometheus {{$labels.namespace}}/{{$labels.pod}} has failed to evaluate {{ printf "%.0f" $value }} rules in the last 5m.
+          runbook_url: default_runbook_url
+          summary: Prometheus is failing rule evaluations.
+          dashboard_url: default_dashboard_url
+      - alert: prometheusrulefailures-critical
+        expr: increase(prometheus_rule_evaluation_failures_total{job="kube-prometheus-stack-prometheus",namespace="prometheus"}[5m]) > 0
+        for: 30m
+        labels:
+          severity: critical
+          group_name: prometheusrulefailures
+          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+        annotations:
+          description: Prometheus {{$labels.namespace}}/{{$labels.pod}} has failed to evaluate {{ printf "%.0f" $value }} rules in the last 5m.
+          runbook_url: default_runbook_url
+          summary: Prometheus is failing rule evaluations.
+          dashboard_url: default_dashboard_url

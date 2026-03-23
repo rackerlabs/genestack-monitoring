@@ -1,0 +1,45 @@
+additionalPrometheusRulesMap:
+  openstack-compute-abnormal-instance-failures:
+    groups:
+    - name: openstack-compute-abnormal-instance-failures
+      rules:
+      - alert: openstack-compute-abnormal-instance-failures-warning
+        expr: 'count(count(last_over_time(openstack_nova_server_status{status=~"BUILD|ERROR"}[60m])) by (id)) /
+
+          count(count(last_over_time(openstack_nova_server_status{status="ACTIVE"}[60m])) by (id)) * 100 >= 20
+
+          '
+        for: 0m
+        labels:
+          severity: warning
+          group_name: openstack-compute-abnormal-instance-failures
+          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+        annotations:
+          description: 'This indicates a major problem building compute instances.
+
+            View logs and take action to resolve the build failures.
+
+            '
+          runbook_url: default_runbook_url
+          summary: Instance build failure rate is abnormally high
+          dashboard_url: default_dashboard_url
+      - alert: openstack-compute-abnormal-instance-failures-critical
+        expr: 'count(count(last_over_time(openstack_nova_server_status{status=~"BUILD|ERROR"}[60m])) by (id)) /
+
+          count(count(last_over_time(openstack_nova_server_status{status="ACTIVE"}[60m])) by (id)) * 100 >= 20
+
+          '
+        for: 5m
+        labels:
+          severity: critical
+          group_name: openstack-compute-abnormal-instance-failures
+          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+        annotations:
+          description: 'This indicates a major problem building compute instances.
+
+            View logs and take action to resolve the build failures.
+
+            '
+          runbook_url: default_runbook_url
+          summary: Instance build failure rate is abnormally high
+          dashboard_url: default_dashboard_url

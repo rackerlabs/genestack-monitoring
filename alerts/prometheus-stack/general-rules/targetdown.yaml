@@ -1,0 +1,29 @@
+additionalPrometheusRulesMap:
+  targetdown:
+    groups:
+    - name: targetdown
+      rules:
+      - alert: targetdown-warning
+        expr: 100 * (count(up == 0) BY (cluster, job, namespace, service) / count(up) BY (cluster, job, namespace, service)) > 10
+        for: 10m
+        labels:
+          severity: warning
+          group_name: targetdown
+          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+        annotations:
+          description: '{{ printf "%.4g" $value }}% of the {{ $labels.job }}/{{ $labels.service }} targets in {{ $labels.namespace }} namespace are down.'
+          runbook_url: default_runbook_url
+          summary: One or more targets are unreachable.
+          dashboard_url: default_dashboard_url
+      - alert: targetdown-critical
+        expr: 100 * (count(up == 0) BY (cluster, job, namespace, service) / count(up) BY (cluster, job, namespace, service)) > 10
+        for: 15m
+        labels:
+          severity: critical
+          group_name: targetdown
+          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+        annotations:
+          description: '{{ printf "%.4g" $value }}% of the {{ $labels.job }}/{{ $labels.service }} targets in {{ $labels.namespace }} namespace are down.'
+          runbook_url: default_runbook_url
+          summary: One or more targets are unreachable.
+          dashboard_url: default_dashboard_url

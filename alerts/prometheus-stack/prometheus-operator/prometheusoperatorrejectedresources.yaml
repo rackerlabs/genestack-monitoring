@@ -1,0 +1,29 @@
+additionalPrometheusRulesMap:
+  prometheusoperatorrejectedresources:
+    groups:
+    - name: prometheusoperatorrejectedresources
+      rules:
+      - alert: prometheusoperatorrejectedresources-warning
+        expr: min_over_time(prometheus_operator_managed_resources{state="rejected",job="kube-prometheus-stack-operator",namespace="prometheus"}[5m]) > 0
+        for: 5m
+        labels:
+          severity: warning
+          group_name: prometheusoperatorrejectedresources
+          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+        annotations:
+          description: Prometheus operator in {{ $labels.namespace }} namespace rejected {{ printf "%0.0f" $value }} {{ $labels.controller }}/{{ $labels.resource }} resources.
+          runbook_url: default_runbook_url
+          summary: Resources rejected by Prometheus operator
+          dashboard_url: default_dashboard_url
+      - alert: prometheusoperatorrejectedresources-critical
+        expr: min_over_time(prometheus_operator_managed_resources{state="rejected",job="kube-prometheus-stack-operator",namespace="prometheus"}[5m]) > 0
+        for: 15m
+        labels:
+          severity: critical
+          group_name: prometheusoperatorrejectedresources
+          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+        annotations:
+          description: Prometheus operator in {{ $labels.namespace }} namespace rejected {{ printf "%0.0f" $value }} {{ $labels.controller }}/{{ $labels.resource }} resources.
+          runbook_url: default_runbook_url
+          summary: Resources rejected by Prometheus operator
+          dashboard_url: default_dashboard_url

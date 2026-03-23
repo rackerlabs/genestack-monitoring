@@ -1,0 +1,29 @@
+additionalPrometheusRulesMap:
+  prometheussdrefreshfailure:
+    groups:
+    - name: prometheussdrefreshfailure
+      rules:
+      - alert: prometheussdrefreshfailure-warning
+        expr: increase(prometheus_sd_refresh_failures_total{job="kube-prometheus-stack-prometheus",namespace="prometheus"}[10m]) > 0
+        for: 20m
+        labels:
+          severity: warning
+          group_name: prometheussdrefreshfailure
+          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+        annotations:
+          description: Prometheus {{$labels.namespace}}/{{$labels.pod}} has failed to refresh SD with mechanism {{$labels.mechanism}}.
+          runbook_url: default_runbook_url
+          summary: Failed Prometheus SD refresh.
+          dashboard_url: default_dashboard_url
+      - alert: prometheussdrefreshfailure-critical
+        expr: increase(prometheus_sd_refresh_failures_total{job="kube-prometheus-stack-prometheus",namespace="prometheus"}[10m]) > 0
+        for: 30m
+        labels:
+          severity: critical
+          group_name: prometheussdrefreshfailure
+          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+        annotations:
+          description: Prometheus {{$labels.namespace}}/{{$labels.pod}} has failed to refresh SD with mechanism {{$labels.mechanism}}.
+          runbook_url: default_runbook_url
+          summary: Failed Prometheus SD refresh.
+          dashboard_url: default_dashboard_url

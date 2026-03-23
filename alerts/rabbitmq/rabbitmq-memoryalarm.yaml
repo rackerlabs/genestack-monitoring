@@ -1,0 +1,41 @@
+additionalPrometheusRulesMap:
+  rabbitmq-memoryalarm:
+    groups:
+    - name: rabbitmq-memoryalarm
+      rules:
+      - alert: rabbitmq-memoryalarm-warning
+        expr: "max by(rabbitmq_cluster) (\n  max_over_time(rabbitmq_alarms_memory_used_watermark[5m])\n  * on(instance) group_left(rabbitmq_cluster) max by (instance, rabbitmq_cluster) (rabbitmq_identity_info)\n) > 0\n"
+        for: 0m
+        labels:
+          severity: warning
+          group_name: rabbitmq-memoryalarm
+          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+        annotations:
+          description: 'RabbitMQ cluster `{{ $labels.rabbitmq_cluster }}` memory alarm active. Publishers are blocked.
+
+            '
+          runbook_url: default_runbook_url
+          summary: 'A RabbitMQ node reached the `vm_memory_high_watermark` threshold.
+
+            See https://www.rabbitmq.com/docs/alarms#overview, https://www.rabbitmq.com/docs/memory.
+
+            '
+          dashboard_url: default_dashboard_url
+      - alert: rabbitmq-memoryalarm-critical
+        expr: "max by(rabbitmq_cluster) (\n  max_over_time(rabbitmq_alarms_memory_used_watermark[5m])\n  * on(instance) group_left(rabbitmq_cluster) max by (instance, rabbitmq_cluster) (rabbitmq_identity_info)\n) > 0\n"
+        for: 5m
+        labels:
+          severity: critical
+          group_name: rabbitmq-memoryalarm
+          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+        annotations:
+          description: 'RabbitMQ cluster `{{ $labels.rabbitmq_cluster }}` memory alarm active. Publishers are blocked.
+
+            '
+          runbook_url: default_runbook_url
+          summary: 'A RabbitMQ node reached the `vm_memory_high_watermark` threshold.
+
+            See https://www.rabbitmq.com/docs/alarms#overview, https://www.rabbitmq.com/docs/memory.
+
+            '
+          dashboard_url: default_dashboard_url

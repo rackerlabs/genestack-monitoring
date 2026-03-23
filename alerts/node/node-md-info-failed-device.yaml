@@ -1,0 +1,43 @@
+additionalPrometheusRulesMap:
+  node-md-info-failed-device:
+    groups:
+    - name: node-md-info-failed-device
+      rules:
+      - alert: node-md-info-failed-device-warning
+        expr: node_md_info{job="node-exporter", FailedDevices!="0"} > 0
+        for: 2m
+        labels:
+          severity: warning
+          group_name: node-md-info-failed-device
+          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+          coreAccountID: '{{ $labels.rackspace_com_coreAccountID }}'
+          coreDeviceID: '{{ $labels.rackspace_com_coreDeviceID }}'
+          node: '{{ $labels.instance }}'
+        annotations:
+          description: '{{ $labels.name }}
+
+            Number MD Failed:{{ $labels.FailedDevices }}
+
+            LABELS: {{ $labels }}'
+          runbook_url: default_runbook_url
+          summary: NVME device on Linux software RAID failure info
+          dashboard_url: default_dashboard_url
+      - alert: node-md-info-failed-device-critical
+        expr: node_md_info{job="node-exporter", FailedDevices!="0"} > 0
+        for: 5m
+        labels:
+          severity: critical
+          group_name: node-md-info-failed-device
+          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+          coreAccountID: '{{ $labels.rackspace_com_coreAccountID }}'
+          coreDeviceID: '{{ $labels.rackspace_com_coreDeviceID }}'
+          node: '{{ $labels.instance }}'
+        annotations:
+          description: '{{ $labels.name }}
+
+            Number MD Failed:{{ $labels.FailedDevices }}
+
+            LABELS: {{ $labels }}'
+          runbook_url: default_runbook_url
+          summary: NVME device on Linux software RAID failure info
+          dashboard_url: default_dashboard_url

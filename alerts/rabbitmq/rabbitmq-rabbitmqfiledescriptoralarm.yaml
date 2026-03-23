@@ -1,0 +1,41 @@
+additionalPrometheusRulesMap:
+  rabbitmq-rabbitmqfiledescriptoralarm:
+    groups:
+    - name: rabbitmq-rabbitmqfiledescriptoralarm
+      rules:
+      - alert: rabbitmq-rabbitmqfiledescriptoralarm-warning
+        expr: "max by(rabbitmq_cluster) (\n  max_over_time(rabbitmq_alarms_file_descriptor_limit[5m])\n  * on(instance) group_left(rabbitmq_cluster) max by (instance, rabbitmq_cluster) (rabbitmq_identity_info)\n) > 0\n"
+        for: 0m
+        labels:
+          severity: warning
+          group_name: rabbitmq-rabbitmqfiledescriptoralarm
+          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+        annotations:
+          description: 'RabbitMQ cluster `{{ $labels.rabbitmq_cluster }}` file descriptor alarm active. Publishers are blocked.
+
+            '
+          runbook_url: default_runbook_url
+          summary: 'A RabbitMQ node ran out of file descriptors.
+
+            See https://www.rabbitmq.com/docs/alarms#file-descriptors.
+
+            '
+          dashboard_url: default_dashboard_url
+      - alert: rabbitmq-rabbitmqfiledescriptoralarm-critical
+        expr: "max by(rabbitmq_cluster) (\n  max_over_time(rabbitmq_alarms_file_descriptor_limit[5m])\n  * on(instance) group_left(rabbitmq_cluster) max by (instance, rabbitmq_cluster) (rabbitmq_identity_info)\n) > 0\n"
+        for: 5m
+        labels:
+          severity: critical
+          group_name: rabbitmq-rabbitmqfiledescriptoralarm
+          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+        annotations:
+          description: 'RabbitMQ cluster `{{ $labels.rabbitmq_cluster }}` file descriptor alarm active. Publishers are blocked.
+
+            '
+          runbook_url: default_runbook_url
+          summary: 'A RabbitMQ node ran out of file descriptors.
+
+            See https://www.rabbitmq.com/docs/alarms#file-descriptors.
+
+            '
+          dashboard_url: default_dashboard_url

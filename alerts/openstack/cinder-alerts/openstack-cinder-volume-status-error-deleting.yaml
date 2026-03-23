@@ -1,0 +1,49 @@
+additionalPrometheusRulesMap:
+  openstack-cinder-volume-status-error-deleting:
+    groups:
+    - name: openstack-cinder-volume-status-error-deleting
+      rules:
+      - alert: openstack-cinder-volume-status-error-deleting-warning
+        expr: '(openstack_cinder_volume_status{status="error_deleting", job="os-metrics-prometheus-openstack-exporter"} offset 4m)
+
+          and
+
+          openstack_cinder_volume_status{status="error_deleting", job="os-metrics-prometheus-openstack-exporter"}
+
+          '
+        for: 1m
+        labels:
+          severity: warning
+          group_name: openstack-cinder-volume-status-error-deleting
+          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+        annotations:
+          description: 'Cinder volume ID: {{ $labels.id }}
+
+            NAME: {{ $labels.name }}
+
+            LABELS: {{ $labels }}'
+          runbook_url: default_runbook_url
+          summary: Cinder volume with status == error_deleting
+          dashboard_url: default_dashboard_url
+      - alert: openstack-cinder-volume-status-error-deleting-critical
+        expr: '(openstack_cinder_volume_status{status="error_deleting", job="os-metrics-prometheus-openstack-exporter"} offset 4m)
+
+          and
+
+          openstack_cinder_volume_status{status="error_deleting", job="os-metrics-prometheus-openstack-exporter"}
+
+          '
+        for: 5m
+        labels:
+          severity: critical
+          group_name: openstack-cinder-volume-status-error-deleting
+          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+        annotations:
+          description: 'Cinder volume ID: {{ $labels.id }}
+
+            NAME: {{ $labels.name }}
+
+            LABELS: {{ $labels }}'
+          runbook_url: default_runbook_url
+          summary: Cinder volume with status == error_deleting
+          dashboard_url: default_dashboard_url

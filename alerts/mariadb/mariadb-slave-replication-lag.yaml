@@ -1,0 +1,29 @@
+additionalPrometheusRulesMap:
+  mariadb-slave-replication-lag:
+    groups:
+    - name: mariadb-slave-replication-lag
+      rules:
+      - alert: mariadb-slave-replication-lag-warning
+        expr: ( (mysql_slave_status_seconds_behind_master - mysql_slave_status_sql_delay) and ON (instance) mysql_slave_status_master_server_id > 0 ) > 30
+        for: 1m
+        labels:
+          severity: warning
+          group_name: mariadb-slave-replication-lag
+          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+        annotations:
+          description: "MySQL replication lag on {{ $labels.instance }}\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+          runbook_url: default_runbook_url
+          summary: MySQL Slave replication lag (instance {{ $labels.instance }})
+          dashboard_url: default_dashboard_url
+      - alert: mariadb-slave-replication-lag-critical
+        expr: ( (mysql_slave_status_seconds_behind_master - mysql_slave_status_sql_delay) and ON (instance) mysql_slave_status_master_server_id > 0 ) > 30
+        for: 5m
+        labels:
+          severity: critical
+          group_name: mariadb-slave-replication-lag
+          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+        annotations:
+          description: "MySQL replication lag on {{ $labels.instance }}\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+          runbook_url: default_runbook_url
+          summary: MySQL Slave replication lag (instance {{ $labels.instance }})
+          dashboard_url: default_dashboard_url

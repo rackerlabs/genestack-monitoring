@@ -1,0 +1,41 @@
+additionalPrometheusRulesMap:
+  blackbox-tls-certificate-expiring:
+    groups:
+    - name: blackbox-tls-certificate-expiring
+      rules:
+      - alert: blackbox-tls-certificate-expiring-warning
+        expr: (probe_ssl_earliest_cert_expiry - time()) / 86400 < 15
+        for: 0m
+        labels:
+          severity: warning
+          group_name: blackbox-tls-certificate-expiring
+          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+        annotations:
+          description: 'SSL certificate expires within 15 days.
+
+            VALUE = {{ $value }}
+
+            LABELS = {{ $labels }}
+
+            '
+          runbook_url: default_runbook_url
+          summary: SSL certificate will expire soon on (instance {{ $labels.instance }})
+          dashboard_url: default_dashboard_url
+      - alert: blackbox-tls-certificate-expiring-critical
+        expr: (probe_ssl_earliest_cert_expiry - time()) / 86400 < 15
+        for: 5m
+        labels:
+          severity: critical
+          group_name: blackbox-tls-certificate-expiring
+          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+        annotations:
+          description: 'SSL certificate expires within 15 days.
+
+            VALUE = {{ $value }}
+
+            LABELS = {{ $labels }}
+
+            '
+          runbook_url: default_runbook_url
+          summary: SSL certificate will expire soon on (instance {{ $labels.instance }})
+          dashboard_url: default_dashboard_url

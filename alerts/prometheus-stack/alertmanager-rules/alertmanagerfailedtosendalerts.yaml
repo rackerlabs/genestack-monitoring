@@ -1,0 +1,29 @@
+additionalPrometheusRulesMap:
+  alertmanagerfailedtosendalerts:
+    groups:
+    - name: alertmanagerfailedtosendalerts
+      rules:
+      - alert: alertmanagerfailedtosendalerts-warning
+        expr: "(\n  rate(alertmanager_notifications_failed_total{job=\"kube-prometheus-stack-alertmanager\",container=\"alertmanager\",namespace=\"prometheus\"}[15m])\n/\n  ignoring (reason) group_left rate(alertmanager_notifications_total{job=\"kube-prometheus-stack-alertmanager\",container=\"alertmanager\",namespace=\"prometheus\"}[15m])\n)\n> 0.01"
+        for: 5m
+        labels:
+          severity: warning
+          group_name: alertmanagerfailedtosendalerts
+          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+        annotations:
+          description: Alertmanager {{ $labels.namespace }}/{{ $labels.pod}} failed to send {{ $value | humanizePercentage }} of notifications to {{ $labels.integration }}.
+          runbook_url: default_runbook_url
+          summary: An Alertmanager instance failed to send notifications.
+          dashboard_url: default_dashboard_url
+      - alert: alertmanagerfailedtosendalerts-critical
+        expr: "(\n  rate(alertmanager_notifications_failed_total{job=\"kube-prometheus-stack-alertmanager\",container=\"alertmanager\",namespace=\"prometheus\"}[15m])\n/\n  ignoring (reason) group_left rate(alertmanager_notifications_total{job=\"kube-prometheus-stack-alertmanager\",container=\"alertmanager\",namespace=\"prometheus\"}[15m])\n)\n> 0.01"
+        for: 15m
+        labels:
+          severity: critical
+          group_name: alertmanagerfailedtosendalerts
+          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+        annotations:
+          description: Alertmanager {{ $labels.namespace }}/{{ $labels.pod}} failed to send {{ $value | humanizePercentage }} of notifications to {{ $labels.integration }}.
+          runbook_url: default_runbook_url
+          summary: An Alertmanager instance failed to send notifications.
+          dashboard_url: default_dashboard_url

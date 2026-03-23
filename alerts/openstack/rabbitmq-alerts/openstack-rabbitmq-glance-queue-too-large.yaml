@@ -1,0 +1,29 @@
+additionalPrometheusRulesMap:
+  openstack-rabbitmq-glance-queue-too-large:
+    groups:
+    - name: openstack-rabbitmq-glance-queue-too-large
+      rules:
+      - alert: openstack-rabbitmq-glance-queue-too-large-warning
+        expr: rabbitmq_queue_messages{vhost="glance"} > 25
+        for: 10m
+        labels:
+          severity: warning
+          group_name: openstack-rabbitmq-glance-queue-too-large
+          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+        annotations:
+          description: Glance vhost in RabbitMQ has too many messages. Check consumers.
+          runbook_url: default_runbook_url
+          summary: Glance vhost has too many messages
+          dashboard_url: default_dashboard_url
+      - alert: openstack-rabbitmq-glance-queue-too-large-critical
+        expr: rabbitmq_queue_messages{vhost="glance"} > 25
+        for: 15m
+        labels:
+          severity: critical
+          group_name: openstack-rabbitmq-glance-queue-too-large
+          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+        annotations:
+          description: Glance vhost in RabbitMQ has too many messages. Check consumers.
+          runbook_url: default_runbook_url
+          summary: Glance vhost has too many messages
+          dashboard_url: default_dashboard_url

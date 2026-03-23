@@ -1,0 +1,29 @@
+additionalPrometheusRulesMap:
+  prometheusmissingruleevaluations:
+    groups:
+    - name: prometheusmissingruleevaluations
+      rules:
+      - alert: prometheusmissingruleevaluations-warning
+        expr: increase(prometheus_rule_group_iterations_missed_total{job="kube-prometheus-stack-prometheus",namespace="prometheus"}[5m]) > 0
+        for: 15m
+        labels:
+          severity: warning
+          group_name: prometheusmissingruleevaluations
+          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+        annotations:
+          description: Prometheus {{$labels.namespace}}/{{$labels.pod}} has missed {{ printf "%.0f" $value }} rule group evaluations in the last 5m.
+          runbook_url: default_runbook_url
+          summary: Prometheus is missing rule evaluations due to slow rule group evaluation.
+          dashboard_url: default_dashboard_url
+      - alert: prometheusmissingruleevaluations-critical
+        expr: increase(prometheus_rule_group_iterations_missed_total{job="kube-prometheus-stack-prometheus",namespace="prometheus"}[5m]) > 0
+        for: 30m
+        labels:
+          severity: critical
+          group_name: prometheusmissingruleevaluations
+          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+        annotations:
+          description: Prometheus {{$labels.namespace}}/{{$labels.pod}} has missed {{ printf "%.0f" $value }} rule group evaluations in the last 5m.
+          runbook_url: default_runbook_url
+          summary: Prometheus is missing rule evaluations due to slow rule group evaluation.
+          dashboard_url: default_dashboard_url

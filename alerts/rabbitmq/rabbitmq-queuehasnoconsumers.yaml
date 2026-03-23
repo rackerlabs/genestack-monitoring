@@ -1,0 +1,49 @@
+additionalPrometheusRulesMap:
+  rabbitmq-queuehasnoconsumers:
+    groups:
+    - name: rabbitmq-queuehasnoconsumers
+      rules:
+      - alert: rabbitmq-queuehasnoconsumers-warning
+        expr: "(\n  ((rabbitmq_detailed_queue_consumers{vhost=\"/\", queue=~\".*\"} == 0) + rabbitmq_detailed_queue_messages) > 0\n) * on (instance) group_left(rabbitmq_cluster) max by (instance, rabbitmq_cluster) (rabbitmq_identity_info)\n"
+        for: 10m
+        labels:
+          severity: warning
+          group_name: rabbitmq-queuehasnoconsumers
+          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+        annotations:
+          description: 'Over the last 10 minutes, non-empty queue `{{ $labels.queue }}` with {{ $value }} messages
+
+            in virtual host `{{ $labels.vhost }}` didn''t have any consumers in
+
+            RabbitMQ cluster `{{ $labels.rabbitmq_cluster }}` in namespace `{{ $labels.namespace }}`.
+
+            '
+          runbook_url: default_runbook_url
+          summary: 'Messages are sitting idle in the queue, without any processing.
+
+            This alert is highly application specific (and e.g. doesn''t make sense for stream queues).
+
+            '
+          dashboard_url: default_dashboard_url
+      - alert: rabbitmq-queuehasnoconsumers-critical
+        expr: "(\n  ((rabbitmq_detailed_queue_consumers{vhost=\"/\", queue=~\".*\"} == 0) + rabbitmq_detailed_queue_messages) > 0\n) * on (instance) group_left(rabbitmq_cluster) max by (instance, rabbitmq_cluster) (rabbitmq_identity_info)\n"
+        for: 15m
+        labels:
+          severity: critical
+          group_name: rabbitmq-queuehasnoconsumers
+          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+        annotations:
+          description: 'Over the last 10 minutes, non-empty queue `{{ $labels.queue }}` with {{ $value }} messages
+
+            in virtual host `{{ $labels.vhost }}` didn''t have any consumers in
+
+            RabbitMQ cluster `{{ $labels.rabbitmq_cluster }}` in namespace `{{ $labels.namespace }}`.
+
+            '
+          runbook_url: default_runbook_url
+          summary: 'Messages are sitting idle in the queue, without any processing.
+
+            This alert is highly application specific (and e.g. doesn''t make sense for stream queues).
+
+            '
+          dashboard_url: default_dashboard_url

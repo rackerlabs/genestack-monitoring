@@ -1,0 +1,29 @@
+additionalPrometheusRulesMap:
+  prometheusoutofordertimestamps:
+    groups:
+    - name: prometheusoutofordertimestamps
+      rules:
+      - alert: prometheusoutofordertimestamps-warning
+        expr: rate(prometheus_target_scrapes_sample_out_of_order_total{job="kube-prometheus-stack-prometheus",namespace="prometheus"}[5m]) > 0
+        for: 10m
+        labels:
+          severity: warning
+          group_name: prometheusoutofordertimestamps
+          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+        annotations:
+          description: Prometheus {{$labels.namespace}}/{{$labels.pod}} is dropping {{ printf "%.4g" $value  }} samples/s with timestamps arriving out of order.
+          runbook_url: default_runbook_url
+          summary: Prometheus drops samples with out-of-order timestamps.
+          dashboard_url: default_dashboard_url
+      - alert: prometheusoutofordertimestamps-critical
+        expr: rate(prometheus_target_scrapes_sample_out_of_order_total{job="kube-prometheus-stack-prometheus",namespace="prometheus"}[5m]) > 0
+        for: 15m
+        labels:
+          severity: critical
+          group_name: prometheusoutofordertimestamps
+          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+        annotations:
+          description: Prometheus {{$labels.namespace}}/{{$labels.pod}} is dropping {{ printf "%.4g" $value  }} samples/s with timestamps arriving out of order.
+          runbook_url: default_runbook_url
+          summary: Prometheus drops samples with out-of-order timestamps.
+          dashboard_url: default_dashboard_url

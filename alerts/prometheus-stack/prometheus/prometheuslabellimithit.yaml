@@ -1,0 +1,29 @@
+additionalPrometheusRulesMap:
+  prometheuslabellimithit:
+    groups:
+    - name: prometheuslabellimithit
+      rules:
+      - alert: prometheuslabellimithit-warning
+        expr: increase(prometheus_target_scrape_pool_exceeded_label_limits_total{job="kube-prometheus-stack-prometheus",namespace="prometheus"}[5m]) > 0
+        for: 15m
+        labels:
+          severity: warning
+          group_name: prometheuslabellimithit
+          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+        annotations:
+          description: Prometheus {{$labels.namespace}}/{{$labels.pod}} has dropped {{ printf "%.0f" $value }} targets because some samples exceeded the configured label_limit, label_name_length_limit or label_value_length_limit.
+          runbook_url: default_runbook_url
+          summary: Prometheus has dropped targets because some scrape configs have exceeded the labels limit.
+          dashboard_url: default_dashboard_url
+      - alert: prometheuslabellimithit-critical
+        expr: increase(prometheus_target_scrape_pool_exceeded_label_limits_total{job="kube-prometheus-stack-prometheus",namespace="prometheus"}[5m]) > 0
+        for: 30m
+        labels:
+          severity: critical
+          group_name: prometheuslabellimithit
+          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+        annotations:
+          description: Prometheus {{$labels.namespace}}/{{$labels.pod}} has dropped {{ printf "%.0f" $value }} targets because some samples exceeded the configured label_limit, label_name_length_limit or label_value_length_limit.
+          runbook_url: default_runbook_url
+          summary: Prometheus has dropped targets because some scrape configs have exceeded the labels limit.
+          dashboard_url: default_dashboard_url

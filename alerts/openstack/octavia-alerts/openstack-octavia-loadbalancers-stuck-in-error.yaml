@@ -1,0 +1,33 @@
+additionalPrometheusRulesMap:
+  openstack-octavia-loadbalancers-stuck-in-error:
+    groups:
+    - name: openstack-octavia-loadbalancers-stuck-in-error
+      rules:
+      - alert: openstack-octavia-loadbalancers-stuck-in-error-warning
+        expr: sum(count_over_time(openstack_loadbalancer_loadbalancer_status{provisioning_status="ERROR"}[1h])) > 0
+        for: 15m
+        labels:
+          severity: warning
+          group_name: openstack-octavia-loadbalancers-stuck-in-error
+          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+        annotations:
+          description: 'This could indicate problems building load balancers and should be investigated.
+
+            '
+          runbook_url: default_runbook_url
+          summary: Loadbalancers stuck in error state for a prolonged period
+          dashboard_url: default_dashboard_url
+      - alert: openstack-octavia-loadbalancers-stuck-in-error-critical
+        expr: sum(count_over_time(openstack_loadbalancer_loadbalancer_status{provisioning_status="ERROR"}[1h])) > 0
+        for: 30m
+        labels:
+          severity: critical
+          group_name: openstack-octavia-loadbalancers-stuck-in-error
+          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+        annotations:
+          description: 'This could indicate problems building load balancers and should be investigated.
+
+            '
+          runbook_url: default_runbook_url
+          summary: Loadbalancers stuck in error state for a prolonged period
+          dashboard_url: default_dashboard_url

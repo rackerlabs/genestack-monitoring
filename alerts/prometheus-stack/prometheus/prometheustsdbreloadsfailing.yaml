@@ -1,0 +1,29 @@
+additionalPrometheusRulesMap:
+  prometheustsdbreloadsfailing:
+    groups:
+    - name: prometheustsdbreloadsfailing
+      rules:
+      - alert: prometheustsdbreloadsfailing-warning
+        expr: increase(prometheus_tsdb_reloads_failures_total{job="kube-prometheus-stack-prometheus",namespace="prometheus"}[3h]) > 0
+        for: 4h
+        labels:
+          severity: warning
+          group_name: prometheustsdbreloadsfailing
+          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+        annotations:
+          description: Prometheus {{$labels.namespace}}/{{$labels.pod}} has detected {{$value | humanize}} reload failures over the last 3h.
+          runbook_url: default_runbook_url
+          summary: Prometheus has issues reloading blocks from disk.
+          dashboard_url: default_dashboard_url
+      - alert: prometheustsdbreloadsfailing-critical
+        expr: increase(prometheus_tsdb_reloads_failures_total{job="kube-prometheus-stack-prometheus",namespace="prometheus"}[3h]) > 0
+        for: 15m
+        labels:
+          severity: critical
+          group_name: prometheustsdbreloadsfailing
+          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+        annotations:
+          description: Prometheus {{$labels.namespace}}/{{$labels.pod}} has detected {{$value | humanize}} reload failures over the last 3h.
+          runbook_url: default_runbook_url
+          summary: Prometheus has issues reloading blocks from disk.
+          dashboard_url: default_dashboard_url

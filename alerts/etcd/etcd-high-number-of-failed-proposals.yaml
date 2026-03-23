@@ -1,0 +1,31 @@
+additionalPrometheusRulesMap:
+  etcd-high-number-of-failed-proposals:
+    groups:
+      - name: etcd-high-number-of-failed-proposals
+        rules:
+          - alert: etcd-high-number-of-failed-proposals-warning
+            expr: >-
+              rate(etcd_server_proposals_failed_total{job=~".*etcd.*"}[15m]) > 5
+            for: 15m
+            labels:
+              severity: warning
+              group_name: etcd-high-number-of-failed-proposals
+              node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+            annotations:
+              description: 'etcd cluster "{{ $labels.job }}": {{ $value }} proposal failures within the last 30 minutes on etcd instance {{ $labels.instance }}.'
+              summary: etcd cluster has high number of proposal failures.
+              runbook_url: default_runbook_url
+              dashboard_url: default_dashboard_url
+          - alert: etcd-high-number-of-failed-proposals-critical
+            expr: >-
+              rate(etcd_server_proposals_failed_total{job=~".*etcd.*"}[15m]) > 5
+            for: 30m
+            labels:
+              severity: critical
+              group_name: etcd-high-number-of-failed-proposals
+              node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+            annotations:
+              description: 'etcd cluster "{{ $labels.job }}": {{ $value }} proposal failures within the last 30 minutes on etcd instance {{ $labels.instance }}.'
+              summary: etcd cluster has high number of proposal failures.
+              runbook_url: default_runbook_url
+              dashboard_url: default_dashboard_url

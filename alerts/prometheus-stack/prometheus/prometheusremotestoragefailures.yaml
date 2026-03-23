@@ -1,0 +1,29 @@
+additionalPrometheusRulesMap:
+  prometheusremotestoragefailures:
+    groups:
+    - name: prometheusremotestoragefailures
+      rules:
+      - alert: prometheusremotestoragefailures-warning
+        expr: "(\n  (rate(prometheus_remote_storage_failed_samples_total{job=\"kube-prometheus-stack-prometheus\",namespace=\"prometheus\"}[5m]) or rate(prometheus_remote_storage_samples_failed_total{job=\"kube-prometheus-stack-prometheus\",namespace=\"prometheus\"}[5m]))\n/\n  (\n    (rate(prometheus_remote_storage_failed_samples_total{job=\"kube-prometheus-stack-prometheus\",namespace=\"prometheus\"}[5m]) or rate(prometheus_remote_storage_samples_failed_total{job=\"kube-prometheus-stack-prometheus\",namespace=\"prometheus\"}[5m]))\n  +\n    (rate(prometheus_remote_storage_succeeded_samples_total{job=\"kube-prometheus-stack-prometheus\",namespace=\"prometheus\"}[5m]) or rate(prometheus_remote_storage_samples_total{job=\"kube-prometheus-stack-prometheus\",namespace=\"prometheus\"}[5m]))\n  )\n)\n* 100\n> 1"
+        for: 15m
+        labels:
+          severity: warning
+          group_name: prometheusremotestoragefailures
+          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+        annotations:
+          description: Prometheus {{$labels.namespace}}/{{$labels.pod}} failed to send {{ printf "%.1f" $value }}% of the samples to {{ $labels.remote_name}}:{{ $labels.url }}
+          runbook_url: default_runbook_url
+          summary: Prometheus fails to send samples to remote storage.
+          dashboard_url: default_dashboard_url
+      - alert: prometheusremotestoragefailures-critical
+        expr: "(\n  (rate(prometheus_remote_storage_failed_samples_total{job=\"kube-prometheus-stack-prometheus\",namespace=\"prometheus\"}[5m]) or rate(prometheus_remote_storage_samples_failed_total{job=\"kube-prometheus-stack-prometheus\",namespace=\"prometheus\"}[5m]))\n/\n  (\n    (rate(prometheus_remote_storage_failed_samples_total{job=\"kube-prometheus-stack-prometheus\",namespace=\"prometheus\"}[5m]) or rate(prometheus_remote_storage_samples_failed_total{job=\"kube-prometheus-stack-prometheus\",namespace=\"prometheus\"}[5m]))\n  +\n    (rate(prometheus_remote_storage_succeeded_samples_total{job=\"kube-prometheus-stack-prometheus\",namespace=\"prometheus\"}[5m]) or rate(prometheus_remote_storage_samples_total{job=\"kube-prometheus-stack-prometheus\",namespace=\"prometheus\"}[5m]))\n  )\n)\n* 100\n> 1"
+        for: 30m
+        labels:
+          severity: critical
+          group_name: prometheusremotestoragefailures
+          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+        annotations:
+          description: Prometheus {{$labels.namespace}}/{{$labels.pod}} failed to send {{ printf "%.1f" $value }}% of the samples to {{ $labels.remote_name}}:{{ $labels.url }}
+          runbook_url: default_runbook_url
+          summary: Prometheus fails to send samples to remote storage.
+          dashboard_url: default_dashboard_url

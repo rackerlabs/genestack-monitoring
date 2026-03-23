@@ -1,0 +1,47 @@
+additionalPrometheusRulesMap:
+  node-nvme-info-device-state:
+    groups:
+    - name: node-nvme-info-device-state
+      rules:
+      - alert: node-nvme-info-device-state-warning
+        expr: node_nvme_info{job="node-exporter", state!~"live"} > 0
+        for: 1m
+        labels:
+          severity: warning
+          group_name: node-nvme-info-device-state
+          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+          coreAccountID: '{{ $labels.rackspace_com_coreAccountID }}'
+          coreDeviceID: '{{ $labels.rackspace_com_coreDeviceID }}'
+          node: '{{ $labels.instance }}'
+        annotations:
+          description: '{{ $labels.name }}
+
+            Device: {{ $labels.device }}
+
+            State:{{ $labels.state }}
+
+            LABELS: {{ $labels }}'
+          runbook_url: default_runbook_url
+          summary: NVME device has failed. state!=live
+          dashboard_url: default_dashboard_url
+      - alert: node-nvme-info-device-state-critical
+        expr: node_nvme_info{job="node-exporter", state!~"live"} > 0
+        for: 5m
+        labels:
+          severity: critical
+          group_name: node-nvme-info-device-state
+          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+          coreAccountID: '{{ $labels.rackspace_com_coreAccountID }}'
+          coreDeviceID: '{{ $labels.rackspace_com_coreDeviceID }}'
+          node: '{{ $labels.instance }}'
+        annotations:
+          description: '{{ $labels.name }}
+
+            Device: {{ $labels.device }}
+
+            State:{{ $labels.state }}
+
+            LABELS: {{ $labels }}'
+          runbook_url: default_runbook_url
+          summary: NVME device has failed. state!=live
+          dashboard_url: default_dashboard_url

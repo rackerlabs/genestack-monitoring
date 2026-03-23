@@ -1,0 +1,47 @@
+additionalPrometheusRulesMap:
+  node-md-state:
+    groups:
+    - name: node-md-state
+      rules:
+      - alert: node-md-state-warning
+        expr: node_md_state{job="node-exporter", state!~"active.*|check.*"} > 0
+        for: 3m
+        labels:
+          severity: warning
+          group_name: node-md-state
+          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+          coreAccountID: '{{ $labels.rackspace_com_coreAccountID }}'
+          coreDeviceID: '{{ $labels.rackspace_com_coreDeviceID }}'
+          node: '{{ $labels.instance }}'
+        annotations:
+          description: '{{ $labels.name }}
+
+            MD RAID status:{{ $value }}
+
+            MD RAID device:{{ $labels.device }}
+
+            LABELS: {{ $labels }}'
+          runbook_url: default_runbook_url
+          summary: Linux MDM RAID State is {{ $labels.state }}
+          dashboard_url: default_dashboard_url
+      - alert: node-md-state-critical
+        expr: node_md_state{job="node-exporter", state!~"active.*|check.*"} > 0
+        for: 10m
+        labels:
+          severity: critical
+          group_name: node-md-state
+          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+          coreAccountID: '{{ $labels.rackspace_com_coreAccountID }}'
+          coreDeviceID: '{{ $labels.rackspace_com_coreDeviceID }}'
+          node: '{{ $labels.instance }}'
+        annotations:
+          description: '{{ $labels.name }}
+
+            MD RAID status:{{ $value }}
+
+            MD RAID device:{{ $labels.device }}
+
+            LABELS: {{ $labels }}'
+          runbook_url: default_runbook_url
+          summary: Linux MDM RAID State is {{ $labels.state }}
+          dashboard_url: default_dashboard_url

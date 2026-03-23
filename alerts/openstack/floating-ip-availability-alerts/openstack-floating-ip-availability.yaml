@@ -1,0 +1,29 @@
+additionalPrometheusRulesMap:
+  openstack-floating-ip-availability:
+    groups:
+    - name: openstack-floating-ip-availability
+      rules:
+      - alert: openstack-floating-ip-availability-warning
+        expr: sum(last_over_time(openstack_neutron_network_ip_availabilities_total{network_name="PUBLICNET"}[1d])) - sum(last_over_time(openstack_neutron_network_ip_availabilities_used{network_name="PUBLICNET"}[1d])) < 100
+        for: 5m
+        labels:
+          severity: warning
+          group_name: openstack-floating-ip-availability
+          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+        annotations:
+          description: There are less than 100 floating IPs available to assign
+          runbook_url: default_runbook_url
+          summary: Floating IPs available less than one hundred
+          dashboard_url: default_dashboard_url
+      - alert: openstack-floating-ip-availability-critical
+        expr: sum(last_over_time(openstack_neutron_network_ip_availabilities_total{network_name="PUBLICNET"}[1d])) - sum(last_over_time(openstack_neutron_network_ip_availabilities_used{network_name="PUBLICNET"}[1d])) < 20
+        for: 5m
+        labels:
+          severity: critical
+          group_name: openstack-floating-ip-availability
+          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+        annotations:
+          description: There are less than 20 floating IPs available to assign
+          runbook_url: default_runbook_url
+          summary: Floating IPs available less than twenty
+          dashboard_url: default_dashboard_url

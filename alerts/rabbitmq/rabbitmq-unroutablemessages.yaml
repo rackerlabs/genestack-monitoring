@@ -1,0 +1,85 @@
+additionalPrometheusRulesMap:
+  rabbitmq-unroutablemessages:
+    groups:
+    - name: rabbitmq-unroutablemessages
+      rules:
+      - alert: rabbitmq-unroutablemessages-warning
+        expr: 'sum by(namespace, rabbitmq_cluster) (increase(rabbitmq_channel_messages_unroutable_dropped_total[5m]) * on (instance) group_left(rabbitmq_cluster) max by (instance, rabbitmq_cluster) (rabbitmq_identity_info))
+
+          >= 1
+
+          or
+
+          sum by(namespace, rabbitmq_cluster) (increase(rabbitmq_channel_messages_unroutable_returned_total[5m]) * on (instance) group_left(rabbitmq_cluster) max by (instance, rabbitmq_cluster) (rabbitmq_identity_info))
+
+          >= 1
+
+          '
+        for: 0m
+        labels:
+          severity: warning
+          group_name: rabbitmq-unroutablemessages
+          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+        annotations:
+          description: 'There were `{{ $value | printf "%.0f" }}` unroutable messages within the last
+
+            5 minutes in RabbitMQ cluster `{{ $labels.rabbitmq_cluster }}` in namespace
+
+            `{{ $labels.namespace }}`.
+
+            '
+          runbook_url: default_runbook_url
+          summary: 'There are messages published into an exchange which cannot be routed and are either dropped silently, or returned to publishers.
+
+            Is your routing topology set up correctly?
+
+            Check your application code and bindings between exchanges and queues.
+
+            See
+
+            https://www.rabbitmq.com/publishers.html#unroutable,
+
+            https://www.rabbitmq.com/confirms.html#when-publishes-are-confirmed.
+
+            '
+          dashboard_url: default_dashboard_url
+      - alert: rabbitmq-unroutablemessages-critical
+        expr: 'sum by(namespace, rabbitmq_cluster) (increase(rabbitmq_channel_messages_unroutable_dropped_total[5m]) * on (instance) group_left(rabbitmq_cluster) max by (instance, rabbitmq_cluster) (rabbitmq_identity_info))
+
+          >= 1
+
+          or
+
+          sum by(namespace, rabbitmq_cluster) (increase(rabbitmq_channel_messages_unroutable_returned_total[5m]) * on (instance) group_left(rabbitmq_cluster) max by (instance, rabbitmq_cluster) (rabbitmq_identity_info))
+
+          >= 1
+
+          '
+        for: 5m
+        labels:
+          severity: critical
+          group_name: rabbitmq-unroutablemessages
+          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+        annotations:
+          description: 'There were `{{ $value | printf "%.0f" }}` unroutable messages within the last
+
+            5 minutes in RabbitMQ cluster `{{ $labels.rabbitmq_cluster }}` in namespace
+
+            `{{ $labels.namespace }}`.
+
+            '
+          runbook_url: default_runbook_url
+          summary: 'There are messages published into an exchange which cannot be routed and are either dropped silently, or returned to publishers.
+
+            Is your routing topology set up correctly?
+
+            Check your application code and bindings between exchanges and queues.
+
+            See
+
+            https://www.rabbitmq.com/publishers.html#unroutable,
+
+            https://www.rabbitmq.com/confirms.html#when-publishes-are-confirmed.
+
+            '
+          dashboard_url: default_dashboard_url

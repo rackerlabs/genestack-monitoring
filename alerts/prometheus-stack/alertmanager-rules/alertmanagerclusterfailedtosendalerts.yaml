@@ -1,0 +1,29 @@
+additionalPrometheusRulesMap:
+  alertmanagerclusterfailedtosendalerts:
+    groups:
+    - name: alertmanagerclusterfailedtosendalerts
+      rules:
+      - alert: alertmanagerclusterfailedtosendalerts-warning
+        expr: "min by (namespace,service, integration) (\n  rate(alertmanager_notifications_failed_total{job=\"kube-prometheus-stack-alertmanager\",container=\"alertmanager\",namespace=\"prometheus\", integration!~`.*`}[15m])\n/\n  ignoring (reason) group_left rate(alertmanager_notifications_total{job=\"kube-prometheus-stack-alertmanager\",container=\"alertmanager\",namespace=\"prometheus\", integration!~`.*`}[15m])\n)\n> 0.01"
+        for: 5m
+        labels:
+          severity: warning
+          group_name: alertmanagerclusterfailedtosendalerts
+          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+        annotations:
+          description: The minimum notification failure rate to {{ $labels.integration }} sent from any instance in the {{$labels.job}} cluster is {{ $value | humanizePercentage }}.
+          runbook_url: default_runbook_url
+          summary: All Alertmanager instances in a cluster failed to send notifications to a non-critical integration.
+          dashboard_url: default_dashboard_url
+      - alert: alertmanagerclusterfailedtosendalerts-critical
+        expr: "min by (namespace,service, integration) (\n  rate(alertmanager_notifications_failed_total{job=\"kube-prometheus-stack-alertmanager\",container=\"alertmanager\",namespace=\"prometheus\", integration!~`.*`}[15m])\n/\n  ignoring (reason) group_left rate(alertmanager_notifications_total{job=\"kube-prometheus-stack-alertmanager\",container=\"alertmanager\",namespace=\"prometheus\", integration!~`.*`}[15m])\n)\n> 0.01"
+        for: 15m
+        labels:
+          severity: critical
+          group_name: alertmanagerclusterfailedtosendalerts
+          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+        annotations:
+          description: The minimum notification failure rate to {{ $labels.integration }} sent from any instance in the {{$labels.job}} cluster is {{ $value | humanizePercentage }}.
+          runbook_url: default_runbook_url
+          summary: All Alertmanager instances in a cluster failed to send notifications to a non-critical integration.
+          dashboard_url: default_dashboard_url

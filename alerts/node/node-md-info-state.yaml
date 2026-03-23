@@ -1,0 +1,43 @@
+additionalPrometheusRulesMap:
+  node-md-info-state:
+    groups:
+    - name: node-md-info-state
+      rules:
+      - alert: node-md-info-state-warning
+        expr: node_md_info{job="node-exporter", State!~"active.*|clean.*"} > 0
+        for: 1m
+        labels:
+          severity: warning
+          group_name: node-md-info-state
+          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+          coreAccountID: '{{ $labels.rackspace_com_coreAccountID }}'
+          coreDeviceID: '{{ $labels.rackspace_com_coreDeviceID }}'
+          node: '{{ $labels.instance }}'
+        annotations:
+          description: '{{ $labels.name }}
+
+            State:{{ $labels.State }}
+
+            LABELS: {{ $labels }}'
+          runbook_url: default_runbook_url
+          summary: Linux software MD RAID State is NOT active|clean
+          dashboard_url: default_dashboard_url
+      - alert: node-md-info-state-critical
+        expr: node_md_info{job="node-exporter", State!~"active.*|clean.*"} > 0
+        for: 5m
+        labels:
+          severity: critical
+          group_name: node-md-info-state
+          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+          coreAccountID: '{{ $labels.rackspace_com_coreAccountID }}'
+          coreDeviceID: '{{ $labels.rackspace_com_coreDeviceID }}'
+          node: '{{ $labels.instance }}'
+        annotations:
+          description: '{{ $labels.name }}
+
+            State:{{ $labels.State }}
+
+            LABELS: {{ $labels }}'
+          runbook_url: default_runbook_url
+          summary: Linux software MD RAID State is NOT active|clean
+          dashboard_url: default_dashboard_url

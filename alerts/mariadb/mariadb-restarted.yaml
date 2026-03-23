@@ -1,0 +1,23 @@
+additionalPrometheusRulesMap:
+  mariadb-restarted:
+    groups:
+    - name: mariadb-restarted
+      rules:
+      - alert: mariadb-restarted
+        expr: mysql_global_status_uptime < 60
+        for: 0m
+        labels:
+          severity: info
+          group_name: mariadb-restarted
+          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+        annotations:
+          description: 'MySQL has just been restarted, less than one minute ago on {{ $labels.instance }}.
+
+            VALUE = {{ $value }}
+
+            LABELS = {{ $labels }}
+
+            '
+          runbook_url: default_runbook_url
+          summary: MySQL restarted (instance {{ $labels.instance }})
+          dashboard_url: default_dashboard_url

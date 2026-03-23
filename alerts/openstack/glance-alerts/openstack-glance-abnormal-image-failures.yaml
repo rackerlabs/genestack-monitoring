@@ -1,0 +1,45 @@
+additionalPrometheusRulesMap:
+  openstack-glance-abnormal-image-failures:
+    groups:
+    - name: openstack-glance-abnormal-image-failures
+      rules:
+      - alert: openstack-glance-abnormal-image-failures-warning
+        expr: 'count(count(last_over_time(openstack_glance_image_created_at{status!~"active|deactivated"}[60m])) by (id)) /
+
+          count(count(last_over_time(openstack_glance_image_created_at{status="active"}[60m])) by (id)) * 100 >= 20
+
+          '
+        for: 0m
+        labels:
+          severity: warning
+          group_name: openstack-glance-abnormal-image-failures
+          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+        annotations:
+          description: 'This indicates a major problem creating images.
+
+            View logs and take action to resolve the build failures.
+
+            '
+          runbook_url: default_runbook_url
+          summary: Image create failure rate is abnormally high
+          dashboard_url: default_dashboard_url
+      - alert: openstack-glance-abnormal-image-failures-critical
+        expr: 'count(count(last_over_time(openstack_glance_image_created_at{status!~"active|deactivated"}[60m])) by (id)) /
+
+          count(count(last_over_time(openstack_glance_image_created_at{status="active"}[60m])) by (id)) * 100 >= 20
+
+          '
+        for: 5m
+        labels:
+          severity: critical
+          group_name: openstack-glance-abnormal-image-failures
+          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+        annotations:
+          description: 'This indicates a major problem creating images.
+
+            View logs and take action to resolve the build failures.
+
+            '
+          runbook_url: default_runbook_url
+          summary: Image create failure rate is abnormally high
+          dashboard_url: default_dashboard_url

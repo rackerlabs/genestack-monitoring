@@ -1,0 +1,29 @@
+additionalPrometheusRulesMap:
+  mariadb-down:
+    groups:
+    - name: mariadb-down
+      rules:
+      - alert: mariadb-down-warning
+        expr: mysql_up != 1
+        for: 5m
+        labels:
+          severity: warning
+          group_name: mariadb-down
+          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+        annotations:
+          description: MariaDB {{$labels.job}} on {{$labels.instance}} is not up.
+          runbook_url: default_runbook_url
+          summary: MariaDB not up and running, immediate attention is required.
+          dashboard_url: default_dashboard_url
+      - alert: mariadb-down-critical
+        expr: mysql_up != 1
+        for: 15m
+        labels:
+          severity: critical
+          group_name: mariadb-down
+          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+        annotations:
+          description: MariaDB {{$labels.job}} on {{$labels.instance}} is not up.
+          runbook_url: default_runbook_url
+          summary: MariaDB not up and running, immediate attention is required.
+          dashboard_url: default_dashboard_url

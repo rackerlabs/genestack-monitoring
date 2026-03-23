@@ -1,0 +1,31 @@
+additionalPrometheusRulesMap:
+  etcd-high-number-of-failed-grpc-requests:
+    groups:
+      - name: etcd-high-number-of-failed-grpc-requests
+        rules:
+          - alert: etcd-high-number-of-failed-grpc-requests-warning
+            expr: >-
+              100 * sum(rate(grpc_server_handled_total{job=~".*etcd.*", grpc_code=~"Unknown|FailedPrecondition|ResourceExhausted|Internal|Unavailable|DataLoss|DeadlineExceeded"}[5m])) without (grpc_type, grpc_code) / sum(rate(grpc_server_handled_total{job=~".*etcd.*"}[5m])) without (grpc_type, grpc_code) > 5
+            for: 5m
+            labels:
+              severity: warning
+              group_name: etcd-high-number-of-failed-grpc-requests
+              node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+            annotations:
+              description: 'etcd cluster "{{ $labels.job }}": {{ $value }}% of requests for {{ $labels.grpc_method }} failed on etcd instance {{ $labels.instance }}.'
+              summary: etcd cluster has high number of failed grpc requests.
+              runbook_url: default_runbook_url
+              dashboard_url: default_dashboard_url
+          - alert: etcd-high-number-of-failed-grpc-requests-critical
+            expr: >-
+              100 * sum(rate(grpc_server_handled_total{job=~".*etcd.*", grpc_code=~"Unknown|FailedPrecondition|ResourceExhausted|Internal|Unavailable|DataLoss|DeadlineExceeded"}[5m])) without (grpc_type, grpc_code) / sum(rate(grpc_server_handled_total{job=~".*etcd.*"}[5m])) without (grpc_type, grpc_code) > 5
+            for: 15m
+            labels:
+              severity: critical
+              group_name: etcd-high-number-of-failed-grpc-requests
+              node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+            annotations:
+              description: 'etcd cluster "{{ $labels.job }}": {{ $value }}% of requests for {{ $labels.grpc_method }} failed on etcd instance {{ $labels.instance }}.'
+              summary: etcd cluster has high number of failed grpc requests.
+              runbook_url: default_runbook_url
+              dashboard_url: default_dashboard_url

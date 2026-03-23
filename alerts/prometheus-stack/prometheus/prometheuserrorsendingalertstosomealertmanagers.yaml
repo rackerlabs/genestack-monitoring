@@ -1,0 +1,29 @@
+additionalPrometheusRulesMap:
+  prometheuserrorsendingalertstosomealertmanagers:
+    groups:
+    - name: prometheuserrorsendingalertstosomealertmanagers
+      rules:
+      - alert: prometheuserrorsendingalertstosomealertmanagers-warning
+        expr: "(\n  rate(prometheus_notifications_errors_total{job=\"kube-prometheus-stack-prometheus\",namespace=\"prometheus\"}[5m])\n/\n  rate(prometheus_notifications_sent_total{job=\"kube-prometheus-stack-prometheus\",namespace=\"prometheus\"}[5m])\n)\n* 100\n> 1"
+        for: 15m
+        labels:
+          severity: warning
+          group_name: prometheuserrorsendingalertstosomealertmanagers
+          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+        annotations:
+          description: '{{ printf "%.1f" $value }}% of alerts sent by Prometheus {{$labels.namespace}}/{{$labels.pod}} to Alertmanager {{$labels.alertmanager}} were affected by errors.'
+          runbook_url: default_runbook_url
+          summary: More than 1% of alerts sent by Prometheus to a specific Alertmanager were affected by errors.
+          dashboard_url: default_dashboard_url
+      - alert: prometheuserrorsendingalertstosomealertmanagers-critical
+        expr: "(\n  rate(prometheus_notifications_errors_total{job=\"kube-prometheus-stack-prometheus\",namespace=\"prometheus\"}[5m])\n/\n  rate(prometheus_notifications_sent_total{job=\"kube-prometheus-stack-prometheus\",namespace=\"prometheus\"}[5m])\n)\n* 100\n> 1"
+        for: 30m
+        labels:
+          severity: critical
+          group_name: prometheuserrorsendingalertstosomealertmanagers
+          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+        annotations:
+          description: '{{ printf "%.1f" $value }}% of alerts sent by Prometheus {{$labels.namespace}}/{{$labels.pod}} to Alertmanager {{$labels.alertmanager}} were affected by errors.'
+          runbook_url: default_runbook_url
+          summary: More than 1% of alerts sent by Prometheus to a specific Alertmanager were affected by errors.
+          dashboard_url: default_dashboard_url

@@ -125,7 +125,7 @@ Nodes      HostMetrics  add-node-      (Remote Write)
                         batch
 
 Note: kubeletstats receiver disabled to avoid duplicates.
-      Pod/container metrics collected via Prometheus scraping 
+      Pod/container metrics collected via Prometheus scraping
       kubelet/cAdvisor instead (container_* metrics).
 ```
 
@@ -205,14 +205,14 @@ Note: Single consolidated receiver for all OpenStack services.
    - **Host metrics receiver** collects node-level metrics (CPU, memory, disk, network, filesystem)
    - **Processors** add node labels, enrich with K8s metadata, batch, limit memory
    - **Prometheus remote write exporter** sends to **Prometheus**
-   
+
 2. **Via Prometheus Scraping (Direct)**:
    - **Kubernetes components** (API server, scheduler, controller manager, etc.) expose Prometheus metrics
    - **Kubelet/cAdvisor** exposes pod and container metrics (`container_*` prefix)
    - **Node exporter** exposes detailed node metrics (`node_*` prefix)
    - **Kube-state-metrics** exposes Kubernetes object state (`kube_*` prefix)
    - **Prometheus** scrapes these endpoints directly via ServiceMonitors
-   
+
 3. **Grafana** queries Prometheus for metrics dashboards
 
 **Note**: Pod/container metrics come from Prometheus scraping kubelet/cAdvisor (not from OTel kubeletstats receiver, which is disabled to avoid duplicate samples).
@@ -276,7 +276,7 @@ Monitor these collector metrics at `:8888/metrics`:
 
 ### Prometheus
 - **Purpose**: Time-series metrics database
-- **Endpoints**: 
+- **Endpoints**:
   - Remote Write: `prometheus-server/api/v1/write`
   - Scrape: collector `:8889/metrics`
 - **Protocol**: Prometheus Remote Write + HTTP scrape
@@ -328,14 +328,14 @@ Both platforms render Mermaid diagrams automatically in markdown files.
 
 Your OpenTelemetry stack now provides:
 
-✅ **3 Log Receivers**: K8s containers + K8s events + OpenStack (consolidated 17 services)  
-✅ **6 Trace Receivers**: OTLP (gRPC + HTTP) + Jaeger (gRPC + HTTP + Compact) + Zipkin  
-✅ **2 Active Metrics Receivers**: OTLP + Host Metrics (kubeletstats disabled)  
-✅ **11 Processors**: Node labeling, K8s enrichment, batching, resource detection, Loki label mapping  
-✅ **4 Exporters**: Tempo + Prometheus Remote Write + Loki + Debug  
-✅ **5 Pipelines**: Traces, Metrics, Logs (K8s), Logs (K8s Events), Logs (OpenStack)  
-✅ **3 Storage Backends**: Tempo, Prometheus, Loki  
-✅ **1 Unified Frontend**: Grafana with full correlation  
+✅ **3 Log Receivers**: K8s containers + K8s events + OpenStack (consolidated 17 services)
+✅ **6 Trace Receivers**: OTLP (gRPC + HTTP) + Jaeger (gRPC + HTTP + Compact) + Zipkin
+✅ **2 Active Metrics Receivers**: OTLP + Host Metrics (kubeletstats disabled)
+✅ **11 Processors**: Node labeling, K8s enrichment, batching, resource detection, Loki label mapping
+✅ **4 Exporters**: Tempo + Prometheus Remote Write + Loki + Debug
+✅ **5 Pipelines**: Traces, Metrics, Logs (K8s), Logs (K8s Events), Logs (OpenStack)
+✅ **3 Storage Backends**: Tempo, Prometheus, Loki
+✅ **1 Unified Frontend**: Grafana with full correlation
 ✅ **Additional Metrics**: Prometheus directly scrapes K8s components, kubelet/cAdvisor, node-exporter, kube-state-metrics
 
 **Key Architecture Decisions**:

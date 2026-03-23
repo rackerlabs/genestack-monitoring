@@ -1,0 +1,31 @@
+additionalPrometheusRulesMap:
+  etcd-insufficient-members:
+    groups:
+      - name: etcd-insufficient-members
+        rules:
+          - alert: etcd-insufficient-members-warning
+            expr: >-
+              sum(up{job=~".*etcd.*"} == bool 1) without (instance, pod) < ((count(up{job=~".*etcd.*"}) without (instance, pod) + 1) / 2)
+            for: 3m
+            labels:
+              severity: warning
+              group_name: etcd-insufficient-members
+              node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+            annotations:
+              description: 'etcd cluster "{{ $labels.job }}": insufficient members ({{ $value }}).'
+              summary: etcd cluster has insufficient number of members.
+              runbook_url: default_runbook_url
+              dashboard_url: default_dashboard_url
+          - alert: etcd-insufficient-members-critical
+            expr: >-
+              sum(up{job=~".*etcd.*"} == bool 1) without (instance, pod) < ((count(up{job=~".*etcd.*"}) without (instance, pod) + 1) / 2)
+            for: 10m
+            labels:
+              severity: critical
+              group_name: etcd-insufficient-members
+              node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+            annotations:
+              description: 'etcd cluster "{{ $labels.job }}": insufficient members ({{ $value }}).'
+              summary: etcd cluster has insufficient number of members.
+              runbook_url: default_runbook_url
+              dashboard_url: default_dashboard_url

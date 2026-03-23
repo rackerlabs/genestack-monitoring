@@ -1,0 +1,33 @@
+additionalPrometheusRulesMap:
+  ovn-backup-upload-delay:
+    groups:
+    - name: ovn-backup-upload-delay
+      rules:
+      - alert: ovn-backup-upload-delay-warning
+        expr: time() - upload_pairs_success_timestamp{job="ovn-backup"} > 21600
+        for: 1h
+        labels:
+          severity: warning
+          group_name: ovn-backup-upload-delay
+          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+        annotations:
+          description: 'Last OVN backup not uploaded within 1 hour of scheduled run.
+
+            '
+          runbook_url: default_runbook_url
+          summary: Last OVN backup not uploaded within 1 hour of scheduled run
+          dashboard_url: default_dashboard_url
+      - alert: ovn-backup-upload-delay-critical
+        expr: time() - upload_pairs_success_timestamp{job="ovn-backup"} > 43200
+        for: 1h
+        labels:
+          severity: critical
+          group_name: ovn-backup-upload-delay
+          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+        annotations:
+          description: 'Second successive OVN backup not uploaded within 1 hour of scheduled run.
+
+            '
+          runbook_url: default_runbook_url
+          summary: Second successive OVN backup not uploaded within 1 hour of scheduled run
+          dashboard_url: default_dashboard_url

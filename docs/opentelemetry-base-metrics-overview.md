@@ -76,8 +76,8 @@ These metrics are collected by the OTel collector and sent to Prometheus via rem
 
 ### 1. Host Metrics (from hostmetrics receiver)
 
-**Source**: hostmetrics receiver on each node  
-**Collection Interval**: 30s  
+**Source**: hostmetrics receiver on each node
+**Collection Interval**: 30s
 **Labels**: `k8s_node_name`, `host_name`, `service_instance_id`
 
 #### CPU Metrics
@@ -147,8 +147,8 @@ These metrics are collected by the OTel collector and sent to Prometheus via rem
 
 ### 2. Pod and Container Metrics (from Prometheus cAdvisor scraping)
 
-**Source**: Prometheus scraping kubelet's cAdvisor endpoint `https://<node-ip>:10250/metrics/cadvisor`  
-**Scrape Interval**: 30s (default)  
+**Source**: Prometheus scraping kubelet's cAdvisor endpoint `https://<node-ip>:10250/metrics/cadvisor`
+**Scrape Interval**: 30s (default)
 **Labels**: Includes pod, container, namespace, node, image labels
 
 **Note**: In your configuration, kubeletstats receiver is **disabled** to avoid duplicate sample errors. Instead, pod and container metrics come from Prometheus directly scraping kubelet/cAdvisor via ServiceMonitor. These metrics use the `container_*` prefix instead of `k8s_pod_*` or `k8s_container_*`.
@@ -171,8 +171,8 @@ rate(container_cpu_usage_seconds_total{container!=""}[5m])
 sum by (pod, namespace) (rate(container_cpu_usage_seconds_total{container!=""}[5m]))
 
 # CPU throttling percentage
-rate(container_cpu_cfs_throttled_seconds_total[5m]) 
-  / 
+rate(container_cpu_cfs_throttled_seconds_total[5m])
+  /
 rate(container_cpu_cfs_periods_total[5m]) * 100
 ```
 
@@ -251,7 +251,7 @@ container_fs_usage_bytes{container!=""}
 container_fs_limit_bytes{container!=""} * 100
 
 # I/O rate
-rate(container_fs_reads_bytes_total[5m]) + 
+rate(container_fs_reads_bytes_total[5m]) +
 rate(container_fs_writes_bytes_total[5m])
 ```
 
@@ -317,7 +317,7 @@ rate(container_network_transmit_bytes_total[5m])
 
 **Status**: ⚠️ **DISABLED** - kubeletstats receiver is disabled to prevent duplicate sample errors.
 
-The kubeletstats receiver would provide `k8s_pod_*` and `k8s_container_*` metrics, but these overlap significantly with the `container_*` metrics from cAdvisor (above). 
+The kubeletstats receiver would provide `k8s_pod_*` and `k8s_container_*` metrics, but these overlap significantly with the `container_*` metrics from cAdvisor (above).
 
 **Why disabled**: Multiple OTel collectors were sending identical metrics with identical timestamps to Prometheus, causing "duplicate sample" and "out of order sample" errors. The issue persisted even with proper node-level filtering.
 
@@ -329,8 +329,8 @@ The kubeletstats receiver would provide `k8s_pod_*` and `k8s_container_*` metric
 
 ### 3. Application Metrics (via OTLP)
 
-**Source**: Applications sending metrics to OTel collector via OTLP  
-**Endpoints**: 
+**Source**: Applications sending metrics to OTel collector via OTLP
+**Endpoints**:
 - gRPC: `:4317`
 - HTTP: `:4318`
 
@@ -356,8 +356,8 @@ These metrics are scraped **directly by Prometheus** via ServiceMonitors (NOT vi
 
 ### 1. API Server Metrics
 
-**Source**: `kube-apiserver` (scraped by Prometheus)  
-**Endpoint**: `https://kubernetes.default.svc:443/metrics`  
+**Source**: `kube-apiserver` (scraped by Prometheus)
+**Endpoint**: `https://kubernetes.default.svc:443/metrics`
 **Labels**: `instance`, `job`, `endpoint`, `service`, `namespace`
 
 Common metrics:
@@ -376,8 +376,8 @@ Common metrics:
 
 ### 2. Scheduler Metrics
 
-**Source**: `kube-scheduler` (scraped by Prometheus)  
-**Endpoint**: `https://<scheduler-pod-ip>:10259/metrics`  
+**Source**: `kube-scheduler` (scraped by Prometheus)
+**Endpoint**: `https://<scheduler-pod-ip>:10259/metrics`
 **Labels**: `instance`, `job`, `endpoint`, `service`, `namespace`, `pod`
 
 Common metrics:
@@ -392,8 +392,8 @@ Common metrics:
 
 ### 3. Controller Manager Metrics
 
-**Source**: `kube-controller-manager` (scraped by Prometheus)  
-**Endpoint**: `https://<controller-pod-ip>:10257/metrics`  
+**Source**: `kube-controller-manager` (scraped by Prometheus)
+**Endpoint**: `https://<controller-pod-ip>:10257/metrics`
 **Labels**: `instance`, `job`, `endpoint`, `service`, `namespace`, `pod`
 
 Common metrics:
@@ -406,8 +406,8 @@ Common metrics:
 
 ### 4. Kubelet Metrics (cAdvisor)
 
-**Source**: `kubelet` cAdvisor endpoint (scraped by Prometheus)  
-**Endpoint**: `https://<node-ip>:10250/metrics/cadvisor`  
+**Source**: `kubelet` cAdvisor endpoint (scraped by Prometheus)
+**Endpoint**: `https://<node-ip>:10250/metrics/cadvisor`
 **Labels**: `instance`, `job`, `node`, `container`, `pod`, `namespace`, `image`
 
 **Important**: These are **different** from kubeletstats metrics. cAdvisor provides more detailed container metrics.
@@ -426,8 +426,8 @@ Common metrics:
 
 ### 5. Kubelet Metrics (kubelet /metrics)
 
-**Source**: `kubelet` endpoint (scraped by Prometheus)  
-**Endpoint**: `https://<node-ip>:10250/metrics`  
+**Source**: `kubelet` endpoint (scraped by Prometheus)
+**Endpoint**: `https://<node-ip>:10250/metrics`
 **Labels**: `instance`, `job`, `node`
 
 Common metrics:
@@ -441,8 +441,8 @@ Common metrics:
 
 ### 6. CoreDNS Metrics
 
-**Source**: `coredns` (scraped by Prometheus)  
-**Endpoint**: `http://<coredns-pod-ip>:9153/metrics`  
+**Source**: `coredns` (scraped by Prometheus)
+**Endpoint**: `http://<coredns-pod-ip>:9153/metrics`
 **Labels**: `instance`, `job`, `pod`, `namespace`
 
 Common metrics:
@@ -455,8 +455,8 @@ Common metrics:
 
 ### 7. etcd Metrics
 
-**Source**: `etcd` (scraped by Prometheus if configured)  
-**Endpoint**: `http://<etcd-ip>:2381/metrics`  
+**Source**: `etcd` (scraped by Prometheus if configured)
+**Endpoint**: `http://<etcd-ip>:2381/metrics`
 **Labels**: `instance`, `job`
 
 Common metrics:
@@ -471,8 +471,8 @@ Common metrics:
 
 ### 8. Kube Proxy Metrics
 
-**Source**: `kube-proxy` (scraped by Prometheus)  
-**Endpoint**: `http://<proxy-pod-ip>:10249/metrics`  
+**Source**: `kube-proxy` (scraped by Prometheus)
+**Endpoint**: `http://<proxy-pod-ip>:10249/metrics`
 **Labels**: `instance`, `job`, `node`
 
 Common metrics:
@@ -487,8 +487,8 @@ Common metrics:
 
 ### 1. Node Exporter Metrics
 
-**Source**: `node-exporter` DaemonSet (scraped by Prometheus)  
-**Endpoint**: `http://<node-exporter-pod-ip>:9100/metrics`  
+**Source**: `node-exporter` DaemonSet (scraped by Prometheus)
+**Endpoint**: `http://<node-exporter-pod-ip>:9100/metrics`
 **Labels**: `instance`, `job`, `node` (added via relabeling)
 
 **Important**: These provide MORE detailed node metrics than hostmetrics receiver.
@@ -541,8 +541,8 @@ Common metrics:
 
 ### 2. Kube State Metrics
 
-**Source**: `kube-state-metrics` Deployment (scraped by Prometheus)  
-**Endpoint**: `http://<ksm-pod-ip>:8080/metrics`  
+**Source**: `kube-state-metrics` Deployment (scraped by Prometheus)
+**Endpoint**: `http://<ksm-pod-ip>:8080/metrics`
 **Labels**: Varies by resource type
 
 **Important**: Provides Kubernetes object state metrics (NOT performance metrics).

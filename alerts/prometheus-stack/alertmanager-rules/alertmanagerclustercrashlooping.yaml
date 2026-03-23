@@ -1,0 +1,29 @@
+additionalPrometheusRulesMap:
+  alertmanagerclustercrashlooping:
+    groups:
+    - name: alertmanagerclustercrashlooping
+      rules:
+      - alert: alertmanagerclustercrashlooping-warning
+        expr: "(\n  count by (namespace,service,cluster) (\n    changes(process_start_time_seconds{job=\"kube-prometheus-stack-alertmanager\",container=\"alertmanager\",namespace=\"prometheus\"}[10m]) > 4\n  )\n/\n  count by (namespace,service,cluster) (\n    up{job=\"kube-prometheus-stack-alertmanager\",container=\"alertmanager\",namespace=\"prometheus\"}\n  )\n)\n>= 0.5"
+        for: 5m
+        labels:
+          severity: warning
+          group_name: alertmanagerclustercrashlooping
+          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+        annotations:
+          description: '{{ $value | humanizePercentage }} of Alertmanager instances within the {{$labels.job}} cluster have restarted at least 5 times in the last 10m.'
+          runbook_url: default_runbook_url
+          summary: Half or more of the Alertmanager instances within the same cluster are crashlooping.
+          dashboard_url: default_dashboard_url
+      - alert: alertmanagerclustercrashlooping-critical
+        expr: "(\n  count by (namespace,service,cluster) (\n    changes(process_start_time_seconds{job=\"kube-prometheus-stack-alertmanager\",container=\"alertmanager\",namespace=\"prometheus\"}[10m]) > 4\n  )\n/\n  count by (namespace,service,cluster) (\n    up{job=\"kube-prometheus-stack-alertmanager\",container=\"alertmanager\",namespace=\"prometheus\"}\n  )\n)\n>= 0.5"
+        for: 15m
+        labels:
+          severity: critical
+          group_name: alertmanagerclustercrashlooping
+          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+        annotations:
+          description: '{{ $value | humanizePercentage }} of Alertmanager instances within the {{$labels.job}} cluster have restarted at least 5 times in the last 10m.'
+          runbook_url: default_runbook_url
+          summary: Half or more of the Alertmanager instances within the same cluster are crashlooping.
+          dashboard_url: default_dashboard_url

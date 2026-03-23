@@ -1,0 +1,29 @@
+additionalPrometheusRulesMap:
+  openstack-rabbitmq-barbican-queue-too-large:
+    groups:
+    - name: openstack-rabbitmq-barbican-queue-too-large
+      rules:
+      - alert: openstack-rabbitmq-barbican-queue-too-large-warning
+        expr: rabbitmq_queue_messages{vhost="barbican"} > 25
+        for: 10m
+        labels:
+          severity: warning
+          group_name: openstack-rabbitmq-barbican-queue-too-large
+          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+        annotations:
+          description: Barbican vhost in RabbitMQ has too many messages. Check consumers.
+          runbook_url: default_runbook_url
+          summary: Barbican vhost has too many messages
+          dashboard_url: default_dashboard_url
+      - alert: openstack-rabbitmq-barbican-queue-too-large-critical
+        expr: rabbitmq_queue_messages{vhost="barbican"} > 25
+        for: 15m
+        labels:
+          severity: critical
+          group_name: openstack-rabbitmq-barbican-queue-too-large
+          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+        annotations:
+          description: Barbican vhost in RabbitMQ has too many messages. Check consumers.
+          runbook_url: default_runbook_url
+          summary: Barbican vhost has too many messages
+          dashboard_url: default_dashboard_url

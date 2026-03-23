@@ -1,0 +1,31 @@
+additionalPrometheusRulesMap:
+  etcd-grpc-requests-slow:
+    groups:
+      - name: etcd-grpc-requests-slow
+        rules:
+          - alert: etcd-grpc-requests-slow-warning
+            expr: >-
+              histogram_quantile(0.99, sum(rate(grpc_server_handling_seconds_bucket{job=~".*etcd.*", grpc_method!="Defragment", grpc_type="unary"}[5m])) without(grpc_type)) > 0.15
+            for: 10m
+            labels:
+              severity: warning
+              group_name: etcd-grpc-requests-slow
+              node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+            annotations:
+              description: 'etcd cluster "{{ $labels.job }}": 99th percentile of gRPC requests is {{ $value }}s on etcd instance {{ $labels.instance }} for {{ $labels.grpc_method }} method.'
+              summary: etcd grpc requests are slow
+              runbook_url: default_runbook_url
+              dashboard_url: default_dashboard_url
+          - alert: etcd-grpc-requests-slow-critical
+            expr: >-
+              histogram_quantile(0.99, sum(rate(grpc_server_handling_seconds_bucket{job=~".*etcd.*", grpc_method!="Defragment", grpc_type="unary"}[5m])) without(grpc_type)) > 0.15
+            for: 15m
+            labels:
+              severity: critical
+              group_name: etcd-grpc-requests-slow
+              node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+            annotations:
+              description: 'etcd cluster "{{ $labels.job }}": 99th percentile of gRPC requests is {{ $value }}s on etcd instance {{ $labels.instance }} for {{ $labels.grpc_method }} method.'
+              summary: etcd grpc requests are slow
+              runbook_url: default_runbook_url
+              dashboard_url: default_dashboard_url

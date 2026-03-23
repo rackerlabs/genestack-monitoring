@@ -1,0 +1,33 @@
+additionalPrometheusRulesMap:
+  openstack-octavia-loadbalancers-in-error-rate:
+    groups:
+    - name: openstack-octavia-loadbalancers-in-error-rate
+      rules:
+      - alert: openstack-octavia-loadbalancers-in-error-rate-warning
+        expr: count(openstack_loadbalancer_loadbalancer_status{provisioning_status="ERROR"}) / count(openstack_loadbalancer_loadbalancer_status) * 100 > 50
+        for: 0m
+        labels:
+          severity: warning
+          group_name: openstack-octavia-loadbalancers-in-error-rate
+          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+        annotations:
+          description: 'This likely indicates a cluster wide problem either with networking, health manager operations or building amphora vm''s and needs to be investigated.
+
+            '
+          runbook_url: default_runbook_url
+          summary: More than 50% of the loadbalancers are in error state
+          dashboard_url: default_dashboard_url
+      - alert: openstack-octavia-loadbalancers-in-error-rate-critical
+        expr: count(openstack_loadbalancer_loadbalancer_status{provisioning_status="ERROR"}) / count(openstack_loadbalancer_loadbalancer_status) * 100 > 50
+        for: 5m
+        labels:
+          severity: critical
+          group_name: openstack-octavia-loadbalancers-in-error-rate
+          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+        annotations:
+          description: 'This likely indicates a cluster wide problem either with networking, health manager operations or building amphora vm''s and needs to be investigated.
+
+            '
+          runbook_url: default_runbook_url
+          summary: More than 50% of the loadbalancers are in error state
+          dashboard_url: default_dashboard_url

@@ -1,0 +1,31 @@
+additionalPrometheusRulesMap:
+  etcd-high-fsync-durations:
+    groups:
+      - name: etcd-high-fsync-durations
+        rules:
+          - alert: etcd-high-fsync-durations-warning
+            expr: >-
+              histogram_quantile(0.99, rate(etcd_disk_wal_fsync_duration_seconds_bucket{job=~".*etcd.*"}[5m])) > 1
+            for: 10m
+            labels:
+              severity: warning
+              group_name: etcd-high-fsync-durations
+              node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+            annotations:
+              description: 'etcd cluster "{{ $labels.job }}": 99th percentile fsync durations are {{ $value }}s on etcd instance {{ $labels.instance }}.'
+              summary: etcd cluster 99th percentile fsync durations are too high.
+              runbook_url: default_runbook_url
+              dashboard_url: default_dashboard_url
+          - alert: etcd-high-fsync-durations-critical
+            expr: >-
+              histogram_quantile(0.99, rate(etcd_disk_wal_fsync_duration_seconds_bucket{job=~".*etcd.*"}[5m])) > 1
+            for: 15m
+            labels:
+              severity: critical
+              group_name: etcd-high-fsync-durations
+              node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+            annotations:
+              description: 'etcd cluster "{{ $labels.job }}": 99th percentile fsync durations are {{ $value }}s on etcd instance {{ $labels.instance }}.'
+              summary: etcd cluster 99th percentile fsync durations are too high.
+              runbook_url: default_runbook_url
+              dashboard_url: default_dashboard_url

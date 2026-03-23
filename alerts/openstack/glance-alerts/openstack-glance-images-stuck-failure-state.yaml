@@ -1,0 +1,37 @@
+additionalPrometheusRulesMap:
+  openstack-glance-images-stuck-failure-state:
+    groups:
+    - name: openstack-glance-images-stuck-failure-state
+      rules:
+      - alert: openstack-glance-images-stuck-failure-state-warning
+        expr: sum(count_over_time(openstack_glance_image_created_at{status="failure"}[1h])) > 0
+        for: 15m
+        labels:
+          severity: warning
+          group_name: openstack-glance-images-stuck-failure-state
+          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+        annotations:
+          description: 'There are images stuck in a failure state for a prolonged period
+
+            that need to be cleaned up.
+
+            '
+          runbook_url: default_runbook_url
+          summary: Images stuck in failure state for a prolonged period
+          dashboard_url: default_dashboard_url
+      - alert: openstack-glance-images-stuck-failure-state-critical
+        expr: sum(count_over_time(openstack_glance_image_created_at{status="failure"}[1h])) > 0
+        for: 30m
+        labels:
+          severity: critical
+          group_name: openstack-glance-images-stuck-failure-state
+          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+        annotations:
+          description: 'There are images stuck in a failure state for a prolonged period
+
+            that need to be cleaned up.
+
+            '
+          runbook_url: default_runbook_url
+          summary: Images stuck in failure state for a prolonged period
+          dashboard_url: default_dashboard_url

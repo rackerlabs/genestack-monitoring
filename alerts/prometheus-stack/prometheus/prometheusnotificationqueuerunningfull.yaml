@@ -1,0 +1,29 @@
+additionalPrometheusRulesMap:
+  prometheusnotificationqueuerunningfull:
+    groups:
+    - name: prometheusnotificationqueuerunningfull
+      rules:
+      - alert: prometheusnotificationqueuerunningfull-warning
+        expr: "# Without min_over_time, failed scrapes could create false negatives, see\n# https://www.robustperception.io/alerting-on-gauges-in-prometheus-2-0 for details.\n(\n  predict_linear(prometheus_notifications_queue_length{job=\"kube-prometheus-stack-prometheus\",namespace=\"prometheus\"}[5m], 60 * 30)\n>\n  min_over_time(prometheus_notifications_queue_capacity{job=\"kube-prometheus-stack-prometheus\",namespace=\"prometheus\"}[5m])\n)"
+        for: 15m
+        labels:
+          severity: warning
+          group_name: prometheusnotificationqueuerunningfull
+          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+        annotations:
+          description: Alert notification queue of Prometheus {{$labels.namespace}}/{{$labels.pod}} is running full.
+          runbook_url: default_runbook_url
+          summary: Prometheus alert notification queue predicted to run full in less than 30m.
+          dashboard_url: default_dashboard_url
+      - alert: prometheusnotificationqueuerunningfull-critical
+        expr: "# Without min_over_time, failed scrapes could create false negatives, see\n# https://www.robustperception.io/alerting-on-gauges-in-prometheus-2-0 for details.\n(\n  predict_linear(prometheus_notifications_queue_length{job=\"kube-prometheus-stack-prometheus\",namespace=\"prometheus\"}[5m], 60 * 30)\n>\n  min_over_time(prometheus_notifications_queue_capacity{job=\"kube-prometheus-stack-prometheus\",namespace=\"prometheus\"}[5m])\n)"
+        for: 30m
+        labels:
+          severity: critical
+          group_name: prometheusnotificationqueuerunningfull
+          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+        annotations:
+          description: Alert notification queue of Prometheus {{$labels.namespace}}/{{$labels.pod}} is running full.
+          runbook_url: default_runbook_url
+          summary: Prometheus alert notification queue predicted to run full in less than 30m.
+          dashboard_url: default_dashboard_url

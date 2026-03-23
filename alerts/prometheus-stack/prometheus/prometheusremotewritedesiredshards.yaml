@@ -1,0 +1,29 @@
+additionalPrometheusRulesMap:
+  prometheusremotewritedesiredshards:
+    groups:
+    - name: prometheusremotewritedesiredshards
+      rules:
+      - alert: prometheusremotewritedesiredshards-warning
+        expr: "# Without max_over_time, failed scrapes could create false negatives, see\n# https://www.robustperception.io/alerting-on-gauges-in-prometheus-2-0 for details.\n(\n  max_over_time(prometheus_remote_storage_shards_desired{job=\"kube-prometheus-stack-prometheus\",namespace=\"prometheus\"}[5m])\n>\n  max_over_time(prometheus_remote_storage_shards_max{job=\"kube-prometheus-stack-prometheus\",namespace=\"prometheus\"}[5m])\n)"
+        for: 15m
+        labels:
+          severity: warning
+          group_name: prometheusremotewritedesiredshards
+          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+        annotations:
+          description: Prometheus {{$labels.namespace}}/{{$labels.pod}} remote write desired shards calculation wants to run {{ $value }} shards for queue {{ $labels.remote_name}}:{{ $labels.url }}, which is more than the max of {{ printf `prometheus_remote_storage_shards_max{instance="%s",job="kube-prometheus-stack-prometheus",namespace="prometheus"}` $labels.instance | query | first | value }}.
+          runbook_url: default_runbook_url
+          summary: Prometheus remote write desired shards calculation wants to run more than configured max shards.
+          dashboard_url: default_dashboard_url
+      - alert: prometheusremotewritedesiredshards-critical
+        expr: "# Without max_over_time, failed scrapes could create false negatives, see\n# https://www.robustperception.io/alerting-on-gauges-in-prometheus-2-0 for details.\n(\n  max_over_time(prometheus_remote_storage_shards_desired{job=\"kube-prometheus-stack-prometheus\",namespace=\"prometheus\"}[5m])\n>\n  max_over_time(prometheus_remote_storage_shards_max{job=\"kube-prometheus-stack-prometheus\",namespace=\"prometheus\"}[5m])\n)"
+        for: 30m
+        labels:
+          severity: critical
+          group_name: prometheusremotewritedesiredshards
+          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+        annotations:
+          description: Prometheus {{$labels.namespace}}/{{$labels.pod}} remote write desired shards calculation wants to run {{ $value }} shards for queue {{ $labels.remote_name}}:{{ $labels.url }}, which is more than the max of {{ printf `prometheus_remote_storage_shards_max{instance="%s",job="kube-prometheus-stack-prometheus",namespace="prometheus"}` $labels.instance | query | first | value }}.
+          runbook_url: default_runbook_url
+          summary: Prometheus remote write desired shards calculation wants to run more than configured max shards.
+          dashboard_url: default_dashboard_url

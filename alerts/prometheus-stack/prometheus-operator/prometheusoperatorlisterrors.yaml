@@ -1,0 +1,29 @@
+additionalPrometheusRulesMap:
+  prometheusoperatorlisterrors:
+    groups:
+    - name: prometheusoperatorlisterrors
+      rules:
+      - alert: prometheusoperatorlisterrors-warning
+        expr: (sum by (cluster,controller,namespace) (rate(prometheus_operator_list_operations_failed_total{job="kube-prometheus-stack-operator",namespace="prometheus"}[10m])) / sum by (cluster,controller,namespace) (rate(prometheus_operator_list_operations_total{job="kube-prometheus-stack-operator",namespace="prometheus"}[10m]))) > 0.4
+        for: 15m
+        labels:
+          severity: warning
+          group_name: prometheusoperatorlisterrors
+          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+        annotations:
+          description: Errors while performing List operations in controller {{$labels.controller}} in {{$labels.namespace}} namespace.
+          runbook_url: default_runbook_url
+          summary: Errors while performing list operations in controller.
+          dashboard_url: default_dashboard_url
+      - alert: prometheusoperatorlisterrors-critical
+        expr: (sum by (cluster,controller,namespace) (rate(prometheus_operator_list_operations_failed_total{job="kube-prometheus-stack-operator",namespace="prometheus"}[10m])) / sum by (cluster,controller,namespace) (rate(prometheus_operator_list_operations_total{job="kube-prometheus-stack-operator",namespace="prometheus"}[10m]))) > 0.4
+        for: 30m
+        labels:
+          severity: critical
+          group_name: prometheusoperatorlisterrors
+          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+        annotations:
+          description: Errors while performing List operations in controller {{$labels.controller}} in {{$labels.namespace}} namespace.
+          runbook_url: default_runbook_url
+          summary: Errors while performing list operations in controller.
+          dashboard_url: default_dashboard_url

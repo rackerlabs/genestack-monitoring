@@ -1,0 +1,31 @@
+additionalPrometheusRulesMap:
+  etcd-high-number-of-leader-changes:
+    groups:
+      - name: etcd-high-number-of-leader-changes
+        rules:
+          - alert: etcd-high-number-of-leader-changes-warning
+            expr: >-
+              increase((max without (instance, pod) (etcd_server_leader_changes_seen_total{job=~".*etcd.*"}) or 0 * absent(etcd_server_leader_changes_seen_total{job=~".*etcd.*"}))[15m:1m]) >= 4
+            for: 5m
+            labels:
+              severity: warning
+              group_name: etcd-high-number-of-leader-changes
+              node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+            annotations:
+              description: 'etcd cluster "{{ $labels.job }}": {{ $value }} leader changes within the last 15 minutes. Frequent elections may be a sign of insufficient resources, high network latency, or disruptions by other components and should be investigated.'
+              summary: etcd cluster has high number of leader changes.
+              runbook_url: default_runbook_url
+              dashboard_url: default_dashboard_url
+          - alert: etcd-high-number-of-leader-changes-critical
+            expr: >-
+              increase((max without (instance, pod) (etcd_server_leader_changes_seen_total{job=~".*etcd.*"}) or 0 * absent(etcd_server_leader_changes_seen_total{job=~".*etcd.*"}))[15m:1m]) >= 4
+            for: 15m
+            labels:
+              severity: critical
+              group_name: etcd-high-number-of-leader-changes
+              node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+            annotations:
+              description: 'etcd cluster "{{ $labels.job }}": {{ $value }} leader changes within the last 15 minutes. Frequent elections may be a sign of insufficient resources, high network latency, or disruptions by other components and should be investigated.'
+              summary: etcd cluster has high number of leader changes.
+              runbook_url: default_runbook_url
+              dashboard_url: default_dashboard_url

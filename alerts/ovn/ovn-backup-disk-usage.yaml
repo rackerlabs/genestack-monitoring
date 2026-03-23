@@ -1,0 +1,33 @@
+additionalPrometheusRulesMap:
+  ovn-backup-disk-usage:
+    groups:
+    - name: ovn-backup-disk-usage
+      rules:
+      - alert: ovn-backup-disk-usage-warning
+        expr: disk_used_percent_gauge{job="ovn-backup"} > 80
+        for: 0m
+        labels:
+          severity: warning
+          group_name: ovn-backup-disk-usage
+          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+        annotations:
+          description: 'OVN backup volume >= 80% disk usage.
+
+            '
+          runbook_url: default_runbook_url
+          summary: OVN backup volume >= 80% disk usage
+          dashboard_url: default_dashboard_url
+      - alert: ovn-backup-disk-usage-critical
+        expr: disk_used_percent_gauge{job="ovn-backup"} > 90
+        for: 0m
+        labels:
+          severity: critical
+          group_name: ovn-backup-disk-usage
+          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+        annotations:
+          description: 'OVN backup volume >= 90% disk usage.
+
+            '
+          runbook_url: default_runbook_url
+          summary: OVN backup volume >= 90% disk usage
+          dashboard_url: default_dashboard_url

@@ -319,10 +319,10 @@ defaultCRConfig:
     exporters:
       prometheusremotewrite:
         endpoint: "http://kube-prometheus-stack-prometheus.prometheus.svc.cluster.local:9090/api/v1/write"
-      
+
       otlp/tempo:
         endpoint: "tempo.grafana.svc.cluster.local:4317"
-      
+
       otlphttp/loki:
         endpoint: "http://loki-gateway.grafana.svc.cluster.local/otlp"
 
@@ -332,10 +332,10 @@ defaultCRConfig:
     exporters:
       prometheusremotewrite:
         endpoint: "http://kube-prometheus-stack-prometheus.monitoring.svc.cluster.local:9090/api/v1/write"
-      
+
       otlp/tempo:
         endpoint: "tempo.monitoring.svc.cluster.local:4317"
-      
+
       otlphttp/loki:
         endpoint: "http://loki-gateway.monitoring.svc.cluster.local/otlp"
 ```
@@ -549,13 +549,13 @@ prometheus:
         - monitoring
         - kube-system
         - openstack  # If monitoring OpenStack services
-    
+
     # Pod monitor selectors
     podMonitorNamespaceSelector:
       matchNames:
         - monitoring
         - kube-system
-    
+
     # External labels
     externalLabels:
       cluster: openstack-genestack
@@ -679,11 +679,11 @@ datasources:
         type: prometheus
         url: http://kube-prometheus-stack-prometheus.monitoring.svc.cluster.local:9090
         isDefault: true
-      
+
       - name: Loki
         type: loki
         url: http://loki-gateway.monitoring.svc.cluster.local
-      
+
       - name: Tempo
         type: tempo
         url: http://tempo.monitoring.svc.cluster.local:3100
@@ -1328,6 +1328,6 @@ Total expected time: **30-45 minutes**
 
 ---
 
-**Document Version**: 1.0  
-**Last Updated**: 2026-03-17  
+**Document Version**: 1.0
+**Last Updated**: 2026-03-17
 **Tested On**: Kubernetes 1.28+, Helm 3.12+

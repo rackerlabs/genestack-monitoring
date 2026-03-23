@@ -1,0 +1,29 @@
+additionalPrometheusRulesMap:
+  prometheushighqueryload:
+    groups:
+    - name: prometheushighqueryload
+      rules:
+      - alert: prometheushighqueryload-warning
+        expr: avg_over_time(prometheus_engine_queries{job="kube-prometheus-stack-prometheus",namespace="prometheus"}[5m]) / max_over_time(prometheus_engine_queries_concurrent_max{job="kube-prometheus-stack-prometheus",namespace="prometheus"}[5m]) > 0.8
+        for: 15m
+        labels:
+          severity: warning
+          group_name: prometheushighqueryload
+          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+        annotations:
+          description: Prometheus {{$labels.namespace}}/{{$labels.pod}} query API has less than 20% available capacity in its query engine for the last 15 minutes.
+          runbook_url: default_runbook_url
+          summary: Prometheus is reaching its maximum capacity serving concurrent requests.
+          dashboard_url: default_dashboard_url
+      - alert: prometheushighqueryload-critical
+        expr: avg_over_time(prometheus_engine_queries{job="kube-prometheus-stack-prometheus",namespace="prometheus"}[5m]) / max_over_time(prometheus_engine_queries_concurrent_max{job="kube-prometheus-stack-prometheus",namespace="prometheus"}[5m]) > 0.8
+        for: 30m
+        labels:
+          severity: critical
+          group_name: prometheushighqueryload
+          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+        annotations:
+          description: Prometheus {{$labels.namespace}}/{{$labels.pod}} query API has less than 20% available capacity in its query engine for the last 15 minutes.
+          runbook_url: default_runbook_url
+          summary: Prometheus is reaching its maximum capacity serving concurrent requests.
+          dashboard_url: default_dashboard_url

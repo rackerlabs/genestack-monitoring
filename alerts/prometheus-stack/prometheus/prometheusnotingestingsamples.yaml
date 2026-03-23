@@ -1,0 +1,29 @@
+additionalPrometheusRulesMap:
+  prometheusnotingestingsamples:
+    groups:
+    - name: prometheusnotingestingsamples
+      rules:
+      - alert: prometheusnotingestingsamples-warning
+        expr: "(\n  sum without(type) (rate(prometheus_tsdb_head_samples_appended_total{job=\"kube-prometheus-stack-prometheus\",namespace=\"prometheus\"}[5m])) <= 0\nand\n  (\n    sum without(scrape_job) (prometheus_target_metadata_cache_entries{job=\"kube-prometheus-stack-prometheus\",namespace=\"prometheus\"}) > 0\n  or\n    sum without(rule_group) (prometheus_rule_group_rules{job=\"kube-prometheus-stack-prometheus\",namespace=\"prometheus\"}) > 0\n  )\n)"
+        for: 10m
+        labels:
+          severity: warning
+          group_name: prometheusnotingestingsamples
+          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+        annotations:
+          description: Prometheus {{$labels.namespace}}/{{$labels.pod}} is not ingesting samples.
+          runbook_url: default_runbook_url
+          summary: Prometheus is not ingesting samples.
+          dashboard_url: default_dashboard_url
+      - alert: prometheusnotingestingsamples-critical
+        expr: "(\n  sum without(type) (rate(prometheus_tsdb_head_samples_appended_total{job=\"kube-prometheus-stack-prometheus\",namespace=\"prometheus\"}[5m])) <= 0\nand\n  (\n    sum without(scrape_job) (prometheus_target_metadata_cache_entries{job=\"kube-prometheus-stack-prometheus\",namespace=\"prometheus\"}) > 0\n  or\n    sum without(rule_group) (prometheus_rule_group_rules{job=\"kube-prometheus-stack-prometheus\",namespace=\"prometheus\"}) > 0\n  )\n)"
+        for: 15m
+        labels:
+          severity: critical
+          group_name: prometheusnotingestingsamples
+          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+        annotations:
+          description: Prometheus {{$labels.namespace}}/{{$labels.pod}} is not ingesting samples.
+          runbook_url: default_runbook_url
+          summary: Prometheus is not ingesting samples.
+          dashboard_url: default_dashboard_url

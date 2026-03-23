@@ -26,7 +26,150 @@ inhibit_rules:
   - source_match:
       group_name: kube-node-not-ready
     target_match_re:
-      group_name: ^(kubelet-down|kubelet-too-many-pods|kubelet-pleg-duration-high|kubelet-pod-startup-latency-high|kubelet-client-certificate-expiration|kubelet-client-certificate-renewal-errors|kubelet-server-certificate-expiration|kubelet-server-certificate-renewal-errors|kube-proxy-down|cpu-throttling-high|kube-node-pressure|kube-node-unreachable|kube-node-readiness-flapping|kube-node-eviction|kube-pod-not-ready|kube-pod-crash-looping|kube-container-waiting)$
+      group_name: ^(kubelet-down|kubelet-too-many-pods|kubelet-pleg-duration-high|kubelet-pod-startup-latency-high|kubelet-client-certificate-expiration|kubelet-client-certificate-renewal-errors|kubelet-server-certificate-expiration|kubelet-server-certificate-renewal-errors|kube-proxy-down|cpu-throttling-high|kube-node-pressure|kube-node-unreachable|kube-node-readiness-flapping|kube-node-eviction|kube-pod-not-ready|kube-pod-crash-looping|kube-container-waiting|kube-pod-container-restarts)$
     equal:
       - node
       - instance
+
+  # When the critical pod restart alert fires, suppress the warning for the same pod container.
+  - source_match:
+      group_name: kube-pod-container-restarts
+      severity: critical
+    target_match:
+      group_name: kube-pod-container-restarts
+      severity: warning
+    equal:
+      - cluster
+      - namespace
+      - pod
+      - container
+
+  # When an etcd critical alert fires, suppress the warning for the same etcd target.
+  - source_match:
+      severity: critical
+    source_match_re:
+      group_name: ^etcd-.+$
+    target_match:
+      severity: warning
+    target_match_re:
+      group_name: ^etcd-.+$
+    equal:
+      - cluster
+      - job
+      - instance
+
+  # When a blackbox critical alert fires, suppress the warning for the same target.
+  - source_match:
+      severity: critical
+    source_match_re:
+      group_name: ^blackbox-.+$
+    target_match:
+      severity: warning
+    target_match_re:
+      group_name: ^blackbox-.+$
+    equal:
+      - cluster
+      - job
+      - instance
+      - target
+
+  # When a MariaDB critical alert fires, suppress the warning for the same target.
+  - source_match:
+      severity: critical
+    source_match_re:
+      group_name: ^mariadb-.+$
+    target_match:
+      severity: warning
+    target_match_re:
+      group_name: ^mariadb-.+$
+    equal:
+      - cluster
+      - job
+      - instance
+
+  # When a promoted node critical alert fires, suppress the warning for the same host.
+  - source_match:
+      severity: critical
+    source_match_re:
+      group_name: ^node-(md|dm|nvme).+$
+    target_match:
+      severity: warning
+    target_match_re:
+      group_name: ^node-(md|dm|nvme).+$
+    equal:
+      - instance
+      - node_hostname
+
+  # When an OpenStack critical alert fires, suppress the warning for the same target.
+  - source_match:
+      severity: critical
+    source_match_re:
+      group_name: ^openstack-.+$
+    target_match:
+      severity: warning
+    target_match_re:
+      group_name: ^openstack-.+$
+    equal:
+      - cluster
+      - job
+      - instance
+      - namespace
+      - service
+      - vhost
+      - id
+      - name
+
+  # When an OVN critical alert fires, suppress the warning for the same backup target.
+  - source_match:
+      severity: critical
+    source_match_re:
+      group_name: ^ovn-.+$
+    target_match:
+      severity: warning
+    target_match_re:
+      group_name: ^ovn-.+$
+    equal:
+      - cluster
+      - job
+      - instance
+
+  # When a Prometheus-stack critical alert fires, suppress the warning for the same target.
+  - source_match:
+      severity: critical
+    source_match_re:
+      group_name: ^(alertmanager|configreloaders|general|prometheus|prometheusoperator).+$
+    target_match:
+      severity: warning
+    target_match_re:
+      group_name: ^(alertmanager|configreloaders|general|prometheus|prometheusoperator).+$
+    equal:
+      - cluster
+      - job
+      - instance
+      - namespace
+      - service
+      - controller
+      - integration
+      - alertmanager
+      - url
+
+  # When a RabbitMQ critical alert fires, suppress the warning for the same target.
+  - source_match:
+      severity: critical
+    source_match_re:
+      group_name: ^rabbitmq-.+$
+    target_match:
+      severity: warning
+    target_match_re:
+      group_name: ^rabbitmq-.+$
+    equal:
+      - cluster
+      - namespace
+      - rabbitmq_cluster
+      - rabbitmq_node
+      - pod
+      - queue
+      - vhost
+      - statefulset
+      - persistentvolumeclaim
+      - container

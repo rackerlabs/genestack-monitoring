@@ -102,8 +102,8 @@ rate(mysql_commands[5m])
 rate(mysql_query_slow_count[5m])
 
 # Read vs write ratio
-sum(rate(mysql_commands{command="select"}[5m])) 
-/ 
+sum(rate(mysql_commands{command="select"}[5m]))
+/
 sum(rate(mysql_commands{command=~"insert|update|delete"}[5m]))
 ```
 
@@ -142,8 +142,8 @@ sum(rate(mysql_commands{command=~"insert|update|delete"}[5m]))
 rate(mysql_locks{state="waited"}[5m])
 
 # Row lock contention
-rate(mysql_row_locks{state="waited"}[5m]) 
-/ 
+rate(mysql_row_locks{state="waited"}[5m])
+/
 rate(mysql_row_locks[5m])
 ```
 
@@ -162,8 +162,8 @@ rate(mysql_row_locks[5m])
 mysql_threads{state="running"}
 
 # Thread cache efficiency
-rate(mysql_threads{state="cached"}[5m]) 
-/ 
+rate(mysql_threads{state="cached"}[5m])
+/
 rate(mysql_threads{state="created"}[5m])
 ```
 
@@ -175,22 +175,22 @@ mysql:
     # ✅ Enabled (Connection Health)
     mysql.connection.count: true
     mysql.connection.errors: true
-    
+
     # ✅ Enabled (Query Performance)
     mysql.commands: true
     mysql.query.slow.count: true
-    
+
     # ✅ Enabled (Buffer Pool)
     mysql.buffer_pool.usage: true
     mysql.buffer_pool.pages: true
-    
+
     # ✅ Enabled (Locking)
     mysql.locks: true
     mysql.row_locks: true
-    
+
     # ✅ Enabled (Threads)
     mysql.threads: true
-    
+
     # ⚠️ Optional (Additional)
     mysql.handlers: false              # Handler operations
     mysql.operations: false            # CRUD operations count
@@ -246,8 +246,8 @@ rate(postgresql_commits[5m])
 rate(postgresql_rollbacks[5m])
 
 # Rollback ratio (should be low)
-rate(postgresql_rollbacks[5m]) 
-/ 
+rate(postgresql_rollbacks[5m])
+/
 (rate(postgresql_commits[5m]) + rate(postgresql_rollbacks[5m]))
 ```
 
@@ -275,8 +275,8 @@ topk(5, postgresql_db_size)
 deriv(postgresql_db_size[1h]) * 3600 * 24  # Bytes per day
 
 # Index to table size ratio
-sum(postgresql_index_size) by (database, table) 
-/ 
+sum(postgresql_index_size) by (database, table)
+/
 sum(postgresql_table_size) by (database, table)
 ```
 
@@ -319,8 +319,8 @@ sum(postgresql_database_locks) by (database)
 rate(postgresql_blocks_read{source="disk"}[5m])
 
 # Cache hit ratio
-sum(rate(postgresql_blocks_read{source="cache"}[5m])) 
-/ 
+sum(rate(postgresql_blocks_read{source="cache"}[5m]))
+/
 sum(rate(postgresql_blocks_read[5m]))
 
 # Blocks read per second by database
@@ -344,8 +344,8 @@ rate(postgresql_blocks_read[5m])
 rate(postgresql_bgwriter_checkpoint_count[5m])
 
 # Average checkpoint duration
-rate(postgresql_bgwriter_duration[5m]) 
-/ 
+rate(postgresql_bgwriter_duration[5m])
+/
 rate(postgresql_bgwriter_checkpoint_count[5m])
 
 # Requested checkpoints (should be low)
@@ -360,24 +360,24 @@ postgresql:
     # ✅ Enabled (Connection Health)
     postgresql.backends: true
     postgresql.connection.max: true
-    
+
     # ✅ Enabled (Transactions)
     postgresql.commits: true
     postgresql.rollbacks: true
-    
+
     # ✅ Enabled (Database Size)
     postgresql.db_size: true
-    
+
     # ✅ Enabled (Locking)
     postgresql.deadlocks: true
     postgresql.database.locks: true
-    
+
     # ✅ Enabled (I/O)
     postgresql.blocks_read: true
-    
+
     # ✅ Enabled (Background Writer)
     postgresql.bgwriter.checkpoint.count: true
-    
+
     # ⚠️ Optional (Additional)
     postgresql.bgwriter.buffers.allocated: false
     postgresql.bgwriter.buffers.writes: false
@@ -537,8 +537,8 @@ sum(rabbitmq_queue_count) by (vhost)
 sum(rabbitmq_consumer_count)
 
 # Queues without consumers (potential issue)
-rabbitmq_message_current{state="ready"} > 0 
-and 
+rabbitmq_message_current{state="ready"} > 0
+and
 rabbitmq_consumer_count == 0
 
 # Consumers per queue
@@ -557,7 +557,7 @@ rabbitmq:
     rabbitmq.node.mem_used: true
     rabbitmq.node.mem_limit: true
     rabbitmq.node.mem_alarm: true
-    
+
     # ✅ Enabled (Resources)
     rabbitmq.node.fd_used: true
     rabbitmq.node.fd_total: true
@@ -565,18 +565,18 @@ rabbitmq:
     rabbitmq.node.sockets_total: true
     rabbitmq.node.proc_used: true
     rabbitmq.node.proc_total: true
-    
+
     # ✅ Enabled (Messages)
     rabbitmq.message.current: true
     rabbitmq.message.published: true
     rabbitmq.message.delivered: true
     rabbitmq.message.acknowledged: true
     rabbitmq.message.dropped: true
-    
+
     # ✅ Enabled (Queues & Consumers)
     rabbitmq.queue.count: true
     rabbitmq.consumer.count: true
-    
+
     # ⚠️ Optional (Rate Details)
     rabbitmq.node.disk_free_details.rate: false
     rabbitmq.node.fd_used_details.rate: false
@@ -718,18 +718,18 @@ memcached:
     # ✅ Enabled (Memory)
     memcached.bytes: true
     memcached.current_items: true
-    
+
     # ✅ Enabled (Performance)
     memcached.operation_hit_ratio: true
     memcached.operations: true
     memcached.commands: true
-    
+
     # ✅ Enabled (Evictions)
     memcached.evictions: true
-    
+
     # ✅ Enabled (Connections)
     memcached.connections.current: true
-    
+
     # ⚠️ Optional (Additional)
     memcached.connections.total: false
     memcached.network: false
@@ -823,7 +823,7 @@ snmp:
         interface:
           value: prefix
           oid: "1.3.6.1.2.1.2.2.1.2"   # ifDescr
-    
+
     if.out.octets:
       unit: "bytes"
       gauge:
@@ -834,7 +834,7 @@ snmp:
         interface:
           value: prefix
           oid: "1.3.6.1.2.1.2.2.1.2"   # ifDescr
-    
+
     # Interface errors
     if.in.errors:
       unit: "errors"
@@ -941,7 +941,7 @@ groups:
           severity: warning
         annotations:
           summary: "MySQL connection usage high ({{ $value }}%)"
-      
+
       # Slow query rate high
       - alert: MySQLSlowQueriesHigh
         expr: |
@@ -951,7 +951,7 @@ groups:
           severity: warning
         annotations:
           summary: "MySQL slow queries elevated ({{ $value }} queries/sec)"
-      
+
       # Lock waits increasing
       - alert: MySQLLockWaits
         expr: |
@@ -978,7 +978,7 @@ groups:
           severity: warning
         annotations:
           summary: "PostgreSQL connection usage high ({{ $value }}%)"
-      
+
       # Deadlocks detected
       - alert: PostgreSQLDeadlocks
         expr: |
@@ -988,7 +988,7 @@ groups:
           severity: warning
         annotations:
           summary: "PostgreSQL deadlocks detected ({{ $value }} deadlocks/sec)"
-      
+
       # Database growing rapidly
       - alert: PostgreSQLDatabaseGrowth
         expr: |
@@ -1015,7 +1015,7 @@ groups:
           severity: critical
         annotations:
           summary: "RabbitMQ memory alarm active on {{ $labels.node }}"
-      
+
       # Messages piling up
       - alert: RabbitMQMessageBacklog
         expr: |
@@ -1025,19 +1025,19 @@ groups:
           severity: warning
         annotations:
           summary: "RabbitMQ queue backlog ({{ $value }} messages ready)"
-      
+
       # No consumers on queue
       - alert: RabbitMQNoConsumers
         expr: |
-          rabbitmq_message_current{state="ready"} > 0 
-          and 
+          rabbitmq_message_current{state="ready"} > 0
+          and
           rabbitmq_consumer_count == 0
         for: 5m
         labels:
           severity: critical
         annotations:
           summary: "RabbitMQ queue {{ $labels.queue }} has messages but no consumers"
-      
+
       # Message drop rate
       - alert: RabbitMQMessagesDropped
         expr: |
@@ -1064,7 +1064,7 @@ groups:
           severity: warning
         annotations:
           summary: "Memcached hit ratio low ({{ $value }})"
-      
+
       # High eviction rate
       - alert: MemcachedHighEvictions
         expr: |
@@ -1074,7 +1074,7 @@ groups:
           severity: warning
         annotations:
           summary: "Memcached eviction rate high ({{ $value }} evictions/sec)"
-      
+
       # Memory usage high
       - alert: MemcachedMemoryHigh
         expr: |
@@ -1101,7 +1101,7 @@ groups:
           severity: critical
         annotations:
           summary: "HTTP endpoint {{ $labels.http_url }} is down"
-      
+
       # Slow response time
       - alert: HTTPEndpointSlow
         expr: |
@@ -1111,7 +1111,7 @@ groups:
           severity: warning
         annotations:
           summary: "HTTP endpoint {{ $labels.http_url }} responding slowly ({{ $value }}ms)"
-      
+
       # Non-200 status codes
       - alert: HTTPEndpointError
         expr: |

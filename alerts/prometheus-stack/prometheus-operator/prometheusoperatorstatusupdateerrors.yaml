@@ -1,0 +1,29 @@
+additionalPrometheusRulesMap:
+  prometheusoperatorstatusupdateerrors:
+    groups:
+    - name: prometheusoperatorstatusupdateerrors
+      rules:
+      - alert: prometheusoperatorstatusupdateerrors-warning
+        expr: (sum by (cluster,controller,namespace) (rate(prometheus_operator_status_update_errors_total{job="kube-prometheus-stack-operator",namespace="prometheus"}[5m]))) / (sum by (cluster,controller,namespace) (rate(prometheus_operator_status_update_operations_total{job="kube-prometheus-stack-operator",namespace="prometheus"}[5m]))) > 0.1
+        for: 10m
+        labels:
+          severity: warning
+          group_name: prometheusoperatorstatusupdateerrors
+          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+        annotations:
+          description: '{{ $value | humanizePercentage }} of status update operations failed for {{ $labels.controller }} controller in {{ $labels.namespace }} namespace.'
+          runbook_url: default_runbook_url
+          summary: Errors while updating objects status.
+          dashboard_url: default_dashboard_url
+      - alert: prometheusoperatorstatusupdateerrors-critical
+        expr: (sum by (cluster,controller,namespace) (rate(prometheus_operator_status_update_errors_total{job="kube-prometheus-stack-operator",namespace="prometheus"}[5m]))) / (sum by (cluster,controller,namespace) (rate(prometheus_operator_status_update_operations_total{job="kube-prometheus-stack-operator",namespace="prometheus"}[5m]))) > 0.1
+        for: 15m
+        labels:
+          severity: critical
+          group_name: prometheusoperatorstatusupdateerrors
+          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+        annotations:
+          description: '{{ $value | humanizePercentage }} of status update operations failed for {{ $labels.controller }} controller in {{ $labels.namespace }} namespace.'
+          runbook_url: default_runbook_url
+          summary: Errors while updating objects status.
+          dashboard_url: default_dashboard_url
