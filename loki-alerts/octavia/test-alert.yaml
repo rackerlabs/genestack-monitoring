@@ -1,0 +1,17 @@
+groups:
+  - name: octavia-test
+    interval: 1m
+    rules:
+      - alert: octavia-test
+        expr: vector(1)
+        for: 1m
+        labels:
+          severity: warning
+          team: identity
+          source: loki
+          group_name: octavia-test
+        annotations:
+          summary: "Octavia TEST ALERT"
+          description: "This is just a info TEST ALERT."
+          dashboard_url: default_dashboard_url
+          runbook_url: default_runbook_url
