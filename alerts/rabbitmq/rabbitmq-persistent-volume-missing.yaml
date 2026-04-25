@@ -4,13 +4,7 @@ additionalPrometheusRulesMap:
     - name: rabbitmq-persistent-volume-missing
       rules:
       - alert: rabbitmq-persistent-volume-missing-warning
-        expr: 'kube_persistentvolumeclaim_status_phase{phase="Bound"} * on (namespace, persistentvolumeclaim) group_left(label_app_kubernetes_io_name) kube_persistentvolumeclaim_labels{label_app_kubernetes_io_component="rabbitmq"}
-
-          ==
-
-          0
-
-          '
+        expr: 'kube_persistentvolumeclaim_status_phase{phase="Bound"} * on (namespace, persistentvolumeclaim) group_left(label_app_kubernetes_io_name) kube_persistentvolumeclaim_labels{label_app_kubernetes_io_component="rabbitmq"} == 0'
         for: 10m
         labels:
           severity: warning
@@ -34,13 +28,7 @@ additionalPrometheusRulesMap:
             '
           dashboard_url: default_dashboard_url
       - alert: rabbitmq-persistent-volume-missing-critical
-        expr: 'kube_persistentvolumeclaim_status_phase{phase="Bound"} * on (namespace, persistentvolumeclaim) group_left(label_app_kubernetes_io_name) kube_persistentvolumeclaim_labels{label_app_kubernetes_io_component="rabbitmq"}
-
-          ==
-
-          0
-
-          '
+        expr: 'kube_persistentvolumeclaim_status_phase{phase="Bound"} * on (namespace, persistentvolumeclaim) group_left(label_app_kubernetes_io_name) kube_persistentvolumeclaim_labels{label_app_kubernetes_io_component="rabbitmq"} == 0'
         for: 10m
         labels:
           severity: critical

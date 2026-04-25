@@ -1,9 +1,7 @@
-groups:
-- name: node-exporter.rules
-  rules:
-  - expr: "(\n  node_load1{job=\"node-exporter\"}\n/\n  instance:node_num_cpu:sum{job=\"\
-      node-exporter\"}\n)"
-    labels:
-      rackspace_com_coreAccountID: ''
-      rackspace_com_overseerID: ''
-    record: instance:node_load1_per_cpu:ratio
+additionalPrometheusRulesMap:
+  instancenode-load1-per-cpuratio:
+    groups:
+      - name: node-exporter-rules
+        rules:
+          - expr: ( node_load1{job="node-exporter"} / instance:node_num_cpu:sum{job="node-exporter"} )
+            record: instance:node_load1_per_cpu:ratio

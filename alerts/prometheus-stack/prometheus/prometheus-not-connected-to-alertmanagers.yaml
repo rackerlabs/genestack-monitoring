@@ -4,11 +4,7 @@ additionalPrometheusRulesMap:
     - name: prometheus-not-connected-to-alertmanagers
       rules:
       - alert: prometheus-not-connected-to-alertmanagers-warning
-        expr: '# Without max_over_time, failed scrapes could create false negatives, see
-
-          # https://www.robustperception.io/alerting-on-gauges-in-prometheus-2-0 for details.
-
-          max_over_time(prometheus_notifications_alertmanagers_discovered{job="kube-prometheus-stack-prometheus",namespace="prometheus"}[5m]) < 1'
+        expr: max_over_time(prometheus_notifications_alertmanagers_discovered[5m]) < 1
         for: 10m
         labels:
           severity: warning
@@ -22,11 +18,7 @@ additionalPrometheusRulesMap:
           summary: Prometheus is not connected to any Alertmanagers.
           dashboard_url: default_dashboard_url
       - alert: prometheus-not-connected-to-alertmanagers-critical
-        expr: '# Without max_over_time, failed scrapes could create false negatives, see
-
-          # https://www.robustperception.io/alerting-on-gauges-in-prometheus-2-0 for details.
-
-          max_over_time(prometheus_notifications_alertmanagers_discovered{job="kube-prometheus-stack-prometheus",namespace="prometheus"}[5m]) < 1'
+        expr: max_over_time(prometheus_notifications_alertmanagers_discovered[5m]) < 1
         for: 10m
         labels:
           severity: critical

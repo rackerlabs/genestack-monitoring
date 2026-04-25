@@ -4,7 +4,7 @@ additionalPrometheusRulesMap:
       - name: node-memory-high-utilization
         rules:
           - alert: node-memory-high-utilization-warning
-            expr: system_memory_utilization{job="otelcol-hostmetrics"} * 100 > 70
+            expr: system_memory_utilization * 100 > 70
             for: 5m
             labels:
               severity: warning
@@ -18,7 +18,7 @@ additionalPrometheusRulesMap:
               summary: Host memory utilization is high.
               dashboard_url: https://{{ $externalLabels.alert_dashboard }}/node-memory ?var-cluster={{ $externalLabels.cluster }} &var-node={{ $labels.node_hostname }}
           - alert: node-memory-high-utilization-critical
-            expr: system_memory_utilization{job="otelcol-hostmetrics"} * 100 > 90
+            expr: system_memory_utilization * 100 > 90
             for: 10m
             labels:
               severity: critical

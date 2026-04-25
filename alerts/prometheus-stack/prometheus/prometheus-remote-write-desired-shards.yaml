@@ -4,7 +4,7 @@ additionalPrometheusRulesMap:
     - name: prometheus-remote-write-desired-shards
       rules:
       - alert: prometheus-remote-write-desired-shards-warning
-        expr: "# Without max_over_time, failed scrapes could create false negatives, see\n# https://www.robustperception.io/alerting-on-gauges-in-prometheus-2-0 for details.\n(\n  max_over_time(prometheus_remote_storage_shards_desired{job=\"kube-prometheus-stack-prometheus\",namespace=\"prometheus\"}[5m])\n>\n  max_over_time(prometheus_remote_storage_shards_max{job=\"kube-prometheus-stack-prometheus\",namespace=\"prometheus\"}[5m])\n)"
+        expr: (max_over_time(prometheus_remote_storage_shards_desired[5m]) >  max_over_time(prometheus_remote_storage_shards_max[5m]))
         for: 15m
         labels:
           severity: warning
@@ -21,7 +21,7 @@ additionalPrometheusRulesMap:
           summary: Prometheus remote write desired shards calculation wants to run more than configured max shards.
           dashboard_url: default_dashboard_url
       - alert: prometheus-remote-write-desired-shards-critical
-        expr: "# Without max_over_time, failed scrapes could create false negatives, see\n# https://www.robustperception.io/alerting-on-gauges-in-prometheus-2-0 for details.\n(\n  max_over_time(prometheus_remote_storage_shards_desired{job=\"kube-prometheus-stack-prometheus\",namespace=\"prometheus\"}[5m])\n>\n  max_over_time(prometheus_remote_storage_shards_max{job=\"kube-prometheus-stack-prometheus\",namespace=\"prometheus\"}[5m])\n)"
+        expr: (max_over_time(prometheus_remote_storage_shards_desired[5m]) >  max_over_time(prometheus_remote_storage_shards_max[5m]))
         for: 30m
         labels:
           severity: critical

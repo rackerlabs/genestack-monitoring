@@ -4,7 +4,7 @@ additionalPrometheusRulesMap:
     - name: prometheus-kubernetes-list-watch-failures
       rules:
       - alert: prometheus-kubernetes-list-watch-failures-warning
-        expr: increase(prometheus_sd_kubernetes_failures_total{job="kube-prometheus-stack-prometheus",namespace="prometheus"}[5m]) > 0
+        expr: increase(prometheus_sd_kubernetes_failures_total[5m]) > 0
         for: 15m
         labels:
           severity: warning
@@ -19,7 +19,7 @@ additionalPrometheusRulesMap:
           summary: Requests in Kubernetes SD are failing.
           dashboard_url: default_dashboard_url
       - alert: prometheus-kubernetes-list-watch-failures-critical
-        expr: increase(prometheus_sd_kubernetes_failures_total{job="kube-prometheus-stack-prometheus",namespace="prometheus"}[5m]) > 0
+        expr: increase(prometheus_sd_kubernetes_failures_total[5m]) > 0
         for: 30m
         labels:
           severity: critical

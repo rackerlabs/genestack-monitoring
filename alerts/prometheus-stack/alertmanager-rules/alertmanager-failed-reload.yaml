@@ -1,14 +1,10 @@
 additionalPrometheusRulesMap:
-  alertmanager-failed-reload:
+  am-failed-reload:
     groups:
-    - name: alertmanager-failed-reload
+    - name: am-failed-reload
       rules:
       - alert: alertmanager-failed-reload-warning
-        expr: '# Without max_over_time, failed scrapes could create false negatives, see
-
-          # https://www.robustperception.io/alerting-on-gauges-in-prometheus-2-0 for details.
-
-          max_over_time(alertmanager_config_last_reload_successful{job="kube-prometheus-stack-alertmanager",container="alertmanager",namespace="prometheus"}[5m]) == 0'
+        expr: max_over_time(alertmanager_config_last_reload_successful{job="kube-prometheus-stack-alertmanager",container="alertmanager"}[5m]) == 0
         for: 10m
         labels:
           severity: warning
@@ -22,11 +18,7 @@ additionalPrometheusRulesMap:
           summary: Reloading an Alertmanager configuration has failed.
           dashboard_url: default_dashboard_url
       - alert: alertmanager-failed-reload-critical
-        expr: '# Without max_over_time, failed scrapes could create false negatives, see
-
-          # https://www.robustperception.io/alerting-on-gauges-in-prometheus-2-0 for details.
-
-          max_over_time(alertmanager_config_last_reload_successful{job="kube-prometheus-stack-alertmanager",container="alertmanager",namespace="prometheus"}[5m]) == 0'
+        expr: max_over_time(alertmanager_config_last_reload_successful{job="kube-prometheus-stack-alertmanager",container="alertmanager"}[5m]) == 0
         for: 10m
         labels:
           severity: critical

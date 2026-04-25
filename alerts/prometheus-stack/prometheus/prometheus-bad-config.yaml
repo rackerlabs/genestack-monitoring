@@ -4,11 +4,7 @@ additionalPrometheusRulesMap:
     - name: prometheus-bad-config
       rules:
       - alert: prometheus-bad-config-warning
-        expr: '# Without max_over_time, failed scrapes could create false negatives, see
-
-          # https://www.robustperception.io/alerting-on-gauges-in-prometheus-2-0 for details.
-
-          max_over_time(prometheus_config_last_reload_successful{job="kube-prometheus-stack-prometheus",namespace="prometheus"}[5m]) == 0'
+        expr: max_over_time(prometheus_config_last_reload_successful[5m]) == 0
         for: 10m
         labels:
           severity: warning
@@ -22,11 +18,7 @@ additionalPrometheusRulesMap:
           summary: Failed Prometheus configuration reload.
           dashboard_url: default_dashboard_url
       - alert: prometheus-bad-config-critical
-        expr: '# Without max_over_time, failed scrapes could create false negatives, see
-
-          # https://www.robustperception.io/alerting-on-gauges-in-prometheus-2-0 for details.
-
-          max_over_time(prometheus_config_last_reload_successful{job="kube-prometheus-stack-prometheus",namespace="prometheus"}[5m]) == 0'
+        expr: max_over_time(prometheus_config_last_reload_successful[5m]) == 0
         for: 10m
         labels:
           severity: critical

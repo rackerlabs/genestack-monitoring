@@ -4,7 +4,7 @@ additionalPrometheusRulesMap:
       - name: node-high-number-conntrack-entries-used
         rules:
           - alert: node-high-number-conntrack-entries-used-warning
-            expr: (system_linux_conntrack_count{job="otelcol-hostmetrics"} / system_linux_conntrack_max{job="otelcol-hostmetrics"}) > 0.75
+            expr: (system_linux_conntrack_count / system_linux_conntrack_max) > 0.75
             for: 5m
             labels:
               severity: warning
@@ -18,7 +18,7 @@ additionalPrometheusRulesMap:
               summary: Number of conntrack are getting close to the limit.
               dashboard_url: default_dashboard_url
           - alert: node-high-number-conntrack-entries-used-critical
-            expr: (system_linux_conntrack_count{job="otelcol-hostmetrics"} / system_linux_conntrack_max{job="otelcol-hostmetrics"}) > 0.75
+            expr: (system_linux_conntrack_count / system_linux_conntrack_max) > 0.75
             for: 10m
             labels:
               severity: critical

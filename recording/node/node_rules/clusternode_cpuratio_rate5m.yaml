@@ -1,8 +1,7 @@
-groups:
-- name: node.rules
-  rules:
-  - expr: "avg by (cluster) (\n  node:node_cpu_utilization:ratio_rate5m\n)"
-    labels:
-      rackspace_com_coreAccountID: ''
-      rackspace_com_overseerID: ''
-    record: cluster:node_cpu:ratio_rate5m
+additionalPrometheusRulesMap:
+  clusternode-cpuratio-rate5m:
+    groups:
+      - name: node-rules
+        rules:
+          - expr: avg by (cluster) ( node:node_cpu_utilization:ratio_rate5m )
+            record: cluster:node_cpu:ratio_rate5m

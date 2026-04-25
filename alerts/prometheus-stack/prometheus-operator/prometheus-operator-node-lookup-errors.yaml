@@ -4,7 +4,7 @@ additionalPrometheusRulesMap:
     - name: prometheus-operator-node-lookup-errors
       rules:
       - alert: prometheus-operator-node-lookup-errors-warning
-        expr: rate(prometheus_operator_node_address_lookup_errors_total{job="kube-prometheus-stack-operator",namespace="prometheus"}[5m]) > 0.1
+        expr: rate(prometheus_operator_node_address_lookup_errors_total[5m]) > 0.1
         for: 10m
         labels:
           severity: warning
@@ -18,7 +18,7 @@ additionalPrometheusRulesMap:
           summary: Errors while reconciling Prometheus.
           dashboard_url: default_dashboard_url
       - alert: prometheus-operator-node-lookup-errors-critical
-        expr: rate(prometheus_operator_node_address_lookup_errors_total{job="kube-prometheus-stack-operator",namespace="prometheus"}[5m]) > 0.1
+        expr: rate(prometheus_operator_node_address_lookup_errors_total[5m]) > 0.1
         for: 10m
         labels:
           severity: critical

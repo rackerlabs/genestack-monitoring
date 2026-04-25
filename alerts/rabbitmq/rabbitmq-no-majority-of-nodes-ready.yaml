@@ -4,21 +4,7 @@ additionalPrometheusRulesMap:
     - name: rabbitmq-no-majority-of-nodes-ready
       rules:
       - alert: rabbitmq-no-majority-of-nodes-ready-warning
-        expr: 'kube_statefulset_status_replicas_ready * on (namespace, statefulset) group_left(label_app_kubernetes_io_name) kube_statefulset_labels{label_app_kubernetes_io_component="rabbitmq"}
-
-          <=
-
-          kube_statefulset_replicas              * on (namespace, statefulset) group_left(label_app_kubernetes_io_name) kube_statefulset_labels{label_app_kubernetes_io_component="rabbitmq"}
-
-          / 2
-
-          unless
-
-          kube_statefulset_replicas              * on (namespace, statefulset) group_left(label_app_kubernetes_io_name) kube_statefulset_labels{label_app_kubernetes_io_component="rabbitmq"}
-
-          == 0
-
-          '
+        expr: 'kube_statefulset_status_replicas_ready * on (namespace, statefulset) group_left(label_app_kubernetes_io_name) kube_statefulset_labels{label_app_kubernetes_io_component="rabbitmq"} <= kube_statefulset_replicas  * on (namespace, statefulset) group_left(label_app_kubernetes_io_name) kube_statefulset_labels{label_app_kubernetes_io_component="rabbitmq"} / 2 unless kube_statefulset_replicas  * on (namespace, statefulset) group_left(label_app_kubernetes_io_name) kube_statefulset_labels{label_app_kubernetes_io_component="rabbitmq"} == 0'
         for: 5m
         labels:
           severity: warning
@@ -40,21 +26,7 @@ additionalPrometheusRulesMap:
             '
           dashboard_url: default_dashboard_url
       - alert: rabbitmq-no-majority-of-nodes-ready-critical
-        expr: 'kube_statefulset_status_replicas_ready * on (namespace, statefulset) group_left(label_app_kubernetes_io_name) kube_statefulset_labels{label_app_kubernetes_io_component="rabbitmq"}
-
-          <=
-
-          kube_statefulset_replicas              * on (namespace, statefulset) group_left(label_app_kubernetes_io_name) kube_statefulset_labels{label_app_kubernetes_io_component="rabbitmq"}
-
-          / 2
-
-          unless
-
-          kube_statefulset_replicas              * on (namespace, statefulset) group_left(label_app_kubernetes_io_name) kube_statefulset_labels{label_app_kubernetes_io_component="rabbitmq"}
-
-          == 0
-
-          '
+        expr: 'kube_statefulset_status_replicas_ready * on (namespace, statefulset) group_left(label_app_kubernetes_io_name) kube_statefulset_labels{label_app_kubernetes_io_component="rabbitmq"} <= kube_statefulset_replicas  * on (namespace, statefulset) group_left(label_app_kubernetes_io_name) kube_statefulset_labels{label_app_kubernetes_io_component="rabbitmq"} / 2 unless kube_statefulset_replicas  * on (namespace, statefulset) group_left(label_app_kubernetes_io_name) kube_statefulset_labels{label_app_kubernetes_io_component="rabbitmq"} == 0'
         for: 10m
         labels:
           severity: critical

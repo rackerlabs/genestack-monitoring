@@ -1,10 +1,10 @@
 additionalPrometheusRulesMap:
-  alertmanager-cluster-failed-to-send-alerts:
+  am-cluster-failed-to-send-alerts:
     groups:
-    - name: alertmanager-cluster-failed-to-send-alerts
+    - name: am-cluster-failed-to-send-alerts
       rules:
       - alert: alertmanager-cluster-failed-to-send-alerts-warning
-        expr: "min by (namespace,service, integration) (\n  rate(alertmanager_notifications_failed_total{job=\"kube-prometheus-stack-alertmanager\",container=\"alertmanager\",namespace=\"prometheus\", integration!~`.*`}[15m])\n/\n  ignoring (reason) group_left rate(alertmanager_notifications_total{job=\"kube-prometheus-stack-alertmanager\",container=\"alertmanager\",namespace=\"prometheus\", integration!~`.*`}[15m])\n)\n> 0.01"
+        expr: min by (namespace,service, integration) (rate(alertmanager_notifications_failed_total{job="kube-prometheus-stack-alertmanager",container="alertmanager", integration!~`.*`}[15m]) /  ignoring (reason) group_left rate(alertmanager_notifications_total{job="kube-prometheus-stack-alertmanager",container="alertmanager", integration!~`.*`}[15m])) > 0.01
         for: 5m
         labels:
           severity: warning
@@ -18,7 +18,7 @@ additionalPrometheusRulesMap:
           summary: All Alertmanager instances in a cluster failed to send notifications to a non-critical integration.
           dashboard_url: default_dashboard_url
       - alert: alertmanager-cluster-failed-to-send-alerts-critical
-        expr: "min by (namespace,service, integration) (\n  rate(alertmanager_notifications_failed_total{job=\"kube-prometheus-stack-alertmanager\",container=\"alertmanager\",namespace=\"prometheus\", integration!~`.*`}[15m])\n/\n  ignoring (reason) group_left rate(alertmanager_notifications_total{job=\"kube-prometheus-stack-alertmanager\",container=\"alertmanager\",namespace=\"prometheus\", integration!~`.*`}[15m])\n)\n> 0.01"
+        expr: min by (namespace,service, integration) (rate(alertmanager_notifications_failed_total{job="kube-prometheus-stack-alertmanager",container="alertmanager", integration!~`.*`}[15m]) /  ignoring (reason) group_left rate(alertmanager_notifications_total{job="kube-prometheus-stack-alertmanager",container="alertmanager", integration!~`.*`}[15m])) > 0.01
         for: 10m
         labels:
           severity: critical

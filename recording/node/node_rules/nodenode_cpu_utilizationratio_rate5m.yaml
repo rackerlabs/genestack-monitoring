@@ -1,9 +1,7 @@
-groups:
-- name: node.rules
-  rules:
-  - expr: "avg by (cluster, node) (\n  sum without (mode) (\n    rate(node_cpu_seconds_total{mode!=\"\
-      idle\",mode!=\"iowait\",mode!=\"steal\",job=\"node-exporter\"}[5m])\n  )\n)"
-    labels:
-      rackspace_com_coreAccountID: ''
-      rackspace_com_overseerID: ''
-    record: node:node_cpu_utilization:ratio_rate5m
+additionalPrometheusRulesMap:
+  nodenode-cpu-utilizationratio-rate5m:
+    groups:
+      - name: node-rules
+        rules:
+          - expr: avg by (cluster, node) ( sum without (mode) ( rate(node_cpu_seconds_total{mode!="idle",mode!="iowait",mode!="steal",job="node-exporter"}[5m]) ) )
+            record: node:node_cpu_utilization:ratio_rate5m

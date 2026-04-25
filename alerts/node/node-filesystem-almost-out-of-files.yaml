@@ -5,7 +5,7 @@ additionalPrometheusRulesMap:
         rules:
           - alert: node-filesystem-almost-out-of-files-warning
             expr: >-
-              ( system_filesystem_inodes_usage{job="otelcol-hostmetrics",fstype!="",mountpoint!="",state="free"} / (system_filesystem_inodes_usage{job="otelcol-hostmetrics",fstype!="",mountpoint!="",state="free"} + system_filesystem_inodes_usage{job="otelcol-hostmetrics",fstype!="",mountpoint!="",state="used"}) * 100 < 3 )
+              ( system_filesystem_inodes_usage{fstype!="",mountpoint!="",state="free"} / (system_filesystem_inodes_usage{fstype!="",mountpoint!="",state="free"} + system_filesystem_inodes_usage{job="otelcol-hostmetrics",fstype!="",mountpoint!="",state="used"}) * 100 < 3 )
             for: 1h
             labels:
               severity: warning
@@ -20,7 +20,7 @@ additionalPrometheusRulesMap:
               dashboard_url: default_dashboard_url
           - alert: node-filesystem-almost-out-of-files-critical
             expr: >-
-              ( system_filesystem_inodes_usage{job="otelcol-hostmetrics",fstype!="",mountpoint!="",state="free"} / (system_filesystem_inodes_usage{job="otelcol-hostmetrics",fstype!="",mountpoint!="",state="free"} + system_filesystem_inodes_usage{job="otelcol-hostmetrics",fstype!="",mountpoint!="",state="used"}) * 100 < 3 )
+              ( system_filesystem_inodes_usage{fstype!="",mountpoint!="",state="free"} / (system_filesystem_inodes_usage{fstype!="",mountpoint!="",state="free"} + system_filesystem_inodes_usage{job="otelcol-hostmetrics",fstype!="",mountpoint!="",state="used"}) * 100 < 3 )
             for: 1h
             labels:
               severity: critical

@@ -1,14 +1,9 @@
-groups:
-- name: kube-apiserver-availability.rules
-  rules:
-  - expr: "1 - (\n  (\n    # too slow\n    sum by (cluster) (cluster_verb_scope:apiserver_request_sli_duration_seconds_count:increase30d{verb=~\"\
-      POST|PUT|PATCH|DELETE\"})\n    -\n    sum by (cluster) (cluster_verb_scope_le:apiserver_request_sli_duration_seconds_bucket:increase30d{verb=~\"\
-      POST|PUT|PATCH|DELETE\",le=~\"1(\\\\.0)?\"} or vector(0))\n  )\n  +\n  # errors\n\
-      \  sum by (cluster) (code:apiserver_request_total:increase30d{verb=\"write\"\
-      ,code=~\"5..\"} or vector(0))\n)\n/\nsum by (cluster) (code:apiserver_request_total:increase30d{verb=\"\
-      write\"})"
-    labels:
-      rackspace_com_coreAccountID: ''
-      rackspace_com_overseerID: ''
-      verb: write
-    record: apiserver_request:availability30d
+additionalPrometheusRulesMap:
+  apiserver-requestavailability30d:
+    groups:
+      - name: kube-apiserver-availability-rules
+        rules:
+          - expr: 1 - ((sum by (cluster) (cluster_verb_scope:apiserver_request_sli_duration_seconds_count:increase30d{verb=~"POST|PUT|PATCH|DELETE"}) - sum by (cluster) (cluster_verb_scope_le:apiserver_request_sli_duration_seconds_bucket:increase30d{verb=~"POST|PUT|PATCH|DELETE",le=~"1(\\.0)?"} or vector(0)) + sum by (cluster) (code:apiserver_request_total:increase30d{verb="write",code=~"5.."} or vector(0))) / sum by (cluster) (code:apiserver_request_total:increase30d{verb="write"}))
+            labels:
+              verb: write
+            record: apiserver_request:availability30d

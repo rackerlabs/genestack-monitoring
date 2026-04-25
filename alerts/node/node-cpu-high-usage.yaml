@@ -4,30 +4,26 @@ additionalPrometheusRulesMap:
       - name: node-cpu-high-usage
         rules:
           - alert: node-cpu-high-usage-warning
-            expr: sum without(mode) (avg without (cpu) (rate(system_cpu_time_seconds_total{job="otelcol-hostmetrics", mode!~"idle|iowait"}[2m]))) * 100 > 90
+            expr: 100 * (1 - avg by(instance) (rate(node_cpu_seconds_total{job="node-exporter", mode="idle"}[5m]))) > 90
             for: 5m
             labels:
               severity: warning
               group_name: node-cpu-high-usage
               node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
             annotations:
-              description: >-
-                CPU usage at {{ $labels.instance }} has been above 90% for the last 5 minutes, is currently at
-                {{ printf "%.2f" $value }}%.
+              description: CPU usage on {{ $labels.node_hostname }} has been above 90% for 5 minutes; current usage is {{ printf "%.2f" $value }}%.
               runbook_url: default_runbook_url
               summary: High CPU usage.
               dashboard_url: default_dashboard_url
           - alert: node-cpu-high-usage-critical
-            expr: sum without(mode) (avg without (cpu) (rate(system_cpu_time_seconds_total{job="otelcol-hostmetrics", mode!~"idle|iowait"}[2m]))) * 100 > 90
+            expr: 100 * (1 - avg by(instance) (rate(node_cpu_seconds_total{job="node-exporter", mode="idle"}[5m]))) > 90
             for: 10m
             labels:
               severity: critical
               group_name: node-cpu-high-usage
               node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
             annotations:
-              description: >-
-                CPU usage at {{ $labels.instance }} has been above 90% for the last 10 minutes, is currently at
-                {{ printf "%.2f" $value }}%.
+              description: CPU usage on {{ $labels.node_hostname }} has been above 90% for 10 minutes; current usage is {{ printf "%.2f" $value }}%.
               runbook_url: default_runbook_url
               summary: High CPU usage.
               dashboard_url: default_dashboard_url

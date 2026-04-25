@@ -1,9 +1,7 @@
-groups:
-- name: kube-prometheus-node-recording.rules
-  rules:
-  - expr: cluster:node_cpu:sum_rate5m / count(sum(node_cpu_seconds_total) BY (instance,
-      cpu))
-    labels:
-      rackspace_com_coreAccountID: ''
-      rackspace_com_overseerID: ''
-    record: cluster:node_cpu:ratio
+additionalPrometheusRulesMap:
+  clusternode-cpuratio:
+    groups:
+      - name: kube-prometheus-node-recording-rules
+        rules:
+          - expr: cluster:node_cpu:sum_rate5m / count(sum(node_cpu_seconds_total) by (instance, cpu))
+            record: cluster:node_cpu:ratio

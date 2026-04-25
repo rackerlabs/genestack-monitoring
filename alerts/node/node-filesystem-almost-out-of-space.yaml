@@ -5,7 +5,7 @@ additionalPrometheusRulesMap:
         rules:
           - alert: node-filesystem-almost-out-of-space-warning
             expr: >-
-              ( system_filesystem_usage_bytes{job="otelcol-hostmetrics",fstype!="",mountpoint!="",state="free"} / sum by (device, mountpoint, fstype, instance) (system_filesystem_usage_bytes{job="otelcol-hostmetrics",fstype!="",mountpoint!=""}) * 100 < 3 )
+              ( system_filesystem_usage_bytes{fstype!="",mountpoint!="",state="free"} / sum by (device, mountpoint, fstype, instance) (system_filesystem_usage_bytes{fstype!="",mountpoint!=""}) * 100 < 3 )
             for: 30m
             labels:
               severity: warning
@@ -20,7 +20,7 @@ additionalPrometheusRulesMap:
               dashboard_url: default_dashboard_url
           - alert: node-filesystem-almost-out-of-space-critical
             expr: >-
-              ( system_filesystem_usage_bytes{job="otelcol-hostmetrics",fstype!="",mountpoint!="",state="free"} / sum by (device, mountpoint, fstype, instance) (system_filesystem_usage_bytes{job="otelcol-hostmetrics",fstype!="",mountpoint!=""}) * 100 < 3 )
+              ( system_filesystem_usage_bytes{fstype!="",mountpoint!="",state="free"} / sum by (device, mountpoint, fstype, instance) (system_filesystem_usage_bytes{fstype!="",mountpoint!=""}) * 100 < 3 )
             for: 30m
             labels:
               severity: critical

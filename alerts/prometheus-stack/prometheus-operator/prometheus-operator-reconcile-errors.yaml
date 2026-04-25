@@ -4,7 +4,7 @@ additionalPrometheusRulesMap:
     - name: prometheus-operator-reconcile-errors
       rules:
       - alert: prometheus-operator-reconcile-errors-warning
-        expr: (sum by (cluster,controller,namespace) (rate(prometheus_operator_reconcile_errors_total{job="kube-prometheus-stack-operator",namespace="prometheus"}[5m]))) / (sum by (cluster,controller,namespace) (rate(prometheus_operator_reconcile_operations_total{job="kube-prometheus-stack-operator",namespace="prometheus"}[5m]))) > 0.1
+        expr: (sum by (cluster,controller,namespace) (rate(prometheus_operator_reconcile_errors_total[5m]))) / (sum by (cluster,controller,namespace) (rate(prometheus_operator_reconcile_operations_total[5m]))) > 0.1
         for: 10m
         labels:
           severity: warning
@@ -18,7 +18,7 @@ additionalPrometheusRulesMap:
           summary: Errors while reconciling objects.
           dashboard_url: default_dashboard_url
       - alert: prometheus-operator-reconcile-errors-critical
-        expr: (sum by (cluster,controller,namespace) (rate(prometheus_operator_reconcile_errors_total{job="kube-prometheus-stack-operator",namespace="prometheus"}[5m]))) / (sum by (cluster,controller,namespace) (rate(prometheus_operator_reconcile_operations_total{job="kube-prometheus-stack-operator",namespace="prometheus"}[5m]))) > 0.1
+        expr: (sum by (cluster,controller,namespace) (rate(prometheus_operator_reconcile_errors_total[5m]))) / (sum by (cluster,controller,namespace) (rate(prometheus_operator_reconcile_operations_total[5m]))) > 0.1
         for: 10m
         labels:
           severity: critical

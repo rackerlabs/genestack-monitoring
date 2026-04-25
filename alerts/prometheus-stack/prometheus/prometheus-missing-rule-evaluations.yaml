@@ -4,7 +4,7 @@ additionalPrometheusRulesMap:
     - name: prometheus-missing-rule-evaluations
       rules:
       - alert: prometheus-missing-rule-evaluations-warning
-        expr: increase(prometheus_rule_group_iterations_missed_total{job="kube-prometheus-stack-prometheus",namespace="prometheus"}[5m]) > 0
+        expr: increase(prometheus_rule_group_iterations_missed_total[5m]) > 0
         for: 15m
         labels:
           severity: warning
@@ -18,7 +18,7 @@ additionalPrometheusRulesMap:
           summary: Prometheus is missing rule evaluations due to slow rule group evaluation.
           dashboard_url: default_dashboard_url
       - alert: prometheus-missing-rule-evaluations-critical
-        expr: increase(prometheus_rule_group_iterations_missed_total{job="kube-prometheus-stack-prometheus",namespace="prometheus"}[5m]) > 0
+        expr: increase(prometheus_rule_group_iterations_missed_total[5m]) > 0
         for: 30m
         labels:
           severity: critical

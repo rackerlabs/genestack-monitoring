@@ -4,7 +4,7 @@ additionalPrometheusRulesMap:
     - name: prometheus-duplicate-timestamps
       rules:
       - alert: prometheus-duplicate-timestamps-warning
-        expr: rate(prometheus_target_scrapes_sample_duplicate_timestamp_total{job="kube-prometheus-stack-prometheus",namespace="prometheus"}[5m]) > 0
+        expr: rate(prometheus_target_scrapes_sample_duplicate_timestamp_total[5m]) > 0
         for: 10m
         labels:
           severity: warning
@@ -18,7 +18,7 @@ additionalPrometheusRulesMap:
           summary: Prometheus is dropping samples with duplicate timestamps.
           dashboard_url: default_dashboard_url
       - alert: prometheus-duplicate-timestamps-critical
-        expr: rate(prometheus_target_scrapes_sample_duplicate_timestamp_total{job="kube-prometheus-stack-prometheus",namespace="prometheus"}[5m]) > 0
+        expr: rate(prometheus_target_scrapes_sample_duplicate_timestamp_total[5m]) > 0
         for: 10m
         labels:
           severity: critical

@@ -4,7 +4,7 @@ additionalPrometheusRulesMap:
     - name: prometheus-errors-sending-alerts-to-some-alertmanagers
       rules:
       - alert: prometheus-errors-sending-alerts-to-some-alertmanagers-warning
-        expr: "(\n  rate(prometheus_notifications_errors_total{job=\"kube-prometheus-stack-prometheus\",namespace=\"prometheus\"}[5m])\n/\n  rate(prometheus_notifications_sent_total{job=\"kube-prometheus-stack-prometheus\",namespace=\"prometheus\"}[5m])\n)\n* 100\n> 1"
+        expr: (rate(prometheus_notifications_errors_total[5m]) /  rate(prometheus_notifications_sent_total[5m])) * 100 > 1
         for: 15m
         labels:
           severity: warning
@@ -19,7 +19,7 @@ additionalPrometheusRulesMap:
           summary: More than 1% of alerts sent by Prometheus to a specific Alertmanager were affected by errors.
           dashboard_url: default_dashboard_url
       - alert: prometheus-errors-sending-alerts-to-some-alertmanagers-critical
-        expr: "(\n  rate(prometheus_notifications_errors_total{job=\"kube-prometheus-stack-prometheus\",namespace=\"prometheus\"}[5m])\n/\n  rate(prometheus_notifications_sent_total{job=\"kube-prometheus-stack-prometheus\",namespace=\"prometheus\"}[5m])\n)\n* 100\n> 1"
+        expr: (rate(prometheus_notifications_errors_total[5m]) /  rate(prometheus_notifications_sent_total[5m])) * 100 > 1
         for: 30m
         labels:
           severity: critical

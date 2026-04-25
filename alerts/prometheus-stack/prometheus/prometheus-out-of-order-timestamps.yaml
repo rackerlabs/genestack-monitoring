@@ -4,7 +4,7 @@ additionalPrometheusRulesMap:
     - name: prometheus-out-of-order-timestamps
       rules:
       - alert: prometheus-out-of-order-timestamps-warning
-        expr: rate(prometheus_target_scrapes_sample_out_of_order_total{job="kube-prometheus-stack-prometheus",namespace="prometheus"}[5m]) > 0
+        expr: rate(prometheus_target_scrapes_sample_out_of_order_total[5m]) > 0
         for: 10m
         labels:
           severity: warning
@@ -18,7 +18,7 @@ additionalPrometheusRulesMap:
           summary: Prometheus drops samples with out-of-order timestamps.
           dashboard_url: default_dashboard_url
       - alert: prometheus-out-of-order-timestamps-critical
-        expr: rate(prometheus_target_scrapes_sample_out_of_order_total{job="kube-prometheus-stack-prometheus",namespace="prometheus"}[5m]) > 0
+        expr: rate(prometheus_target_scrapes_sample_out_of_order_total[5m]) > 0
         for: 10m
         labels:
           severity: critical

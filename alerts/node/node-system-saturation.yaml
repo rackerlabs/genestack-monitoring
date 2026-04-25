@@ -5,9 +5,7 @@ additionalPrometheusRulesMap:
         rules:
           - alert: node-system-saturation-warning
             expr: >-
-              system_cpu_load_average_1m{job="otelcol-hostmetrics"} / count without (cpu, mode) (system_cpu_time_seconds_total{job="otelcol-hostmetrics",
-
-              mode="idle"}) > 2
+              system_cpu_load_average_1m / count without (cpu, mode) (system_cpu_time_seconds_total{mode="idle"}) > 2
             for: 5m
             labels:
               severity: warning
@@ -23,9 +21,7 @@ additionalPrometheusRulesMap:
               dashboard_url: default_dashboard_url
           - alert: node-system-saturation-critical
             expr: >-
-              system_cpu_load_average_1m{job="otelcol-hostmetrics"} / count without (cpu, mode) (system_cpu_time_seconds_total{job="otelcol-hostmetrics",
-
-              mode="idle"}) > 2
+              system_cpu_load_average_1m / count without (cpu, mode) (system_cpu_time_seconds_total{mode="idle"}) > 2
             for: 10m
             labels:
               severity: critical

@@ -9,8 +9,8 @@ route:
   receiver: 'default-receiver'
 
 receivers:
+  # Configure your receivers here (email, slack, pagerduty, etc.)
   - name: 'default-receiver'
-    # Configure your receivers here (email, slack, pagerduty, etc.)
 
 inhibit_rules:
   # When a host is down, suppress all other node alerts for that host
@@ -220,3 +220,26 @@ inhibit_rules:
       - statefulset
       - persistentvolumeclaim
       - container
+
+  # When a HPA ciritical alert fires, supress the warning for the same target
+  - source_matchers:
+      - severity="critical"
+      - group_name="kube-hpa-maxed-out"
+    target_matchers:
+      - severity="warning"
+      - group_name="kube-hpa-maxed-out"
+    equal:
+      - namespace
+      - horizontalpodautoscaler
+
+  # When a Kube Job Failed critical alert fires, supress the warning for the same target
+  - source_matchers:
+      - severity="critical"
+      - group_name="kube-job-failed"
+    target_matchers:
+      - severity="warning"
+      - group_name="kube-job-failed"
+    equal:
+      - namespace
+      - job_name
+      - reason

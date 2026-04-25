@@ -4,7 +4,7 @@ additionalPrometheusRulesMap:
       - name: node-host-down
         rules:
           - alert: node-host-down-warning
-            expr: up{job="otelcol-hostmetrics"} == 0
+            expr: up{job="node-exporter"} == 0
             for: 5m
             labels:
               severity: warning
@@ -18,7 +18,7 @@ additionalPrometheusRulesMap:
               summary: Host is down or metrics collection has stopped.
               dashboard_url: default_dashboard_url
           - alert: node-host-down-critical
-            expr: up{job="otelcol-hostmetrics"} == 0
+            expr: up{job="node-exporter"} == 0
             for: 10m
             labels:
               severity: critical

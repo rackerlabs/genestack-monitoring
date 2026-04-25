@@ -5,7 +5,7 @@ additionalPrometheusRulesMap:
         rules:
           - alert: node-raid-disk-failure-warning
             expr: >-
-              node_md_disks{state="failed",job="otelcol-hostmetrics",device=~"(/dev/)?(mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|md.+|dasd.+)"}
+              node_md_disks{state="failed",device=~"(/dev/)?(mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|md.+|dasd.+)"}
 
               > 0
             for: 5m
@@ -22,7 +22,7 @@ additionalPrometheusRulesMap:
               dashboard_url: default_dashboard_url
           - alert: node-raid-disk-failure-critical
             expr: >-
-              node_md_disks{state="failed",job="otelcol-hostmetrics",device=~"(/dev/)?(mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|md.+|dasd.+)"}
+              node_md_disks{state="failed",device=~"(/dev/)?(mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|md.+|dasd.+)"}
 
               > 0
             for: 10m

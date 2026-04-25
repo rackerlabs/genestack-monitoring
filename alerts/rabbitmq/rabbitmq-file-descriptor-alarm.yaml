@@ -4,7 +4,7 @@ additionalPrometheusRulesMap:
     - name: rabbitmq-file-descriptor-alarm
       rules:
       - alert: rabbitmq-file-descriptor-alarm-warning
-        expr: "max by(rabbitmq_cluster) (\n  max_over_time(rabbitmq_alarms_file_descriptor_limit[5m])\n  * on(instance) group_left(rabbitmq_cluster) max by (instance, rabbitmq_cluster) (rabbitmq_identity_info)\n) > 0\n"
+        expr: max by(rabbitmq_cluster) (max_over_time(rabbitmq_alarms_file_descriptor_limit[5m])  * on(instance) group_left(rabbitmq_cluster) max by (instance, rabbitmq_cluster) (rabbitmq_identity_info)) > 0
         for: 0m
         labels:
           severity: warning
@@ -22,7 +22,7 @@ additionalPrometheusRulesMap:
             '
           dashboard_url: default_dashboard_url
       - alert: rabbitmq-file-descriptor-alarm-critical
-        expr: "max by(rabbitmq_cluster) (\n  max_over_time(rabbitmq_alarms_file_descriptor_limit[5m])\n  * on(instance) group_left(rabbitmq_cluster) max by (instance, rabbitmq_cluster) (rabbitmq_identity_info)\n) > 0\n"
+        expr: max by(rabbitmq_cluster) (max_over_time(rabbitmq_alarms_file_descriptor_limit[5m])  * on(instance) group_left(rabbitmq_cluster) max by (instance, rabbitmq_cluster) (rabbitmq_identity_info)) > 0
         for: 5m
         labels:
           severity: critical

@@ -1,8 +1,7 @@
-groups:
-- name: kube-apiserver-availability.rules
-  rules:
-  - expr: sum by (cluster, code, verb) (increase(apiserver_request_total{job="apiserver",verb=~"LIST|GET|POST|PUT|PATCH|DELETE",code=~"5.."}[1h]))
-    labels:
-      rackspace_com_coreAccountID: ''
-      rackspace_com_overseerID: ''
-    record: code_verb:apiserver_request_total:increase1h
+additionalPrometheusRulesMap:
+  code-verbapiserver-request-totalincrease1h:
+    groups:
+      - name: kube-apiserver-availability-rules
+        rules:
+          - expr: sum by (cluster, code, verb) (increase(apiserver_request_total{job="apiserver",verb=~"LIST|GET|POST|PUT|PATCH|DELETE",code=~"5.."}[1h]))
+            record: code_verb:apiserver_request_total:increase1h

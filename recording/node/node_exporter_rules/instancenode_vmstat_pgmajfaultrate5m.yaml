@@ -1,8 +1,7 @@
-groups:
-- name: node-exporter.rules
-  rules:
-  - expr: rate(node_vmstat_pgmajfault{job="node-exporter"}[5m])
-    labels:
-      rackspace_com_coreAccountID: ''
-      rackspace_com_overseerID: ''
-    record: instance:node_vmstat_pgmajfault:rate5m
+additionalPrometheusRulesMap:
+  instancenode-vmstat-pgmajfaultrate5m:
+    groups:
+      - name: node-exporter-rules
+        rules:
+          - expr: rate(node_vmstat_pgmajfault{job="node-exporter"}[5m])
+            record: instance:node_vmstat_pgmajfault:rate5m

@@ -4,7 +4,7 @@ additionalPrometheusRulesMap:
     - name: openstack-api-tls-certificate-expiring
       rules:
       - alert: openstack-api-tls-certificate-expiring-warning
-        expr: (httpcheck_tls_cert_remaining_seconds - time()) / 86400 < 25
+        expr: (time() - httpcheck_tls_cert_remaining_seconds) < 2160000
         for: 5m
         labels:
           severity: warning
@@ -12,12 +12,12 @@ additionalPrometheusRulesMap:
           node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
         annotations:
           description: >-
-            SSL certificate expires within 15 days. This warning alert fires immediately.
+            SSL certificate expires within 25 days. This warning alert fires immediately.
           runbook_url: default_runbook_url
           summary: SSL certificate will expire soon on (instance {{ $labels.http_url }})
           dashboard_url: default_dashboard_url
       - alert: openstack-api-tls-certificate-expiring-critical
-        expr: (httpcheck_tls_cert_remaining_seconds - time()) / 86400 < 7
+        expr: (time() - httpcheck_tls_cert_remaining_seconds) < 604800
         for: 5m
         labels:
           severity: critical
@@ -25,7 +25,7 @@ additionalPrometheusRulesMap:
           node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
         annotations:
           description: >-
-            SSL certificate expires within 15 days. This critical alert fires after 5m.
+            SSL certificate expires within 7 days. This critical alert fires after 5m.
           runbook_url: default_runbook_url
           summary: SSL certificate will expire soon on (instance {{ $labels.http_url }})
           dashboard_url: default_dashboard_url

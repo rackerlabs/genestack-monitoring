@@ -1,0 +1,35 @@
+additionalPrometheusRulesMap:
+  kube-cpu-quota-overcommit:
+    groups:
+      - name: kube-cpu-quota-overcommit
+        rules:
+          - alert: kube-cpu-quota-overcommit-warning
+            expr: >-
+              sum(kube_pod_container_resource_requests{resource="cpu", job="kube-state-metrics"}) / sum(kube_node_status_allocatable{resource="cpu", job="kube-state-metrics"}) > 1.5
+            for: 5m
+            labels:
+              severity: warning
+              group_name: kube-cpu-quota-overcommit
+              node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+            annotations:
+              description: >-
+                Cluster {{ $labels.cluster }} has overcommitted CPU resource requests for Namespaces. This
+                warning alert fires after 5m.
+              runbook_url: default_runbook_url
+              summary: Cluster has overcommitted CPU resource requests.
+              dashboard_url: default_dashboard_url
+          - alert: kube-cpu-quota-overcommit-critical
+            expr: >-
+              sum(kube_pod_container_resource_requests{resource="cpu", job="kube-state-metrics"}) / sum(kube_node_status_allocatable{resource="cpu", job="kube-state-metrics"}) > 1.5
+            for: 10m
+            labels:
+              severity: critical
+              group_name: kube-cpu-quota-overcommit
+              node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+            annotations:
+              description: >-
+                Cluster {{ $labels.cluster }} has overcommitted CPU resource requests for Namespaces. This
+                critical alert fires after 10m.
+              runbook_url: default_runbook_url
+              summary: Cluster has overcommitted CPU resource requests.
+              dashboard_url: default_dashboard_url

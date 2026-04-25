@@ -5,8 +5,8 @@ additionalPrometheusRulesMap:
         rules:
           - alert: node-clock-not-synchronising-warning
             expr: >-
-              min_over_time(node_timex_sync_status{job="otelcol-hostmetrics"}[5m]) == 0
-              and node_timex_maxerror_seconds{job="otelcol-hostmetrics"} >= 16
+              min_over_time(node_timex_sync_status[5m]) == 0
+              and node_timex_maxerror_seconds >= 16
             for: 5m
             labels:
               severity: warning
@@ -21,9 +21,9 @@ additionalPrometheusRulesMap:
               dashboard_url: default_dashboard_url
           - alert: node-clock-not-synchronising-critical
             expr: >-
-              min_over_time(node_timex_sync_status{job="otelcol-hostmetrics"}[15m]) == 0
+              min_over_time(node_timex_sync_status[15m]) == 0
 
-              and node_timex_maxerror_seconds{job="otelcol-hostmetrics"} >= 16
+              and node_timex_maxerror_seconds >= 16
             for: 10m
             labels:
               severity: critical

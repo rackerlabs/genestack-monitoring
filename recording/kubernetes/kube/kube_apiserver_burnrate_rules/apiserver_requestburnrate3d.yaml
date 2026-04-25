@@ -1,16 +1,9 @@
-groups:
-- name: kube-apiserver-burnrate.rules
-  rules:
-  - expr: "(\n  (\n    # too slow\n    sum by (cluster) (rate(apiserver_request_sli_duration_seconds_count{job=\"\
-      apiserver\",verb=~\"POST|PUT|PATCH|DELETE\",subresource!~\"proxy|attach|log|exec|portforward\"\
-      }[3d]))\n    -\n    sum by (cluster) (rate(apiserver_request_sli_duration_seconds_bucket{job=\"\
-      apiserver\",verb=~\"POST|PUT|PATCH|DELETE\",subresource!~\"proxy|attach|log|exec|portforward\"\
-      ,le=~\"1(\\\\.0)?\"}[3d]))\n  )\n  +\n  sum by (cluster) (rate(apiserver_request_total{job=\"\
-      apiserver\",verb=~\"POST|PUT|PATCH|DELETE\",code=~\"5..\"}[3d]))\n)\n/\nsum\
-      \ by (cluster) (rate(apiserver_request_total{job=\"apiserver\",verb=~\"POST|PUT|PATCH|DELETE\"\
-      }[3d]))"
-    labels:
-      rackspace_com_coreAccountID: ''
-      rackspace_com_overseerID: ''
-      verb: write
-    record: apiserver_request:burnrate3d
+additionalPrometheusRulesMap:
+  apiserver-requestburnrate3d:
+    groups:
+      - name: kube-apiserver-burnrate-rules
+        rules:
+          - expr: ( ( sum by (cluster) (rate(apiserver_request_sli_duration_seconds_count{job="apiserver",verb=~"POST|PUT|PATCH|DELETE",subresource!~"proxy|attach|log|exec|portforward"}[3d])) - sum by (cluster) (rate(apiserver_request_sli_duration_seconds_bucket{job="apiserver",verb=~"POST|PUT|PATCH|DELETE",subresource!~"proxy|attach|log|exec|portforward",le=~"1(\\.0)?"}[3d])) ) + sum by (cluster) (rate(apiserver_request_total{job="apiserver",verb=~"POST|PUT|PATCH|DELETE",code=~"5.."}[3d])) ) / sum by (cluster) (rate(apiserver_request_total{job="apiserver",verb=~"POST|PUT|PATCH|DELETE"}[3d]))
+            labels:
+              verb: write
+            record: apiserver_request:burnrate3d

@@ -1,9 +1,7 @@
-groups:
-- name: kube-apiserver-availability.rules
-  rules:
-  - expr: avg_over_time(code_verb:apiserver_request_total:increase1h[30d]) * 24 *
-      30
-    labels:
-      rackspace_com_coreAccountID: ''
-      rackspace_com_overseerID: ''
-    record: code_verb:apiserver_request_total:increase30d
+additionalPrometheusRulesMap:
+  code-verbapiserver-request-totalincrease30d:
+    groups:
+      - name: kube-apiserver-availability-rules
+        rules:
+          - expr: avg_over_time(code_verb:apiserver_request_total:increase1h[30d]) * 24 * 30
+            record: code_verb:apiserver_request_total:increase30d

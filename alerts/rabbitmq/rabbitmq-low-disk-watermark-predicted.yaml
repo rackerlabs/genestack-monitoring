@@ -4,7 +4,7 @@ additionalPrometheusRulesMap:
     - name: rabbitmq-low-disk-watermark-predicted
       rules:
       - alert: rabbitmq-low-disk-watermark-predicted-warning
-        expr: "(\n  predict_linear(rabbitmq_disk_space_available_bytes[24h], 60*60*24) * on (instance) group_left(rabbitmq_cluster, rabbitmq_node) max by (instance, rabbitmq_node, rabbitmq_cluster) (rabbitmq_identity_info)\n  <\n  rabbitmq_disk_space_available_limit_bytes * on (instance) group_left(rabbitmq_cluster, rabbitmq_node) max by (instance, rabbitmq_node, rabbitmq_cluster) (rabbitmq_identity_info)\n)\nand\n(\n  count_over_time(rabbitmq_disk_space_available_limit_bytes[2h] offset 22h) * on (instance) group_left(rabbitmq_cluster, rabbitmq_node) max by (instance, rabbitmq_node, rabbitmq_cluster) (rabbitmq_identity_info)\n  >\n  0\n)\n"
+        expr: (predict_linear(rabbitmq_disk_space_available_bytes[24h], 60*60*24) * on (instance) group_left(rabbitmq_cluster, rabbitmq_node) max by (instance, rabbitmq_node, rabbitmq_cluster) (rabbitmq_identity_info)  < rabbitmq_disk_space_available_limit_bytes * on (instance) group_left(rabbitmq_cluster, rabbitmq_node) max by (instance, rabbitmq_node, rabbitmq_cluster) (rabbitmq_identity_info)) and (count_over_time(rabbitmq_disk_space_available_limit_bytes[2h] offset 22h) * on (instance) group_left(rabbitmq_cluster, rabbitmq_node) max by (instance, rabbitmq_node, rabbitmq_cluster) (rabbitmq_identity_info) > 0)
         for: 60m
         labels:
           severity: warning
@@ -38,7 +38,7 @@ additionalPrometheusRulesMap:
             '
           dashboard_url: default_dashboard_url
       - alert: rabbitmq-low-disk-watermark-predicted-critical
-        expr: "(\n  predict_linear(rabbitmq_disk_space_available_bytes[24h], 60*60*24) * on (instance) group_left(rabbitmq_cluster, rabbitmq_node) max by (instance, rabbitmq_node, rabbitmq_cluster) (rabbitmq_identity_info)\n  <\n  rabbitmq_disk_space_available_limit_bytes * on (instance) group_left(rabbitmq_cluster, rabbitmq_node) max by (instance, rabbitmq_node, rabbitmq_cluster) (rabbitmq_identity_info)\n)\nand\n(\n  count_over_time(rabbitmq_disk_space_available_limit_bytes[2h] offset 22h) * on (instance) group_left(rabbitmq_cluster, rabbitmq_node) max by (instance, rabbitmq_node, rabbitmq_cluster) (rabbitmq_identity_info)\n  >\n  0\n)\n"
+        expr: (predict_linear(rabbitmq_disk_space_available_bytes[24h], 60*60*24) * on (instance) group_left(rabbitmq_cluster, rabbitmq_node) max by (instance, rabbitmq_node, rabbitmq_cluster) (rabbitmq_identity_info)  < rabbitmq_disk_space_available_limit_bytes * on (instance) group_left(rabbitmq_cluster, rabbitmq_node) max by (instance, rabbitmq_node, rabbitmq_cluster) (rabbitmq_identity_info)) and (count_over_time(rabbitmq_disk_space_available_limit_bytes[2h] offset 22h) * on (instance) group_left(rabbitmq_cluster, rabbitmq_node) max by (instance, rabbitmq_node, rabbitmq_cluster) (rabbitmq_identity_info) > 0)
         for: 120m
         labels:
           severity: critical

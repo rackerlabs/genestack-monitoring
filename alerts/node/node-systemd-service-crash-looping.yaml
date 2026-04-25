@@ -4,7 +4,7 @@ additionalPrometheusRulesMap:
       - name: node-systemd-service-crash-looping
         rules:
           - alert: node-systemd-service-crash-looping-warning
-            expr: increase(node_systemd_service_restart_total{job="otelcol-hostmetrics"}[5m]) > 2
+            expr: increase(node_systemd_service_restart_total[5m]) > 2
             for: 5m
             labels:
               severity: warning
@@ -18,7 +18,7 @@ additionalPrometheusRulesMap:
               summary: Systemd service keeps restaring, possibly crash looping.
               dashboard_url: default_dashboard_url
           - alert: node-systemd-service-crash-looping-critical
-            expr: increase(node_systemd_service_restart_total{job="otelcol-hostmetrics"}[5m]) > 2
+            expr: increase(node_systemd_service_restart_total[5m]) > 2
             for: 10m
             labels:
               severity: critical

@@ -4,7 +4,7 @@ additionalPrometheusRulesMap:
     - name: prometheus-tsdb-reloads-failing
       rules:
       - alert: prometheus-tsdb-reloads-failing-warning
-        expr: increase(prometheus_tsdb_reloads_failures_total{job="kube-prometheus-stack-prometheus",namespace="prometheus"}[3h]) > 0
+        expr: increase(prometheus_tsdb_reloads_failures_total[3h]) > 0
         for: 4h
         labels:
           severity: warning
@@ -18,7 +18,7 @@ additionalPrometheusRulesMap:
           summary: Prometheus has issues reloading blocks from disk.
           dashboard_url: default_dashboard_url
       - alert: prometheus-tsdb-reloads-failing-critical
-        expr: increase(prometheus_tsdb_reloads_failures_total{job="kube-prometheus-stack-prometheus",namespace="prometheus"}[3h]) > 0
+        expr: increase(prometheus_tsdb_reloads_failures_total[3h]) > 0
         for: 10m
         labels:
           severity: critical

@@ -1,8 +1,7 @@
-groups:
-- name: kube-prometheus-node-recording.rules
-  rules:
-  - expr: sum(rate(node_network_receive_bytes_total[3m])) BY (instance)
-    labels:
-      rackspace_com_coreAccountID: ''
-      rackspace_com_overseerID: ''
-    record: instance:node_network_receive_bytes:rate:sum
+additionalPrometheusRulesMap:
+  instancenode-network-receive-bytesratesum:
+    groups:
+      - name: kube-prometheus-node-recording-rules
+        rules:
+          - expr: sum(rate(node_network_receive_bytes_total[3m])) by (instance)
+            record: instance:node_network_receive_bytes:rate:sum

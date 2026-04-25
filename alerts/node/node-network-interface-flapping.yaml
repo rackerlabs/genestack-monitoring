@@ -4,7 +4,7 @@ additionalPrometheusRulesMap:
       - name: node-network-interface-flapping
         rules:
           - alert: node-network-interface-flapping-warning
-            expr: changes(system_network_up{job="otelcol-hostmetrics",device!~"veth.+"}[2m]) > 2
+            expr: changes(system_network_up{device!~"veth.+"}[2m]) > 2
             for: 2m
             labels:
               severity: warning
@@ -18,7 +18,7 @@ additionalPrometheusRulesMap:
               summary: Network interface is often changing its status
               dashboard_url: default_dashboard_url
           - alert: node-network-interface-flapping-critical
-            expr: changes(system_network_up{job="otelcol-hostmetrics",device!~"veth.+"}[2m]) > 2
+            expr: changes(system_network_up{device!~"veth.+"}[2m]) > 2
             for: 2m
             labels:
               severity: critical

@@ -1,8 +1,8 @@
-groups:
-- name: kube-prometheus-node-recording.rules
-  rules:
-  - expr: sum(rate(node_cpu_seconds_total{mode!="idle",mode!="iowait",mode!="steal"}[5m]))
-    labels:
-      rackspace_com_coreAccountID: ''
-      rackspace_com_overseerID: ''
-    record: cluster:node_cpu:sum_rate5m
+additionalPrometheusRulesMap:
+  clusternode-cpusum-rate5m:
+    groups:
+      - name: kube-prometheus-node-recording-rules
+        rules:
+          - expr: sum(rate(node_cpu_seconds_total{mode!="idle",mode!="iowait",mode!="steal"}[5m]))
+            labels:
+            record: cluster:node_cpu:sum_rate5m

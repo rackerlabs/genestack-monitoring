@@ -4,7 +4,7 @@ additionalPrometheusRulesMap:
     - name: rabbitmq-queue-has-no-consumers
       rules:
       - alert: rabbitmq-queue-has-no-consumers-warning
-        expr: "(\n  ((rabbitmq_detailed_queue_consumers{vhost=\"/\", queue=~\".*\"} == 0) + rabbitmq_detailed_queue_messages) > 0\n) * on (instance) group_left(rabbitmq_cluster) max by (instance, rabbitmq_cluster) (rabbitmq_identity_info)\n"
+        expr: (((rabbitmq_detailed_queue_consumers{vhost="/", queue=~".*"} == 0) + rabbitmq_detailed_queue_messages) > 0) * on (instance) group_left(rabbitmq_cluster) max by (instance, rabbitmq_cluster) (rabbitmq_identity_info)
         for: 10m
         labels:
           severity: warning
@@ -24,7 +24,7 @@ additionalPrometheusRulesMap:
             '
           dashboard_url: default_dashboard_url
       - alert: rabbitmq-queue-has-no-consumers-critical
-        expr: "(\n  ((rabbitmq_detailed_queue_consumers{vhost=\"/\", queue=~\".*\"} == 0) + rabbitmq_detailed_queue_messages) > 0\n) * on (instance) group_left(rabbitmq_cluster) max by (instance, rabbitmq_cluster) (rabbitmq_identity_info)\n"
+        expr: (((rabbitmq_detailed_queue_consumers{vhost="/", queue=~".*"} == 0) + rabbitmq_detailed_queue_messages) > 0) * on (instance) group_left(rabbitmq_cluster) max by (instance, rabbitmq_cluster) (rabbitmq_identity_info)
         for: 10m
         labels:
           severity: critical

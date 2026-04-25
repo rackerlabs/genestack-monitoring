@@ -4,7 +4,7 @@ additionalPrometheusRulesMap:
     - name: prometheus-notification-queue-running-full
       rules:
       - alert: prometheus-notification-queue-running-full-warning
-        expr: "# Without min_over_time, failed scrapes could create false negatives, see\n# https://www.robustperception.io/alerting-on-gauges-in-prometheus-2-0 for details.\n(\n  predict_linear(prometheus_notifications_queue_length{job=\"kube-prometheus-stack-prometheus\",namespace=\"prometheus\"}[5m], 60 * 30)\n>\n  min_over_time(prometheus_notifications_queue_capacity{job=\"kube-prometheus-stack-prometheus\",namespace=\"prometheus\"}[5m])\n)"
+        expr: (predict_linear(prometheus_notifications_queue_length[5m], 60 * 30) >  min_over_time(prometheus_notifications_queue_capacity[5m]))
         for: 15m
         labels:
           severity: warning
@@ -18,7 +18,7 @@ additionalPrometheusRulesMap:
           summary: Prometheus alert notification queue predicted to run full in less than 30m.
           dashboard_url: default_dashboard_url
       - alert: prometheus-notification-queue-running-full-critical
-        expr: "# Without min_over_time, failed scrapes could create false negatives, see\n# https://www.robustperception.io/alerting-on-gauges-in-prometheus-2-0 for details.\n(\n  predict_linear(prometheus_notifications_queue_length{job=\"kube-prometheus-stack-prometheus\",namespace=\"prometheus\"}[5m], 60 * 30)\n>\n  min_over_time(prometheus_notifications_queue_capacity{job=\"kube-prometheus-stack-prometheus\",namespace=\"prometheus\"}[5m])\n)"
+        expr: (predict_linear(prometheus_notifications_queue_length[5m], 60 * 30) >  min_over_time(prometheus_notifications_queue_capacity[5m]))
         for: 30m
         labels:
           severity: critical

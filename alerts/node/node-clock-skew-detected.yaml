@@ -5,10 +5,10 @@ additionalPrometheusRulesMap:
         rules:
           - alert: node-clock-skew-detected-warning
             expr: >-
-              ( node_timex_offset_seconds{job="otelcol-hostmetrics"} > 0.05
-              and deriv(node_timex_offset_seconds{job="otelcol-hostmetrics"}[5m]) >= 0 )
-              or ( node_timex_offset_seconds{job="otelcol-hostmetrics"} < -0.05
-              and deriv(node_timex_offset_seconds{job="otelcol-hostmetrics"}[5m]) <= 0 )
+              ( node_timex_offset_seconds > 0.05
+              and deriv(node_timex_offset_seconds[5m]) >= 0 )
+              or ( node_timex_offset_seconds < -0.05
+              and deriv(node_timex_offset_seconds[5m]) <= 0 )
             for: 5m
             labels:
               severity: warning
@@ -23,13 +23,13 @@ additionalPrometheusRulesMap:
               dashboard_url: default_dashboard_url
           - alert: node-clock-skew-detected-critical
             expr: >-
-              ( node_timex_offset_seconds{job="otelcol-hostmetrics"} > 0.05
+              ( node_timex_offset_seconds > 0.05
 
-              and deriv(node_timex_offset_seconds{job="otelcol-hostmetrics"}[5m]) >= 0 )
+              and deriv(node_timex_offset_seconds[5m]) >= 0 )
 
-              or ( node_timex_offset_seconds{job="otelcol-hostmetrics"} < -0.05
+              or ( node_timex_offset_seconds < -0.05
 
-              and deriv(node_timex_offset_seconds{job="otelcol-hostmetrics"}[5m]) <= 0 )
+              and deriv(node_timex_offset_seconds[5m]) <= 0 )
             for: 10m
             labels:
               severity: critical

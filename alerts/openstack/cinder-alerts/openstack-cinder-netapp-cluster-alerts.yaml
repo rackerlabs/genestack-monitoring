@@ -1,0 +1,35 @@
+additionalPrometheusRulesMap:
+  openstack-cinder-netapp-cluster-alerts:
+    groups:
+    - name: openstack-cinder-netapp-cluster-alerts
+      rules:
+      - alert: cinder-netapp-cluster-pool-freespace-warning
+        expr: |
+          (avg(openstack_cinder_pool_capacity_free_gb{name=~".*netapp.*cinder02.*", job="os-metrics-prometheus-openstack-exporter"}) /
+          avg(openstack_cinder_pool_capacity_total_gb{name=~".*netapp.*cinder02.*", job="os-metrics-prometheus-openstack-exporter"})) * 100.0 <= 30.0
+        for: 5m
+        labels:
+          severity: warning
+          node: "{{ $labels.instance }}"
+          group_name: cinder-netapp-cluster-pool-freespace
+          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+        annotations:
+          runbook_url: default_runbook_url
+          dashboard_url: default_dashboard_url
+          summary: Cinder NetApp (cinder02) free pool capacity has dropped below 30% of total
+          description: "Cinder NetApp volume cinder02: {{ $labels.name }}\nFree Space: {{ $value }}%\nLABELS: {{ $labels }}"
+      - alert: cinder-netapp-cluster-pool-freespace-critical
+        expr: |
+          (avg(openstack_cinder_pool_capacity_free_gb{name=~".*netapp.*cinder02.*", job="os-metrics-prometheus-openstack-exporter"}) /
+          avg(openstack_cinder_pool_capacity_total_gb{name=~".*netapp.*cinder02.*", job="os-metrics-prometheus-openstack-exporter"})) * 100.0 <= 30.0
+        for: 10m
+        labels:
+          severity: critical
+          node: "{{ $labels.instance }}"
+          group_name: cinder-netapp-cluster-pool-freespace
+          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+        annotations:
+          runbook_url: default_runbook_url
+          dashboard_url: default_dashboard_url
+          summary: Cinder NetApp (cinder02) free pool capacity has dropped below 30% of total
+          description: "Cinder NetApp volume cinder02: {{ $labels.name }}\nFree Space: {{ $value }}%\nLABELS: {{ $labels }}"

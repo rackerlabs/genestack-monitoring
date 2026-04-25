@@ -4,7 +4,7 @@ additionalPrometheusRulesMap:
       - name: node-memory-major-pages-faults
         rules:
           - alert: node-memory-major-pages-faults-warning
-            expr: rate(system_paging_faults_total{job="otelcol-hostmetrics",type="major"}[5m]) > 500
+            expr: rate(system_paging_faults_total{type="major"}[5m]) > 500
             for: 5m
             labels:
               severity: warning
@@ -19,7 +19,7 @@ additionalPrometheusRulesMap:
               summary: Memory major page faults are occurring at very high rate.
               dashboard_url: default_dashboard_url
           - alert: node-memory-major-pages-faults-critical
-            expr: rate(system_paging_faults_total{job="otelcol-hostmetrics",type="major"}[5m]) > 500
+            expr: rate(system_paging_faults_total{type="major"}[5m]) > 500
             for: 10m
             labels:
               severity: critical

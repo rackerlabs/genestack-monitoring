@@ -1,8 +1,7 @@
-groups:
-- name: kube-apiserver-availability.rules
-  rules:
-  - expr: sum by (cluster, verb, scope) (cluster_verb_scope_le:apiserver_request_sli_duration_seconds_bucket:increase1h{le="+Inf"})
-    labels:
-      rackspace_com_coreAccountID: ''
-      rackspace_com_overseerID: ''
-    record: cluster_verb_scope:apiserver_request_sli_duration_seconds_count:increase1h
+additionalPrometheusRulesMap:
+  cluster-verb-scopeapiserver-request-sli-duration-seconds-countincrease1h:
+    groups:
+      - name: kube-apiserver-availability-rules
+        rules:
+          - expr: sum by (cluster, verb, scope) (cluster_verb_scope_le:apiserver_request_sli_duration_seconds_bucket:increase1h{le="+Inf"})
+            record: cluster_verb_scope:apiserver_request_sli_duration_seconds_count:increase1h

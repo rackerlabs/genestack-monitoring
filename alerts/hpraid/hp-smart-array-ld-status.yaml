@@ -1,0 +1,31 @@
+additionalPrometheusRulesMap:
+  hp-smart-array-ld-status:
+    groups:
+    - name: hp-smart-array-ld-status
+      rules:
+      - alert: hp-smart-array-ld-status-warning
+        expr: hp_smart_array_ld_status{job="node-exporter"} < 1
+        for: 5m
+        labels:
+          severity: warning
+          node: "{{ $labels.instance }}"
+          group_name: hp-smart-array-ld-status
+          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+        annotations:
+          runbook_url: default_runbook_url
+          dashboard_url: default_dashboard_url
+          summary: "HP RAID logical disk status alert: possible LD array recovery in-progress"
+          description: "{{ $labels.name }}\nlabels: {{ $labels }}"
+      - alert: hp-smart-array-ld-status-critical
+        expr: hp_smart_array_ld_status{job="node-exporter"} < 1
+        for: 15m
+        labels:
+          severity: critical
+          node: "{{ $labels.instance }}"
+          group_name: hp-smart-array-ld-status
+          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+        annotations:
+          runbook_url: default_runbook_url
+          dashboard_url: default_dashboard_url
+          summary: "HP RAID logical disk status alert: possible LD array recovery in-progress"
+          description: "{{ $labels.name }}\nlabels: {{ $labels }}"

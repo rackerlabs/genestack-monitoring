@@ -1,8 +1,7 @@
-groups:
-- name: kube-prometheus-general.rules
-  rules:
-  - expr: count without(instance, pod, node) (up == 0)
-    labels:
-      rackspace_com_coreAccountID: ''
-      rackspace_com_overseerID: ''
-    record: count:up0
+additionalPrometheusRulesMap:
+  countup0:
+    groups:
+      - name: kube-prometheus-general-rules
+        rules:
+          - expr: count without(instance, pod, node) (up == 0)
+            record: count:up0

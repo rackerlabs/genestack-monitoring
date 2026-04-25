@@ -1,10 +1,10 @@
 additionalPrometheusRulesMap:
-  alertmanager-cluster-crash-looping:
+  am-cluster-crash-looping:
     groups:
-    - name: alertmanager-cluster-crash-looping
+    - name: am-cluster-crash-looping
       rules:
       - alert: alertmanager-cluster-crash-looping-warning
-        expr: "(\n  count by (namespace,service,cluster) (\n    changes(process_start_time_seconds{job=\"kube-prometheus-stack-alertmanager\",container=\"alertmanager\",namespace=\"prometheus\"}[10m]) > 4\n  )\n/\n  count by (namespace,service,cluster) (\n    up{job=\"kube-prometheus-stack-alertmanager\",container=\"alertmanager\",namespace=\"prometheus\"}\n  )\n)\n>= 0.5"
+        expr: (count by (namespace,service,cluster) (changes(process_start_time_seconds{job="kube-prometheus-stack-alertmanager",container="alertmanager",namespace="prometheus"}[10m]) > 4  ) / count by (namespace,service,cluster) (up{job="kube-prometheus-stack-alertmanager",container="alertmanager",namespace="prometheus"}  ))>= 0.5
         for: 5m
         labels:
           severity: warning
@@ -18,7 +18,7 @@ additionalPrometheusRulesMap:
           summary: Half or more of the Alertmanager instances within the same cluster are crashlooping.
           dashboard_url: default_dashboard_url
       - alert: alertmanager-cluster-crash-looping-critical
-        expr: "(\n  count by (namespace,service,cluster) (\n    changes(process_start_time_seconds{job=\"kube-prometheus-stack-alertmanager\",container=\"alertmanager\",namespace=\"prometheus\"}[10m]) > 4\n  )\n/\n  count by (namespace,service,cluster) (\n    up{job=\"kube-prometheus-stack-alertmanager\",container=\"alertmanager\",namespace=\"prometheus\"}\n  )\n)\n>= 0.5"
+        expr: (count by (namespace,service,cluster) (changes(process_start_time_seconds{job="kube-prometheus-stack-alertmanager",container="alertmanager",namespace="prometheus"}[10m]) > 4 ) / count by (namespace,service,cluster) (up{job="kube-prometheus-stack-alertmanager",container="alertmanager",namespace="prometheus"}  ))>= 0.5
         for: 10m
         labels:
           severity: critical

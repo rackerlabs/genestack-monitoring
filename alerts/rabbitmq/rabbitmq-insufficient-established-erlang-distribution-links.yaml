@@ -4,7 +4,7 @@ additionalPrometheusRulesMap:
     - name: rabbitmq-insufficient-established-erlang-distribution-links
       rules:
       - alert: rabbitmq-insufficient-established-erlang-distribution-links-warning
-        expr: "count by (namespace, rabbitmq_cluster) (erlang_vm_dist_node_state * on(instance) group_left(rabbitmq_cluster) max by (instance, rabbitmq_cluster) (rabbitmq_identity_info) == 3)\n<\n count by (namespace, rabbitmq_cluster) (rabbitmq_build_info * on(instance) group_left(rabbitmq_cluster) max by (instance, rabbitmq_cluster) (rabbitmq_identity_info))\n *\n(count by (namespace, rabbitmq_cluster) (rabbitmq_build_info * on(instance) group_left(rabbitmq_cluster) max by (instance, rabbitmq_cluster) (rabbitmq_identity_info)) -1 )\n"
+        expr: count by (namespace, rabbitmq_cluster) (erlang_vm_dist_node_state * on(instance) group_left(rabbitmq_cluster) max by (instance, rabbitmq_cluster) (rabbitmq_identity_info) == 3) <  count by (namespace, rabbitmq_cluster) (rabbitmq_build_info * on(instance) group_left(rabbitmq_cluster) max by (instance, rabbitmq_cluster) (rabbitmq_identity_info)) * (count by (namespace, rabbitmq_cluster) (rabbitmq_build_info * on(instance) group_left(rabbitmq_cluster) max by (instance, rabbitmq_cluster) (rabbitmq_identity_info)) -1 )
         for: 10m
         labels:
           severity: warning
@@ -37,7 +37,7 @@ additionalPrometheusRulesMap:
             '
           dashboard_url: default_dashboard_url
       - alert: rabbitmq-insufficient-established-erlang-distribution-links-critical
-        expr: "count by (namespace, rabbitmq_cluster) (erlang_vm_dist_node_state * on(instance) group_left(rabbitmq_cluster) max by (instance, rabbitmq_cluster) (rabbitmq_identity_info) == 3)\n<\n count by (namespace, rabbitmq_cluster) (rabbitmq_build_info * on(instance) group_left(rabbitmq_cluster) max by (instance, rabbitmq_cluster) (rabbitmq_identity_info))\n *\n(count by (namespace, rabbitmq_cluster) (rabbitmq_build_info * on(instance) group_left(rabbitmq_cluster) max by (instance, rabbitmq_cluster) (rabbitmq_identity_info)) -1 )\n"
+        expr: count by (namespace, rabbitmq_cluster) (erlang_vm_dist_node_state * on(instance) group_left(rabbitmq_cluster) max by (instance, rabbitmq_cluster) (rabbitmq_identity_info) == 3) <  count by (namespace, rabbitmq_cluster) (rabbitmq_build_info * on(instance) group_left(rabbitmq_cluster) max by (instance, rabbitmq_cluster) (rabbitmq_identity_info)) * (count by (namespace, rabbitmq_cluster) (rabbitmq_build_info * on(instance) group_left(rabbitmq_cluster) max by (instance, rabbitmq_cluster) (rabbitmq_identity_info)) -1 )
         for: 10m
         labels:
           severity: critical

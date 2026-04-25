@@ -4,7 +4,7 @@ additionalPrometheusRulesMap:
     - name: rabbitmq-queue-is-growing
       rules:
       - alert: rabbitmq-queue-is-growing-warning
-        expr: "(\n    avg_over_time(rabbitmq_detailed_queue_messages[10m]) - avg_over_time(rabbitmq_detailed_queue_messages[10m] offset 1m) > 1\n) * on (instance) group_left(rabbitmq_cluster) max by (instance, rabbitmq_cluster) (rabbitmq_identity_info)\n"
+        expr: (avg_over_time(rabbitmq_detailed_queue_messages[10m]) - avg_over_time(rabbitmq_detailed_queue_messages[10m] offset 1m) > 1) * on (instance) group_left(rabbitmq_cluster) max by (instance, rabbitmq_cluster) (rabbitmq_identity_info)
         for: 10m
         labels:
           severity: warning
@@ -22,7 +22,7 @@ additionalPrometheusRulesMap:
             '
           dashboard_url: default_dashboard_url
       - alert: rabbitmq-queue-is-growing-critical
-        expr: "(\n    avg_over_time(rabbitmq_detailed_queue_messages[10m]) - avg_over_time(rabbitmq_detailed_queue_messages[10m] offset 1m) > 1\n) * on (instance) group_left(rabbitmq_cluster) max by (instance, rabbitmq_cluster) (rabbitmq_identity_info)\n"
+        expr: (avg_over_time(rabbitmq_detailed_queue_messages[10m]) - avg_over_time(rabbitmq_detailed_queue_messages[10m] offset 1m) > 1) * on (instance) group_left(rabbitmq_cluster) max by (instance, rabbitmq_cluster) (rabbitmq_identity_info)
         for: 10m
         labels:
           severity: critical

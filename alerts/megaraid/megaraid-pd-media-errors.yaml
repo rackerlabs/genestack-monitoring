@@ -1,0 +1,23 @@
+additionalPrometheusRulesMap:
+  megaraid-pd-media-errors:
+    groups:
+    - name: megaraid-pd-media-errors
+      rules:
+      - alert: megaraid-pd-media-errors-info
+        expr: |
+          (megaraid_pd_other_errors{job="node-exporter"} > 5
+          and
+          megaraid_pd_media_errors{job="node-exporter"}
+          and
+          megaraid_pd_predictive_errors{job="node-exporter"}) > 0
+        for: 5m
+        labels:
+          severity: info
+          node: "{{ $labels.instance }}"
+          group_name: megaraid-pd-media-errors-info
+          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+        annotations:
+          runbook_url: default_runbook_url
+          dashboard_url: default_dashboard_url
+          summary: "DELL megaraid physical disk media errors detected"
+          description: "{{ $labels.name }}\nController: {{ $labels.controller }}\nSlot: {{ $labels.slot }}\nlabels: {{ $labels }}"

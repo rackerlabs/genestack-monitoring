@@ -4,7 +4,7 @@ additionalPrometheusRulesMap:
     - name: prometheus-operator-watch-errors
       rules:
       - alert: prometheus-operator-watch-errors-warning
-        expr: (sum by (cluster,controller,namespace) (rate(prometheus_operator_watch_operations_failed_total{job="kube-prometheus-stack-operator",namespace="prometheus"}[5m])) / sum by (cluster,controller,namespace) (rate(prometheus_operator_watch_operations_total{job="kube-prometheus-stack-operator",namespace="prometheus"}[5m]))) > 0.4
+        expr: (sum by (cluster,controller,namespace) (rate(prometheus_operator_watch_operations_failed_total[5m])) / sum by (cluster,controller,namespace) (rate(prometheus_operator_watch_operations_total[5m]))) > 0.4
         for: 15m
         labels:
           severity: warning
@@ -18,7 +18,7 @@ additionalPrometheusRulesMap:
           summary: Errors while performing watch operations in controller.
           dashboard_url: default_dashboard_url
       - alert: prometheus-operator-watch-errors-critical
-        expr: (sum by (cluster,controller,namespace) (rate(prometheus_operator_watch_operations_failed_total{job="kube-prometheus-stack-operator",namespace="prometheus"}[5m])) / sum by (cluster,controller,namespace) (rate(prometheus_operator_watch_operations_total{job="kube-prometheus-stack-operator",namespace="prometheus"}[5m]))) > 0.4
+        expr: (sum by (cluster,controller,namespace) (rate(prometheus_operator_watch_operations_failed_total[5m])) / sum by (cluster,controller,namespace) (rate(prometheus_operator_watch_operations_total[5m]))) > 0.4
         for: 30m
         labels:
           severity: critical

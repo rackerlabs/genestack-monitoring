@@ -1,10 +1,10 @@
 additionalPrometheusRulesMap:
-  alertmanager-cluster-down:
+  am-cluster-down:
     groups:
-    - name: alertmanager-cluster-down
+    - name: am-cluster-down
       rules:
       - alert: alertmanager-cluster-down-warning
-        expr: "(\n  count by (namespace,service,cluster) (\n    avg_over_time(up{job=\"kube-prometheus-stack-alertmanager\",container=\"alertmanager\",namespace=\"prometheus\"}[5m]) < 0.5\n  )\n/\n  count by (namespace,service,cluster) (\n    up{job=\"kube-prometheus-stack-alertmanager\",container=\"alertmanager\",namespace=\"prometheus\"}\n  )\n)\n>= 0.5"
+        expr: (count by (namespace,service,cluster) ( avg_over_time(up{job="kube-prometheus-stack-alertmanager",container="alertmanager"}[5m]) < 0.5 ) /  count by (namespace,service,cluster) ( up{job="kube-prometheus-stack-alertmanager",container="alertmanager"} )) >= 0.5
         for: 5m
         labels:
           severity: warning
@@ -18,7 +18,7 @@ additionalPrometheusRulesMap:
           summary: Half or more of the Alertmanager instances within the same cluster are down.
           dashboard_url: default_dashboard_url
       - alert: alertmanager-cluster-down-critical
-        expr: "(\n  count by (namespace,service,cluster) (\n    avg_over_time(up{job=\"kube-prometheus-stack-alertmanager\",container=\"alertmanager\",namespace=\"prometheus\"}[5m]) < 0.5\n  )\n/\n  count by (namespace,service,cluster) (\n    up{job=\"kube-prometheus-stack-alertmanager\",container=\"alertmanager\",namespace=\"prometheus\"}\n  )\n)\n>= 0.5"
+        expr: (count by (namespace,service,cluster) ( avg_over_time(up{job="kube-prometheus-stack-alertmanager",container="alertmanager"}[5m]) < 0.5 ) /  count by (namespace,service,cluster) ( up{job="kube-prometheus-stack-alertmanager",container="alertmanager"} )) >= 0.5
         for: 10m
         labels:
           severity: critical

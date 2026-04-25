@@ -1,0 +1,17 @@
+groups:
+  - name: loki-watchdog
+    interval: 1m
+    rules:
+      - alert: loki-watchdog
+        expr: vector(1)
+        for: 1m
+        labels:
+          severity: warning
+          team: identity
+          source: loki
+          group_name: loki-watchdog
+        annotations:
+          summary: "Loki watchdog"
+          description: "This is a continuously firing informational alert to verify Loki ruler and Alertmanager operation."
+          dashboard_url: default_dashboard_url
+          runbook_url: default_runbook_url

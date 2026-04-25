@@ -4,17 +4,7 @@ additionalPrometheusRulesMap:
     - name: rabbitmq-unroutable-messages
       rules:
       - alert: rabbitmq-unroutable-messages-warning
-        expr: 'sum by(namespace, rabbitmq_cluster) (increase(rabbitmq_channel_messages_unroutable_dropped_total[5m]) * on (instance) group_left(rabbitmq_cluster) max by (instance, rabbitmq_cluster) (rabbitmq_identity_info))
-
-          >= 1
-
-          or
-
-          sum by(namespace, rabbitmq_cluster) (increase(rabbitmq_channel_messages_unroutable_returned_total[5m]) * on (instance) group_left(rabbitmq_cluster) max by (instance, rabbitmq_cluster) (rabbitmq_identity_info))
-
-          >= 1
-
-          '
+        expr: 'sum by(namespace, rabbitmq_cluster) (increase(rabbitmq_channel_messages_unroutable_dropped_total[5m]) * on (instance) group_left(rabbitmq_cluster) max by (instance, rabbitmq_cluster) (rabbitmq_identity_info)) >= 1 or sum by(namespace, rabbitmq_cluster) (increase(rabbitmq_channel_messages_unroutable_returned_total[5m]) * on (instance) group_left(rabbitmq_cluster) max by (instance, rabbitmq_cluster) (rabbitmq_identity_info)) >= 1'
         for: 0m
         labels:
           severity: warning
@@ -41,17 +31,7 @@ additionalPrometheusRulesMap:
             '
           dashboard_url: default_dashboard_url
       - alert: rabbitmq-unroutable-messages-critical
-        expr: 'sum by(namespace, rabbitmq_cluster) (increase(rabbitmq_channel_messages_unroutable_dropped_total[5m]) * on (instance) group_left(rabbitmq_cluster) max by (instance, rabbitmq_cluster) (rabbitmq_identity_info))
-
-          >= 1
-
-          or
-
-          sum by(namespace, rabbitmq_cluster) (increase(rabbitmq_channel_messages_unroutable_returned_total[5m]) * on (instance) group_left(rabbitmq_cluster) max by (instance, rabbitmq_cluster) (rabbitmq_identity_info))
-
-          >= 1
-
-          '
+        expr: 'sum by(namespace, rabbitmq_cluster) (increase(rabbitmq_channel_messages_unroutable_dropped_total[5m]) * on (instance) group_left(rabbitmq_cluster) max by (instance, rabbitmq_cluster) (rabbitmq_identity_info)) >= 1 or sum by(namespace, rabbitmq_cluster) (increase(rabbitmq_channel_messages_unroutable_returned_total[5m]) * on (instance) group_left(rabbitmq_cluster) max by (instance, rabbitmq_cluster) (rabbitmq_identity_info)) >= 1'
         for: 5m
         labels:
           severity: critical

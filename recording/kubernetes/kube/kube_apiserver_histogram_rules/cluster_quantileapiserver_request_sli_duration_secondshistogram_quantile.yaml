@@ -1,11 +1,10 @@
-groups:
-- name: kube-apiserver-histogram.rules
-  rules:
-  - expr: histogram_quantile(0.99, sum by (cluster, le, resource) (rate(apiserver_request_sli_duration_seconds_bucket{job="apiserver",verb=~"POST|PUT|PATCH|DELETE",subresource!~"proxy|attach|log|exec|portforward"}[5m])))
-      > 0
-    labels:
-      quantile: '0.99'
-      rackspace_com_coreAccountID: ''
-      rackspace_com_overseerID: ''
-      verb: write
-    record: cluster_quantile:apiserver_request_sli_duration_seconds:histogram_quantile
+additionalPrometheusRulesMap:
+  cluster-quantileapiserver-request-sli-duration-secondshistogram-quantile:
+    groups:
+      - name: kube-apiserver-histogram-rules
+        rules:
+          - expr: histogram_quantile(0.99, sum by (cluster, le, resource) (rate(apiserver_request_sli_duration_seconds_bucket{job="apiserver",verb=~"POST|PUT|PATCH|DELETE",subresource!~"proxy|attach|log|exec|portforward"}[5m]))) > 0
+            labels:
+              quantile: '0.99'
+              verb: write
+            record: cluster_quantile:apiserver_request_sli_duration_seconds:histogram_quantile

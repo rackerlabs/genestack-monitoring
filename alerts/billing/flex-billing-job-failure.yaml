@@ -1,0 +1,31 @@
+additionalPrometheusRulesMap:
+  flex-billing-job-failure:
+    groups:
+    - name: flex-billing-job-failure
+      rules:
+      - alert: flex-billing-failure-warning
+        expr: 'time() - kube_cronjob_status_last_successful_time{cronjob="flex-billing-cronjob", namespace="flex-billing"} > 46800'
+        for: 1h
+        labels:
+          severity: warning
+          group_name: flex-billing-job-failure
+          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+        annotations:
+          description: >-
+            Last flex-billing job not successful within 1 hour of scheduled run.
+          runbook_url: default_runbook_url
+          summary: Last flex-billing job not successful within 1 hour of scheduled run
+          dashboard_url: default_dashboard_url
+      - alert: flex-billing-failure-critical
+        expr: 'time() - kube_cronjob_status_last_successful_time{cronjob="flex-billing-cronjob", namespace="flex-billing"} > 90000'
+        for: 1h
+        labels:
+          severity: critical
+          group_name: flex-billing-job-failure
+          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+        annotations:
+          description: >-
+            Second successive flex-billing job not successful within 1 hour of scheduled run.
+          runbook_url: default_runbook_url
+          summary: Second successive flex-billing job not successful within 1 hour of scheduled run
+          dashboard_url: default_dashboard_url

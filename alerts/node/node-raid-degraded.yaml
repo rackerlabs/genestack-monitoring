@@ -5,11 +5,11 @@ additionalPrometheusRulesMap:
         rules:
           - alert: node-raid-degraded-warning
             expr: >-
-              node_md_disks_required{job="otelcol-hostmetrics",device=~"(/dev/)?(mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|md.+|dasd.+)"}
+              node_md_disks_required{device=~"(/dev/)?(mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|md.+|dasd.+)"}
 
               - ignoring (state)
 
-              (node_md_disks{state="active",job="otelcol-hostmetrics",device=~"(/dev/)?(mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|md.+|dasd.+)"})
+              (node_md_disks{state="active",device=~"(/dev/)?(mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|md.+|dasd.+)"})
 
               > 0
             for: 5m
@@ -27,11 +27,11 @@ additionalPrometheusRulesMap:
               dashboard_url: default_dashboard_url
           - alert: node-raid-degraded-critical
             expr: >-
-              node_md_disks_required{job="otelcol-hostmetrics",device=~"(/dev/)?(mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|md.+|dasd.+)"}
+              node_md_disks_required{device=~"(/dev/)?(mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|md.+|dasd.+)"}
 
               - ignoring (state)
 
-              (node_md_disks{state="active",job="otelcol-hostmetrics",device=~"(/dev/)?(mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|md.+|dasd.+)"})
+              (node_md_disks{state="active",device=~"(/dev/)?(mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|md.+|dasd.+)"})
 
               > 0
             for: 10m

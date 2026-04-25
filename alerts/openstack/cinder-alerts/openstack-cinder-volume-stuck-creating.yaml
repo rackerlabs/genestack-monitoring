@@ -1,0 +1,35 @@
+additionalPrometheusRulesMap:
+  openstack-cinder-volume-stuck-creating:
+    groups:
+    - name: openstack-cinder-volume-stuck-creating
+      rules:
+      - alert: cinder-volume-status-stuck-creating-warning
+        expr: |
+          count((openstack_cinder_volume_status{status="creating", job="os-metrics-prometheus-openstack-exporter"} offset 7m)
+          and
+          openstack_cinder_volume_status{status="creating", job="os-metrics-prometheus-openstack-exporter"})
+        for: 15m
+        labels:
+          severity: warning
+          group_name: openstack-cinder-volume-stuck-creating
+          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+        annotations:
+          runbook_url: default_runbook_url
+          dashboard_url: default_dashboard_url
+          summary: "There are {{ $value }} Cinder volumes stuck in creating state"
+          description: "There are {{ $value }} Cinder volumes stuck in creating state.\nLABELS: {{ $labels }}"
+      - alert: cinder-volume-status-stuck-creating-critical
+        expr: |
+          (openstack_cinder_volume_status{status="creating", job="os-metrics-prometheus-openstack-exporter"} offset 7m)
+          and
+          openstack_cinder_volume_status{status="creating", job="os-metrics-prometheus-openstack-exporter"}
+        for: 30m
+        labels:
+          severity: critical
+          group_name: openstack-cinder-volume-stuck-creating
+          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+        annotations:
+          runbook_url: default_runbook_url
+          dashboard_url: default_dashboard_url
+          summary: "Cinder volume with status == creating for approximately 30 minutes."
+          description: "Cinder volume ID: {{ $labels.id }}\nNAME: {{ $labels.name }}\nLABELS: {{ $labels }}"

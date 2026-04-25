@@ -1,10 +1,10 @@
 additionalPrometheusRulesMap:
-  alertmanager-failed-to-send-alerts:
+  am-failed-to-send-alerts:
     groups:
-    - name: alertmanager-failed-to-send-alerts
+    - name: am-failed-to-send-alerts
       rules:
       - alert: alertmanager-failed-to-send-alerts-warning
-        expr: "(\n  rate(alertmanager_notifications_failed_total{job=\"kube-prometheus-stack-alertmanager\",container=\"alertmanager\",namespace=\"prometheus\"}[15m])\n/\n  ignoring (reason) group_left rate(alertmanager_notifications_total{job=\"kube-prometheus-stack-alertmanager\",container=\"alertmanager\",namespace=\"prometheus\"}[15m])\n)\n> 0.01"
+        expr: (rate(alertmanager_notifications_failed_total{job="kube-prometheus-stack-alertmanager",container="alertmanager"}[15m]) /  ignoring (reason) group_left rate(alertmanager_notifications_total{job="kube-prometheus-stack-alertmanager",container="alertmanager",namespace="prometheus"}[15m])) > 0.01
         for: 5m
         labels:
           severity: warning
@@ -19,7 +19,7 @@ additionalPrometheusRulesMap:
           summary: An Alertmanager instance failed to send notifications.
           dashboard_url: default_dashboard_url
       - alert: alertmanager-failed-to-send-alerts-critical
-        expr: "(\n  rate(alertmanager_notifications_failed_total{job=\"kube-prometheus-stack-alertmanager\",container=\"alertmanager\",namespace=\"prometheus\"}[15m])\n/\n  ignoring (reason) group_left rate(alertmanager_notifications_total{job=\"kube-prometheus-stack-alertmanager\",container=\"alertmanager\",namespace=\"prometheus\"}[15m])\n)\n> 0.01"
+        expr: (rate(alertmanager_notifications_failed_total{job="kube-prometheus-stack-alertmanager",container="alertmanager"}[15m]) /  ignoring (reason) group_left rate(alertmanager_notifications_total{job="kube-prometheus-stack-alertmanager",container="alertmanager",namespace="prometheus"}[15m])) > 0.01
         for: 10m
         labels:
           severity: critical

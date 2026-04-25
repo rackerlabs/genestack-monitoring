@@ -4,7 +4,7 @@ additionalPrometheusRulesMap:
     - name: prometheus-sd-refresh-failure
       rules:
       - alert: prometheus-sd-refresh-failure-warning
-        expr: increase(prometheus_sd_refresh_failures_total{job="kube-prometheus-stack-prometheus",namespace="prometheus"}[10m]) > 0
+        expr: increase(prometheus_sd_refresh_failures_total[10m]) > 0
         for: 20m
         labels:
           severity: warning
@@ -18,7 +18,7 @@ additionalPrometheusRulesMap:
           summary: Failed Prometheus SD refresh.
           dashboard_url: default_dashboard_url
       - alert: prometheus-sd-refresh-failure-critical
-        expr: increase(prometheus_sd_refresh_failures_total{job="kube-prometheus-stack-prometheus",namespace="prometheus"}[10m]) > 0
+        expr: increase(prometheus_sd_refresh_failures_total[10m]) > 0
         for: 30m
         labels:
           severity: critical

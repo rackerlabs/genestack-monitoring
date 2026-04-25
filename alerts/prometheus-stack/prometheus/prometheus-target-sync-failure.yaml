@@ -4,7 +4,7 @@ additionalPrometheusRulesMap:
     - name: prometheus-target-sync-failure
       rules:
       - alert: prometheus-target-sync-failure-warning
-        expr: increase(prometheus_target_sync_failed_total{job="kube-prometheus-stack-prometheus",namespace="prometheus"}[30m]) > 0
+        expr: increase(prometheus_target_sync_failed_total[30m]) > 0
         for: 5m
         labels:
           severity: warning
@@ -18,7 +18,7 @@ additionalPrometheusRulesMap:
           summary: Prometheus has failed to sync targets.
           dashboard_url: default_dashboard_url
       - alert: prometheus-target-sync-failure-critical
-        expr: increase(prometheus_target_sync_failed_total{job="kube-prometheus-stack-prometheus",namespace="prometheus"}[30m]) > 0
+        expr: increase(prometheus_target_sync_failed_total[30m]) > 0
         for: 10m
         labels:
           severity: critical

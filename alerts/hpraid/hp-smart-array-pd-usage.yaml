@@ -1,0 +1,31 @@
+additionalPrometheusRulesMap:
+  hp-smart-array-pd-usage:
+    groups:
+    - name: hp-smart-array-pd-usage
+      rules:
+      - alert: hp-smart-array-pd-usage-warning
+        expr: hp_smart_array_disk_usage{job="node-exporter"} < 60.0
+        for: 5m
+        labels:
+          severity: warning
+          node: "{{ $labels.instance }}"
+          group_name: hp-smart-array-pd-usage
+          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+        annotations:
+          runbook_url: default_runbook_url
+          dashboard_url: default_dashboard_url
+          summary: "HP RAID physical disk usage remaining has dropped below 60%"
+          description: "{{ $labels.name }}\nUsage Remaining: {{ $value }}\nPort:Box:Bay: {{ $labels.port }}:{{ $labels.box }}:{{ $labels.bay }}\nSerial: {{ $labels.serial }}\nlabels: {{ $labels }}"
+      - alert: hp-smart-array-pd-usage-critical
+        expr: hp_smart_array_disk_usage{job="node-exporter"} < 60.0
+        for: 15m
+        labels:
+          severity: critical
+          node: "{{ $labels.instance }}"
+          group_name: hp-smart-array-pd-usage
+          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+        annotations:
+          runbook_url: default_runbook_url
+          dashboard_url: default_dashboard_url
+          summary: "HP RAID physical disk usage remaining has dropped below 60%"
+          description: "{{ $labels.name }}\nUsage Remaining: {{ $value }}\nPort:Box:Bay: {{ $labels.port }}:{{ $labels.box }}:{{ $labels.bay }}\nSerial: {{ $labels.serial }}\nlabels: {{ $labels }}"

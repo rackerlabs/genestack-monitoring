@@ -5,9 +5,9 @@ additionalPrometheusRulesMap:
         rules:
           - alert: node-network-transmit-errs-warning
             expr: >-
-              rate(system_network_errors_total{job="otelcol-hostmetrics",direction="transmit"}[2m]) /
+              rate(system_network_errors_total{direction="transmit"}[2m]) /
 
-              rate(system_network_packets_total{job="otelcol-hostmetrics",direction="transmit"}[2m]) > 0.01
+              rate(system_network_packets_total{direction="transmit"}[2m]) > 0.01
             for: 1h
             labels:
               severity: warning
@@ -22,9 +22,9 @@ additionalPrometheusRulesMap:
               dashboard_url: default_dashboard_url
           - alert: node-network-transmit-errs-critical
             expr: >-
-              rate(system_network_errors_total{job="otelcol-hostmetrics",direction="transmit"}[2m]) /
+              rate(system_network_errors_total{direction="transmit"}[2m]) /
 
-              rate(system_network_packets_total{job="otelcol-hostmetrics",direction="transmit"}[2m]) > 0.01
+              rate(system_network_packets_total{direction="transmit"}[2m]) > 0.01
             for: 1h
             labels:
               severity: critical

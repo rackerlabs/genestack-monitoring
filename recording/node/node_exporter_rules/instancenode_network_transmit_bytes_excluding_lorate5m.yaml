@@ -1,9 +1,7 @@
-groups:
-- name: node-exporter.rules
-  rules:
-  - expr: "sum without (device) (\n  rate(node_network_transmit_bytes_total{job=\"\
-      node-exporter\", device!=\"lo\"}[5m])\n)"
-    labels:
-      rackspace_com_coreAccountID: ''
-      rackspace_com_overseerID: ''
-    record: instance:node_network_transmit_bytes_excluding_lo:rate5m
+additionalPrometheusRulesMap:
+  instancenode-network-transmit-bytes-excluding-lorate5m:
+    groups:
+      - name: node-exporter-rules
+        rules:
+          - expr: sum without (device) ( rate(node_network_transmit_bytes_total{job="node-exporter", device!="lo"}[5m]) )
+            record: instance:node_network_transmit_bytes_excluding_lo:rate5m

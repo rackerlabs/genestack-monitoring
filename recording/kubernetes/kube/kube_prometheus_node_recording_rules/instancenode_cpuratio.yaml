@@ -1,10 +1,7 @@
-groups:
-- name: kube-prometheus-node-recording.rules
-  rules:
-  - expr: sum(rate(node_cpu_seconds_total{mode!="idle",mode!="iowait",mode!="steal"}[5m]))
-      WITHOUT (cpu, mode) / ON (instance) GROUP_LEFT() count(sum(node_cpu_seconds_total)
-      BY (instance, cpu)) BY (instance)
-    labels:
-      rackspace_com_coreAccountID: ''
-      rackspace_com_overseerID: ''
-    record: instance:node_cpu:ratio
+additionalPrometheusRulesMap:
+  instancenode-cpuratio:
+    groups:
+      - name: kube-prometheus-node-recording-rules
+        rules:
+          - expr: sum(rate(node_cpu_seconds_total{mode!="idle",mode!="iowait",mode!="steal"}[5m])) without (cpu, mode) / on (instance) group_left() count(sum(node_cpu_seconds_total) by (instance, cpu)) by (instance)
+            record: instance:node_cpu:ratio

@@ -4,7 +4,7 @@ additionalPrometheusRulesMap:
       - name: node-textfile-collector-scrape-error
         rules:
           - alert: node-textfile-collector-scrape-error-warning
-            expr: node_textfile_scrape_error{job="otelcol-hostmetrics"} == 1
+            expr: node_textfile_scrape_error == 1
             for: 5m
             labels:
               severity: warning
@@ -18,7 +18,7 @@ additionalPrometheusRulesMap:
               summary: Node Exporter text file collector failed to scrape.
               dashboard_url: default_dashboard_url
           - alert: node-textfile-collector-scrape-error-critical
-            expr: node_textfile_scrape_error{job="otelcol-hostmetrics"} == 1
+            expr: node_textfile_scrape_error == 1
             for: 10m
             labels:
               severity: critical

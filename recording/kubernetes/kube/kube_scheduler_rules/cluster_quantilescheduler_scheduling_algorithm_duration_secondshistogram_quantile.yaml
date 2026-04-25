@@ -1,10 +1,9 @@
-groups:
-- name: kube-scheduler.rules
-  rules:
-  - expr: histogram_quantile(0.5, sum(rate(scheduler_scheduling_algorithm_duration_seconds_bucket{job="kube-scheduler"}[5m]))
-      without(instance, pod))
-    labels:
-      quantile: '0.5'
-      rackspace_com_coreAccountID: ''
-      rackspace_com_overseerID: ''
-    record: cluster_quantile:scheduler_scheduling_algorithm_duration_seconds:histogram_quantile
+additionalPrometheusRulesMap:
+  cluster-quantilescheduler-scheduling-algorithm-duration-secondshistogram-quantile:
+    groups:
+      - name: kube-scheduler-rules
+        rules:
+          - expr: histogram_quantile(0.5, sum(rate(scheduler_scheduling_algorithm_duration_seconds_bucket{job="kube-scheduler"}[5m])) without(instance, pod))
+            labels:
+              quantile: '0.5'
+            record: cluster_quantile:scheduler_scheduling_algorithm_duration_seconds:histogram_quantile

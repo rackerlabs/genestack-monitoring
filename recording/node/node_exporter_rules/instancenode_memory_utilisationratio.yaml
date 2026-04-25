@@ -1,13 +1,7 @@
-groups:
-- name: node-exporter.rules
-  rules:
-  - expr: "1 - (\n  (\n    node_memory_MemAvailable_bytes{job=\"node-exporter\"}\n\
-      \    or\n    (\n      node_memory_Buffers_bytes{job=\"node-exporter\"}\n   \
-      \   +\n      node_memory_Cached_bytes{job=\"node-exporter\"}\n      +\n    \
-      \  node_memory_MemFree_bytes{job=\"node-exporter\"}\n      +\n      node_memory_Slab_bytes{job=\"\
-      node-exporter\"}\n    )\n  )\n/\n  node_memory_MemTotal_bytes{job=\"node-exporter\"\
-      }\n)"
-    labels:
-      rackspace_com_coreAccountID: ''
-      rackspace_com_overseerID: ''
-    record: instance:node_memory_utilisation:ratio
+additionalPrometheusRulesMap:
+  instancenode-memory-utilisationratio:
+    groups:
+      - name: node-exporter-rules
+        rules:
+          - expr: 1 - ( ( node_memory_MemAvailable_bytes{job="node-exporter"} or ( node_memory_Buffers_bytes{job="node-exporter"} + node_memory_Cached_bytes{job="node-exporter"} + node_memory_MemFree_bytes{job="node-exporter"} + node_memory_Slab_bytes{job="node-exporter"} ) ) / node_memory_MemTotal_bytes{job="node-exporter"} )
+            record: instance:node_memory_utilisation:ratio
