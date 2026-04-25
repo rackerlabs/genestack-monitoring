@@ -12,7 +12,11 @@ additionalPrometheusRulesMap:
             labels:
               severity: warning
               group_name: kube-node-readiness-flapping
-              node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+              node_hostname: '{{ $labels.node }}'
+              affected_node: '{{ $labels.node }}'
+              correlation_key: node/{{ $labels.node }}
+              correlation_scope: node
+              root_cause: 'true'
             annotations:
               description: >-
                 The readiness status of node {{ $labels.node }} has changed {{ $value }} times in the last 15
@@ -29,7 +33,11 @@ additionalPrometheusRulesMap:
             labels:
               severity: critical
               group_name: kube-node-readiness-flapping
-              node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+              node_hostname: '{{ $labels.node }}'
+              affected_node: '{{ $labels.node }}'
+              correlation_key: node/{{ $labels.node }}
+              correlation_scope: node
+              root_cause: 'true'
             annotations:
               description: >-
                 The readiness status of node {{ $labels.node }} has changed {{ $value }} times in the last 15

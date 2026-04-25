@@ -11,6 +11,8 @@ additionalPrometheusRulesMap:
               severity: warning
               group_name: kube-pdb-not-enough-healthy-pods
               node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+              correlation_key: pdb/{{ $labels.namespace }}/{{ $labels.poddisruptionbudget }}
+              correlation_scope: pdb
             annotations:
               description: >-
                 PDB {{ $labels.namespace }}/{{ $labels.poddisruptionbudget }} expects {{
@@ -27,6 +29,8 @@ additionalPrometheusRulesMap:
               severity: critical
               group_name: kube-pdb-not-enough-healthy-pods
               node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+              correlation_key: pdb/{{ $labels.namespace }}/{{ $labels.poddisruptionbudget }}
+              correlation_scope: pdb
             annotations:
               description: >-
                 PDB {{ $labels.namespace }}/{{ $labels.poddisruptionbudget }} expects {{

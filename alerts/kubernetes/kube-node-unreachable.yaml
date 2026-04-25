@@ -10,7 +10,11 @@ additionalPrometheusRulesMap:
             labels:
               severity: warning
               group_name: kube-node-unreachable
-              node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+              node_hostname: '{{ $labels.node }}'
+              affected_node: '{{ $labels.node }}'
+              correlation_key: node/{{ $labels.node }}
+              correlation_scope: node
+              root_cause: 'true'
             annotations:
               description: >-
                 {{ $labels.node }} is unreachable and some workloads may be rescheduled on cluster.
@@ -25,7 +29,11 @@ additionalPrometheusRulesMap:
             labels:
               severity: critical
               group_name: kube-node-unreachable
-              node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+              node_hostname: '{{ $labels.node }}'
+              affected_node: '{{ $labels.node }}'
+              correlation_key: node/{{ $labels.node }}
+              correlation_scope: node
+              root_cause: 'true'
             annotations:
               description: >-
                 {{ $labels.node }} is unreachable and some workloads may be rescheduled on cluster.

@@ -5,12 +5,15 @@ additionalPrometheusRulesMap:
         rules:
           - alert: kube-pod-not-ready-warning
             expr: >-
-              sum by (namespace, pod) ( max by (namespace, pod) ( kube_pod_status_phase{namespace=~".*", phase=~"Pending|Failed|Unknown"} == 1 ) * on (namespace, pod) group_left(owner_kind) topk by (namespace, pod) ( 1, max by (namespace, pod, owner_kind) (kube_pod_owner{owner_kind!="Job"}) ) ) > 0
+              sum by (namespace, pod, node) ( max by (namespace, pod) ( kube_pod_status_phase{namespace=~".*", phase=~"Pending|Failed|Unknown"} == 1 ) * on (namespace, pod) group_left(owner_kind) topk by (namespace, pod) ( 1, max by (namespace, pod, owner_kind) (kube_pod_owner{owner_kind!="Job"}) ) * on (namespace, pod) group_left(node) max by (namespace, pod, node) (kube_pod_info{node!=""}) ) > 0
             for: 5m
             labels:
               severity: warning
               group_name: kube-pod-not-ready
-              node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+              node_hostname: '{{ $labels.node }}'
+              affected_node: '{{ $labels.node }}'
+              correlation_key: node/{{ $labels.node }}
+              correlation_scope: node
             annotations:
               description: >-
                 Pod {{ $labels.namespace }}/{{ $labels.pod }} has been in a non-ready state for longer than 5
@@ -20,12 +23,15 @@ additionalPrometheusRulesMap:
               dashboard_url: default_dashboard_url
           - alert: kube-pod-not-ready-critical
             expr: >-
-              sum by (namespace, pod) ( max by (namespace, pod) ( kube_pod_status_phase{namespace=~".*", phase=~"Pending|Failed|Unknown"} == 1 ) * on (namespace, pod) group_left(owner_kind) topk by (namespace, pod) ( 1, max by (namespace, pod, owner_kind) (kube_pod_owner{owner_kind!="Job"}) ) ) > 0
+              sum by (namespace, pod, node) ( max by (namespace, pod) ( kube_pod_status_phase{namespace=~".*", phase=~"Pending|Failed|Unknown"} == 1 ) * on (namespace, pod) group_left(owner_kind) topk by (namespace, pod) ( 1, max by (namespace, pod, owner_kind) (kube_pod_owner{owner_kind!="Job"}) ) * on (namespace, pod) group_left(node) max by (namespace, pod, node) (kube_pod_info{node!=""}) ) > 0
             for: 10m
             labels:
               severity: critical
               group_name: kube-pod-not-ready
-              node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+              node_hostname: '{{ $labels.node }}'
+              affected_node: '{{ $labels.node }}'
+              correlation_key: node/{{ $labels.node }}
+              correlation_scope: node
             annotations:
               description: >-
                 Pod {{ $labels.namespace }}/{{ $labels.pod }} has been in a non-ready state for longer than 10

@@ -11,6 +11,8 @@ additionalPrometheusRulesMap:
               severity: warning
               group_name: kube-daemonset-not-scheduled
               node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+              correlation_key: daemonset/{{ $labels.namespace }}/{{ $labels.daemonset }}
+              correlation_scope: daemonset
             annotations:
               description: >-
                 {{ $value }} Pods of DaemonSet {{ $labels.namespace }}/{{ $labels.daemonset }} are not scheduled
@@ -26,6 +28,8 @@ additionalPrometheusRulesMap:
               severity: critical
               group_name: kube-daemonset-not-scheduled
               node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+              correlation_key: daemonset/{{ $labels.namespace }}/{{ $labels.daemonset }}
+              correlation_scope: daemonset
             annotations:
               description: >-
                 {{ $value }} Pods of DaemonSet {{ $labels.namespace }}/{{ $labels.daemonset }} are not scheduled

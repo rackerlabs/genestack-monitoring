@@ -14,7 +14,10 @@ additionalPrometheusRulesMap:
             labels:
               severity: warning
               group_name: kube-node-eviction
-              node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+              node_hostname: '{{ $labels.node }}'
+              affected_node: '{{ $labels.node }}'
+              correlation_key: node/{{ $labels.node }}
+              correlation_scope: node
             annotations:
               description: >-
                 Evictions have been detected on node {{ $labels.node }}. Investigate memory, disk, and ephemeral storage
@@ -33,7 +36,10 @@ additionalPrometheusRulesMap:
             labels:
               severity: critical
               group_name: kube-node-eviction
-              node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+              node_hostname: '{{ $labels.node }}'
+              affected_node: '{{ $labels.node }}'
+              correlation_key: node/{{ $labels.node }}
+              correlation_scope: node
             annotations:
               description: >-
                 Evictions have been detected on node {{ $labels.node }}. Investigate memory, disk, and ephemeral storage

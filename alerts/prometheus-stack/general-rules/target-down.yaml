@@ -1,33 +1,37 @@
 additionalPrometheusRulesMap:
   target-down:
     groups:
-    - name: target-down
-      rules:
-      - alert: target-down-warning
-        expr: 100 * (count(up == 0) BY (cluster, job, namespace, service) / count(up) BY (cluster, job, namespace, service)) > 10
-        for: 10m
-        labels:
-          severity: warning
-          group_name: target-down
-          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
-        annotations:
-          description: >-
-            {{ printf "%.4g" $value }}% of the {{ $labels.job }}/{{ $labels.service }} targets in {{
-            $labels.namespace }} namespace are down. This warning alert fires after 10m.
-          runbook_url: default_runbook_url
-          summary: One or more targets are unreachable.
-          dashboard_url: default_dashboard_url
-      - alert: target-down-critical
-        expr: 100 * (count(up == 0) BY (cluster, job, namespace, service) / count(up) BY (cluster, job, namespace, service)) > 10
-        for: 10m
-        labels:
-          severity: critical
-          group_name: target-down
-          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
-        annotations:
-          description: >-
-            {{ printf "%.4g" $value }}% of the {{ $labels.job }}/{{ $labels.service }} targets in {{
-            $labels.namespace }} namespace are down. This critical alert fires after 10m.
-          runbook_url: default_runbook_url
-          summary: One or more targets are unreachable.
-          dashboard_url: default_dashboard_url
+      - name: target-down
+        rules:
+          - alert: target-down-warning
+            expr: 100 * (count(up == 0) BY (cluster, job, namespace, service) / count(up) BY (cluster, job, namespace, service)) > 10
+            for: 10m
+            labels:
+              severity: warning
+              group_name: target-down
+              node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+              correlation_key: target/{{ $labels.namespace }}/{{ $labels.service }}/{{ $labels.job }}
+              correlation_scope: target
+            annotations:
+              description: >-
+                {{ printf "%.4g" $value }}% of the {{ $labels.job }}/{{ $labels.service }} targets in {{
+                $labels.namespace }} namespace are down. This warning alert fires after 10m.
+              runbook_url: default_runbook_url
+              summary: One or more targets are unreachable.
+              dashboard_url: default_dashboard_url
+          - alert: target-down-critical
+            expr: 100 * (count(up == 0) BY (cluster, job, namespace, service) / count(up) BY (cluster, job, namespace, service)) > 10
+            for: 10m
+            labels:
+              severity: critical
+              group_name: target-down
+              node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+              correlation_key: target/{{ $labels.namespace }}/{{ $labels.service }}/{{ $labels.job }}
+              correlation_scope: target
+            annotations:
+              description: >-
+                {{ printf "%.4g" $value }}% of the {{ $labels.job }}/{{ $labels.service }} targets in {{
+                $labels.namespace }} namespace are down. This critical alert fires after 10m.
+              runbook_url: default_runbook_url
+              summary: One or more targets are unreachable.
+              dashboard_url: default_dashboard_url

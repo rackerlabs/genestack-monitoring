@@ -13,6 +13,8 @@ additionalPrometheusRulesMap:
               severity: warning
               group_name: kube-deployment-replicas-mismatch
               node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+              correlation_key: deployment/{{ $labels.namespace }}/{{ $labels.deployment }}
+              correlation_scope: deployment
             annotations:
               description: >-
                 Deployment {{ $labels.namespace }}/{{ $labels.deployment }} has not matched the expected number
@@ -30,6 +32,8 @@ additionalPrometheusRulesMap:
               severity: critical
               group_name: kube-deployment-replicas-mismatch
               node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+              correlation_key: deployment/{{ $labels.namespace }}/{{ $labels.deployment }}
+              correlation_scope: deployment
             annotations:
               description: >-
                 Deployment {{ $labels.namespace }}/{{ $labels.deployment }} has not matched the expected number

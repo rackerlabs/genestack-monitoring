@@ -1,20 +1,21 @@
 additionalPrometheusRulesMap:
   kubelet-pleg-duration-high-critical:
     groups:
-    - name: kubelet-pleg-duration-high
-      rules:
-      - alert: kubelet-pleg-duration-high-critical
-        annotations:
-          dashboard_url: default_dashboard_url
-          description: The Kubelet Pod Lifecycle Event Generator has a 99th percentile
-            duration of {{ $value }} seconds on node {{ $labels.node }} on cluster
-            {{ $labels.cluster }}. This critical alert fires after 10m.
-          runbook_url: default_runbook_url
-          summary: Kubelet Pod Lifecycle Event Generator is taking too long to relist.
-        expr: node_quantile:kubelet_pleg_relist_duration_seconds:histogram_quantile{quantile="0.99"}
-          >= 10
-        for: 10m
-        labels:
-          group_name: kubelet-pleg-duration-high
-          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
-          severity: critical
+      - name: kubelet-pleg-duration-high
+        rules:
+          - alert: kubelet-pleg-duration-high-critical
+            annotations:
+              dashboard_url: default_dashboard_url
+              description: The Kubelet Pod Lifecycle Event Generator has a 99th percentile duration of {{ $value }} seconds on node {{ $labels.node }} on cluster {{ $labels.cluster }}. This critical alert fires after 10m.
+              runbook_url: default_runbook_url
+              summary: Kubelet Pod Lifecycle Event Generator is taking too long to relist.
+            expr: node_quantile:kubelet_pleg_relist_duration_seconds:histogram_quantile{quantile="0.99"} >= 10
+            for: 10m
+            labels:
+              group_name: kubelet-pleg-duration-high
+              node_hostname: '{{ $labels.node }}'
+              severity: critical
+              affected_node: '{{ $labels.node }}'
+              correlation_key: node/{{ $labels.node }}
+              correlation_scope: node
+              root_cause: 'true'

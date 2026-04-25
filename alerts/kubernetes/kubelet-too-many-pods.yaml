@@ -14,7 +14,11 @@ additionalPrometheusRulesMap:
             labels:
               severity: warning
               group_name: kubelet-too-many-pods
-              node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+              node_hostname: '{{ $labels.node }}'
+              affected_node: '{{ $labels.node }}'
+              correlation_key: node/{{ $labels.node }}
+              correlation_scope: node
+              root_cause: 'true'
             annotations:
               description: >-
                 Kubelet '{{ $labels.node }}' is running at {{ $value | humanizePercentage }} of its Pod capacity.
@@ -33,7 +37,11 @@ additionalPrometheusRulesMap:
             labels:
               severity: critical
               group_name: kubelet-too-many-pods
-              node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+              node_hostname: '{{ $labels.node }}'
+              affected_node: '{{ $labels.node }}'
+              correlation_key: node/{{ $labels.node }}
+              correlation_scope: node
+              root_cause: 'true'
             annotations:
               description: >-
                 Kubelet '{{ $labels.node }}' is running at {{ $value | humanizePercentage }} of its Pod capacity.
