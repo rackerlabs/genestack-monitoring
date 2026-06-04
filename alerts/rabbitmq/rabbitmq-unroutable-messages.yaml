@@ -14,46 +14,8 @@ additionalPrometheusRulesMap:
           description: >-
             There were `{{ $value | printf "%.0f" }}` unroutable messages within the last 5 minutes in
             RabbitMQ cluster `{{ $labels.rabbitmq_cluster }}` in namespace `{{ $labels.namespace }}`. This
-            warning alert fires immediately.
+            warning alert fires immediately. This is likely related to neutron sending messages to agents that do not
+            exist in our environment and can be ignored.
           runbook_url: default_runbook_url
-          summary: 'There are messages published into an exchange which cannot be routed and are either dropped silently, or returned to publishers.
-
-            Is your routing topology set up correctly?
-
-            Check your application code and bindings between exchanges and queues.
-
-            See
-
-            https://www.rabbitmq.com/publishers.html#unroutable,
-
-            https://www.rabbitmq.com/confirms.html#when-publishes-are-confirmed.
-
-            '
-          dashboard_url: default_dashboard_url
-      - alert: rabbitmq-unroutable-messages-critical
-        expr: 'sum by(namespace, rabbitmq_cluster) (increase(rabbitmq_channel_messages_unroutable_dropped_total[5m]) * on (instance) group_left(rabbitmq_cluster) max by (instance, rabbitmq_cluster) (rabbitmq_identity_info)) >= 1 or sum by(namespace, rabbitmq_cluster) (increase(rabbitmq_channel_messages_unroutable_returned_total[5m]) * on (instance) group_left(rabbitmq_cluster) max by (instance, rabbitmq_cluster) (rabbitmq_identity_info)) >= 1'
-        for: 5m
-        labels:
-          severity: critical
-          group_name: rabbitmq-unroutable-messages
-          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
-        annotations:
-          description: >-
-            There were `{{ $value | printf "%.0f" }}` unroutable messages within the last 5 minutes in
-            RabbitMQ cluster `{{ $labels.rabbitmq_cluster }}` in namespace `{{ $labels.namespace }}`. This
-            critical alert fires after 5m.
-          runbook_url: default_runbook_url
-          summary: 'There are messages published into an exchange which cannot be routed and are either dropped silently, or returned to publishers.
-
-            Is your routing topology set up correctly?
-
-            Check your application code and bindings between exchanges and queues.
-
-            See
-
-            https://www.rabbitmq.com/publishers.html#unroutable,
-
-            https://www.rabbitmq.com/confirms.html#when-publishes-are-confirmed.
-
-            '
+          summary: 'There are messages published into an exchange which cannot be routed and are either dropped silently, or returned to publishers. '
           dashboard_url: default_dashboard_url
