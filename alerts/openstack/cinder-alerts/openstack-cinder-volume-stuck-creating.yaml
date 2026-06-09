@@ -19,7 +19,7 @@ additionalPrometheusRulesMap:
           runbook_url: default_runbook_url
           dashboard_url: default_dashboard_url
           summary: "There are {{ $value }} Cinder volumes stuck in creating state"
-          description: "There are {{ $value }} Cinder volumes stuck in creating state.\nLABELS: {{ $labels }}"
+          description: "There are {{ $value }} Cinder volumes stuck in creating state."
       - alert: cinder-volume-status-stuck-creating-critical
         expr: |
           (openstack_cinder_volume_status{status="creating", job="os-metrics-prometheus-openstack-exporter"} offset 7m)
@@ -36,4 +36,4 @@ additionalPrometheusRulesMap:
           runbook_url: default_runbook_url
           dashboard_url: default_dashboard_url
           summary: "Cinder volume with status == creating for approximately 30 minutes."
-          description: "Cinder volume ID: {{ $labels.id }}\nNAME: {{ $labels.name }}\nLABELS: {{ $labels }}"
+          description: "Cinder volume ID: {{ $labels.id }}\nNAME: {{ $labels.name }}"

@@ -10,7 +10,7 @@ additionalPrometheusRulesMap:
             labels:
               severity: warning
               group_name: etcd-members-down
-              node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+              node_hostname: '{{ $labels.k8s_node_name }}'
             annotations:
               description: >-
                 etcd cluster "{{ $labels.job }}": members are down ({{ $value }}). This warning alert fires
@@ -25,7 +25,7 @@ additionalPrometheusRulesMap:
             labels:
               severity: critical
               group_name: etcd-members-down
-              node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+              node_hostname: '{{ $labels.k8s_node_name }}'
             annotations:
               description: >-
                 etcd cluster "{{ $labels.job }}": members are down ({{ $value }}). This critical alert fires

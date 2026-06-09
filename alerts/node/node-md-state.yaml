@@ -9,14 +9,14 @@ additionalPrometheusRulesMap:
         labels:
           severity: warning
           group_name: node-md-state
-          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+          node_hostname: '{{ $labels.k8s_node_name }}'
           coreAccountID: '{{ $labels.rackspace_com_coreAccountID }}'
           coreDeviceID: '{{ $labels.rackspace_com_coreDeviceID }}'
-          node: '{{ $labels.instance }}'
+          node: '{{ $labels.k8s_node_name }}'
         annotations:
           description: >-
-            {{ $labels.name }} MD RAID status:{{ $value }} MD RAID device:{{ $labels.device }} LABELS: {{
-            $labels }}. This warning alert fires after 3m.
+            {{ $labels.name }} MD RAID status:{{ $value }} MD RAID device:{{ $labels.device }} on node {{ $labels.k8s_node_name }}.
+            This warning alert fires after 3m.
           runbook_url: default_runbook_url
           summary: Linux MDM RAID State is {{ $labels.state }}
           dashboard_url: default_dashboard_url
@@ -26,14 +26,14 @@ additionalPrometheusRulesMap:
         labels:
           severity: critical
           group_name: node-md-state
-          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+          node_hostname: '{{ $labels.k8s_node_name }}'
           coreAccountID: '{{ $labels.rackspace_com_coreAccountID }}'
           coreDeviceID: '{{ $labels.rackspace_com_coreDeviceID }}'
-          node: '{{ $labels.instance }}'
+          node: '{{ $labels.k8s_node_name }}'
         annotations:
           description: >-
-            {{ $labels.name }} MD RAID status:{{ $value }} MD RAID device:{{ $labels.device }} LABELS: {{
-            $labels }}. This critical alert fires after 10m.
+            {{ $labels.name }} MD RAID status:{{ $value }} MD RAID device:{{ $labels.device }} on node {{ $labels.k8s_node_name }}.
+            This critical alert fires after 10m.
           runbook_url: default_runbook_url
           summary: Linux MDM RAID State is {{ $labels.state }}
           dashboard_url: default_dashboard_url

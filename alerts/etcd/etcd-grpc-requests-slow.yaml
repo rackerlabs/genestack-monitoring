@@ -10,7 +10,7 @@ additionalPrometheusRulesMap:
             labels:
               severity: warning
               group_name: etcd-grpc-requests-slow
-              node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+              node_hostname: '{{ $labels.k8s_node_name }}'
             annotations:
               description: >-
                 etcd cluster "{{ $labels.job }}": 99th percentile of gRPC requests is {{ $value }}s on etcd
@@ -26,7 +26,7 @@ additionalPrometheusRulesMap:
             labels:
               severity: critical
               group_name: etcd-grpc-requests-slow
-              node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+              node_hostname: '{{ $labels.k8s_node_name }}'
             annotations:
               description: >-
                 etcd cluster "{{ $labels.job }}": 99th percentile of gRPC requests is {{ $value }}s on etcd

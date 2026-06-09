@@ -10,7 +10,7 @@ additionalPrometheusRulesMap:
             labels:
               severity: warning
               group_name: node-filesystem-almost-out-of-space
-              node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+              node_hostname: '{{ $labels.k8s_node_name }}'
             annotations:
               description: >-
                 Filesystem on {{ $labels.device }}, mounted on {{ $labels.mountpoint }}, at {{ $labels.instance
@@ -25,7 +25,7 @@ additionalPrometheusRulesMap:
             labels:
               severity: critical
               group_name: node-filesystem-almost-out-of-space
-              node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+              node_hostname: '{{ $labels.k8s_node_name }}'
             annotations:
               description: >-
                 Filesystem on {{ $labels.device }}, mounted on {{ $labels.mountpoint }}, at {{ $labels.instance

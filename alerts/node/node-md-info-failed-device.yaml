@@ -9,14 +9,14 @@ additionalPrometheusRulesMap:
         labels:
           severity: warning
           group_name: node-md-info-failed-device
-          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+          node_hostname: '{{ $labels.k8s_node_name }}'
           coreAccountID: '{{ $labels.rackspace_com_coreAccountID }}'
           coreDeviceID: '{{ $labels.rackspace_com_coreDeviceID }}'
-          node: '{{ $labels.instance }}'
+          node: '{{ $labels.k8s_node_name }}'
         annotations:
           description: >-
-            {{ $labels.name }} Number MD Failed:{{ $labels.FailedDevices }} LABELS: {{ $labels }}. This
-            warning alert fires after 2m.
+            {{ $labels.name }} Number MD Failed:{{ $labels.FailedDevices }} on node {{ $labels.k8s_node_name }}.
+            This warning alert fires after 2m.
           runbook_url: default_runbook_url
           summary: NVME device on Linux software RAID failure info
           dashboard_url: default_dashboard_url
@@ -26,14 +26,14 @@ additionalPrometheusRulesMap:
         labels:
           severity: critical
           group_name: node-md-info-failed-device
-          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+          node_hostname: '{{ $labels.k8s_node_name }}'
           coreAccountID: '{{ $labels.rackspace_com_coreAccountID }}'
           coreDeviceID: '{{ $labels.rackspace_com_coreDeviceID }}'
-          node: '{{ $labels.instance }}'
+          node: '{{ $labels.k8s_node_name }}'
         annotations:
           description: >-
-            {{ $labels.name }} Number MD Failed:{{ $labels.FailedDevices }} LABELS: {{ $labels }}. This
-            critical alert fires after 5m.
+            {{ $labels.name }} Number MD Failed:{{ $labels.FailedDevices }} on node {{ $labels.k8s_node_name }}.
+            This critical alert fires after 5m.
           runbook_url: default_runbook_url
           summary: NVME device on Linux software RAID failure info
           dashboard_url: default_dashboard_url

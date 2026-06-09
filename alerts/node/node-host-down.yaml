@@ -9,7 +9,7 @@ additionalPrometheusRulesMap:
             labels:
               severity: warning
               group_name: node-host-down
-              node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+              node_hostname: '{{ $labels.k8s_node_name }}'
             annotations:
               description: >-
                 Host {{ $labels.instance }} is down or OpenTelemetry collector is not reporting metrics for 5
@@ -23,7 +23,7 @@ additionalPrometheusRulesMap:
             labels:
               severity: critical
               group_name: node-host-down
-              node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+              node_hostname: '{{ $labels.k8s_node_name }}'
             annotations:
               description: >-
                 Host {{ $labels.instance }} is down or OpenTelemetry collector is not reporting metrics for 10

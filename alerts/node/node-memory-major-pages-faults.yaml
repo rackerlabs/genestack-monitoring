@@ -9,7 +9,7 @@ additionalPrometheusRulesMap:
             labels:
               severity: warning
               group_name: node-memory-major-pages-faults
-              node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+              node_hostname: '{{ $labels.k8s_node_name }}'
             annotations:
               description: >-
                 Memory major pages are occurring at very high rate at {{ $labels.instance }}, 500 major page
@@ -24,7 +24,7 @@ additionalPrometheusRulesMap:
             labels:
               severity: critical
               group_name: node-memory-major-pages-faults
-              node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+              node_hostname: '{{ $labels.k8s_node_name }}'
             annotations:
               description: >-
                 Memory major pages are occurring at very high rate at {{ $labels.instance }}, 500 major page

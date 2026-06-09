@@ -12,7 +12,7 @@ additionalPrometheusRulesMap:
             labels:
               severity: warning
               group_name: node-network-transmit-errs
-              node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+              node_hostname: '{{ $labels.k8s_node_name }}'
             annotations:
               description: >-
                 {{ $labels.instance }} interface {{ $labels.device }} has encountered {{ printf "%.0f" $value }}
@@ -29,7 +29,7 @@ additionalPrometheusRulesMap:
             labels:
               severity: critical
               group_name: node-network-transmit-errs
-              node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+              node_hostname: '{{ $labels.k8s_node_name }}'
             annotations:
               description: >-
                 {{ $labels.instance }} interface {{ $labels.device }} has encountered {{ printf "%.0f" $value }}

@@ -20,7 +20,7 @@ additionalPrometheusRulesMap:
           runbook_url: default_runbook_url
           dashboard_url: default_dashboard_url
           summary: Cinder NetApp (cinder02) free pool capacity has dropped below 30% of total
-          description: "Cinder NetApp volume cinder02: {{ $labels.name }}\nFree Space: {{ $value }}%\nLABELS: {{ $labels }}"
+          description: "Cinder NetApp volume cinder02: {{ $labels.name }}\nFree Space: {{ $value }}%"
       - alert: cinder-netapp-cluster-pool-freespace-critical
         expr: |
           (avg(openstack_cinder_pool_capacity_free_gb{name=~".*netapp.*cinder02.*", job="os-metrics-prometheus-openstack-exporter"}) /
@@ -38,4 +38,4 @@ additionalPrometheusRulesMap:
           runbook_url: default_runbook_url
           dashboard_url: default_dashboard_url
           summary: Cinder NetApp (cinder02) free pool capacity has dropped below 30% of total
-          description: "Cinder NetApp volume cinder02: {{ $labels.name }}\nFree Space: {{ $value }}%\nLABELS: {{ $labels }}"
+          description: "Cinder NetApp volume cinder02: {{ $labels.name }}\nFree Space: {{ $value }}%"

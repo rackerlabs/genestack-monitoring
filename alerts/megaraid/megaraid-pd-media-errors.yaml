@@ -13,15 +13,15 @@ additionalPrometheusRulesMap:
         for: 5m
         labels:
           severity: info
-          node: "{{ $labels.instance }}"
+          node: "{{ $labels.k8s_node_name }}"
           group_name: megaraid-pd-media-errors-info
-          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
-          affected_node: '{{ reReplaceAll ":.*" "" $labels.instance }}'
-          correlation_key: node/{{ reReplaceAll ":.*" "" $labels.instance }}
+          node_hostname: '{{ $labels.k8s_node_name }}'
+          affected_node: '{{ $labels.k8s_node_name }}'
+          correlation_key: node/{{ $labels.k8s_node_name }}
           correlation_scope: node
           root_cause: 'true'
         annotations:
           runbook_url: default_runbook_url
           dashboard_url: default_dashboard_url
           summary: "DELL megaraid physical disk media errors detected"
-          description: "{{ $labels.name }}\nController: {{ $labels.controller }}\nSlot: {{ $labels.slot }}\nlabels: {{ $labels }}"
+          description: "{{ $labels.name }}\nController: {{ $labels.controller }}\nSlot: {{ $labels.slot }}\nNode: {{ $labels.k8s_node_name }}"

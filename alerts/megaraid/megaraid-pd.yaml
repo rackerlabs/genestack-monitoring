@@ -8,32 +8,32 @@ additionalPrometheusRulesMap:
         for: 5m
         labels:
           severity: warning
-          node: "{{ $labels.instance }}"
+          node: "{{ $labels.k8s_node_name }}"
           group_name: megaraid-pd0s
-          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
-          affected_node: '{{ reReplaceAll ":.*" "" $labels.instance }}'
-          correlation_key: node/{{ reReplaceAll ":.*" "" $labels.instance }}
+          node_hostname: '{{ $labels.k8s_node_name }}'
+          affected_node: '{{ $labels.k8s_node_name }}'
+          correlation_key: node/{{ $labels.k8s_node_name }}
           correlation_scope: node
           root_cause: 'true'
         annotations:
           runbook_url: default_runbook_url
           dashboard_url: default_dashboard_url
           summary: "DELL megaraid block storage data disk alert"
-          description: "{{ $labels.name }}\nSlot: {{ $labels.slot }}\nSerial: {{ $labels.serial }}\nlabels: {{ $labels }}"
+          description: "{{ $labels.name }}\nSlot: {{ $labels.slot }}\nSerial: {{ $labels.serial }}\nNode: {{ $labels.k8s_node_name }}"
       - alert: megaraid-pd0s-critical
         expr: megaraid_pd_info{job="node-exporter", type!~"JBOD", state!~"Onln|UGood|DHS"}
         for: 15m
         labels:
           severity: critical
-          node: "{{ $labels.instance }}"
+          node: "{{ $labels.k8s_node_name }}"
           group_name: megaraid-pd0s
-          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
-          affected_node: '{{ reReplaceAll ":.*" "" $labels.instance }}'
-          correlation_key: node/{{ reReplaceAll ":.*" "" $labels.instance }}
+          node_hostname: '{{ $labels.k8s_node_name }}'
+          affected_node: '{{ $labels.k8s_node_name }}'
+          correlation_key: node/{{ $labels.k8s_node_name }}
           correlation_scope: node
           root_cause: 'true'
         annotations:
           runbook_url: default_runbook_url
           dashboard_url: default_dashboard_url
           summary: "DELL megaraid block storage data disk alert"
-          description: "{{ $labels.name }}\nSlot: {{ $labels.slot }}\nSerial: {{ $labels.serial }}\nlabels: {{ $labels }}"
+          description: "{{ $labels.name }}\nSlot: {{ $labels.slot }}\nSerial: {{ $labels.serial }}\nNode: {{ $labels.k8s_node_name }}"

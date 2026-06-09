@@ -8,32 +8,32 @@ additionalPrometheusRulesMap:
         for: 5m
         labels:
           severity: warning
-          node: "{{ $labels.instance }}"
+          node: "{{ $labels.k8s_node_name }}"
           group_name: hp-smart-array-pd-status
-          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
-          affected_node: '{{ reReplaceAll ":.*" "" $labels.instance }}'
-          correlation_key: node/{{ reReplaceAll ":.*" "" $labels.instance }}
+          node_hostname: '{{ $labels.k8s_node_name }}'
+          affected_node: '{{ $labels.k8s_node_name }}'
+          correlation_key: node/{{ $labels.k8s_node_name }}
           correlation_scope: node
           root_cause: 'true'
         annotations:
           runbook_url: default_runbook_url
           dashboard_url: default_dashboard_url
           summary: "HP RAID physical disk failure"
-          description: "{{ $labels.name }}\nPort:Box:Bay: {{ $labels.port }}:{{ $labels.box }}:{{ $labels.bay }}\nSerial: {{ $labels.serial }}\nlabels: {{ $labels }}"
+          description: "{{ $labels.name }}\nPort:Box:Bay: {{ $labels.port }}:{{ $labels.box }}:{{ $labels.bay }}\nSerial: {{ $labels.serial }}\nNode: {{ $labels.k8s_node_name }}"
       - alert: hp-smart-array-pd-status-critical
         expr: hp_smart_array_disk_status{job="node-exporter"} < 1
         for: 15m
         labels:
           severity: critical
-          node: "{{ $labels.instance }}"
+          node: "{{ $labels.k8s_node_name }}"
           group_name: hp-smart-array-pd-status
-          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
-          affected_node: '{{ reReplaceAll ":.*" "" $labels.instance }}'
-          correlation_key: node/{{ reReplaceAll ":.*" "" $labels.instance }}
+          node_hostname: '{{ $labels.k8s_node_name }}'
+          affected_node: '{{ $labels.k8s_node_name }}'
+          correlation_key: node/{{ $labels.k8s_node_name }}
           correlation_scope: node
           root_cause: 'true'
         annotations:
           runbook_url: default_runbook_url
           dashboard_url: default_dashboard_url
           summary: "HP RAID physical disk failure"
-          description: "{{ $labels.name }}\nPort:Box:Bay: {{ $labels.port }}:{{ $labels.box }}:{{ $labels.bay }}\nSerial: {{ $labels.serial }}\nlabels: {{ $labels }}"
+          description: "{{ $labels.name }}\nPort:Box:Bay: {{ $labels.port }}:{{ $labels.box }}:{{ $labels.bay }}\nSerial: {{ $labels.serial }}\nNode: {{ $labels.k8s_node_name }}"

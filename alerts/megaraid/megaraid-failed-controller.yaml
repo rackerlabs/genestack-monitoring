@@ -8,32 +8,32 @@ additionalPrometheusRulesMap:
         for: 5m
         labels:
           severity: warning
-          node: "{{ $labels.instance }}"
+          node: "{{ $labels.k8s_node_name }}"
           group_name: megaraid-failed-controller
-          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
-          affected_node: '{{ reReplaceAll ":.*" "" $labels.instance }}'
-          correlation_key: node/{{ reReplaceAll ":.*" "" $labels.instance }}
+          node_hostname: '{{ $labels.k8s_node_name }}'
+          affected_node: '{{ $labels.k8s_node_name }}'
+          correlation_key: node/{{ $labels.k8s_node_name }}
           correlation_scope: node
           root_cause: 'true'
         annotations:
           runbook_url: default_runbook_url
           dashboard_url: default_dashboard_url
           summary: "DELL Megaraid controller has failed."
-          description: "{{ $labels.name }}\nController: {{ $labels.controller }}\nLABELS: {{ $labels }}"
+          description: "{{ $labels.name }}\nController: {{ $labels.controller }}\nNode: {{ $labels.k8s_node_name }}"
       - alert: megaraid-failed-controller-critical
         expr: megaraid_failed{job="node-exporter"} > 0
         for: 15m
         labels:
           severity: critical
-          node: "{{ $labels.instance }}"
+          node: "{{ $labels.k8s_node_name }}"
           group_name: megaraid-failed-controller
-          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
-          affected_node: '{{ reReplaceAll ":.*" "" $labels.instance }}'
-          correlation_key: node/{{ reReplaceAll ":.*" "" $labels.instance }}
+          node_hostname: '{{ $labels.k8s_node_name }}'
+          affected_node: '{{ $labels.k8s_node_name }}'
+          correlation_key: node/{{ $labels.k8s_node_name }}
           correlation_scope: node
           root_cause: 'true'
         annotations:
           runbook_url: default_runbook_url
           dashboard_url: default_dashboard_url
           summary: "DELL Megaraid controller has failed."
-          description: "{{ $labels.name }}\nController: {{ $labels.controller }}\nLABELS: {{ $labels }}"
+          description: "{{ $labels.name }}\nController: {{ $labels.controller }}\nNode: {{ $labels.k8s_node_name }}"

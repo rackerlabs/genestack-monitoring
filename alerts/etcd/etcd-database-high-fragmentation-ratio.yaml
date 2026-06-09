@@ -10,7 +10,7 @@ additionalPrometheusRulesMap:
             labels:
               severity: warning
               group_name: etcd-database-high-fragmentation-ratio
-              node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+              node_hostname: '{{ $labels.k8s_node_name }}'
             annotations:
               description: >-
                 etcd cluster "{{ $labels.job }}": database size in use on instance {{ $labels.instance }} is {{
@@ -27,7 +27,7 @@ additionalPrometheusRulesMap:
             labels:
               severity: critical
               group_name: etcd-database-high-fragmentation-ratio
-              node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+              node_hostname: '{{ $labels.k8s_node_name }}'
             annotations:
               description: >-
                 etcd cluster "{{ $labels.job }}": database size in use on instance {{ $labels.instance }} is {{

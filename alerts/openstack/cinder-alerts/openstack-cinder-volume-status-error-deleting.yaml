@@ -18,8 +18,8 @@ additionalPrometheusRulesMap:
           node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
         annotations:
           description: >-
-            Cinder volume ID: {{ $labels.id }} NAME: {{ $labels.name }} LABELS: {{ $labels }}. This warning
-            alert fires after 1m.
+            Cinder volume ID: {{ $labels.id }} NAME: {{ $labels.name }}.
+            This warning alert fires after 1m.
           runbook_url: default_runbook_url
           summary: Cinder volume with status == error_deleting
           dashboard_url: default_dashboard_url
@@ -38,8 +38,8 @@ additionalPrometheusRulesMap:
           node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
         annotations:
           description: >-
-            Cinder volume ID: {{ $labels.id }} NAME: {{ $labels.name }} LABELS: {{ $labels }}. This critical
-            alert fires after 5m.
+            Cinder volume ID: {{ $labels.id }} NAME: {{ $labels.name }}.
+            This critical alert fires after 5m.
           runbook_url: default_runbook_url
           summary: Cinder volume with status == error_deleting
           dashboard_url: default_dashboard_url

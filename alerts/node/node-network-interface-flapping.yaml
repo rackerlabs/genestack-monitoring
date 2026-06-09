@@ -9,11 +9,10 @@ additionalPrometheusRulesMap:
             labels:
               severity: warning
               group_name: node-network-interface-flapping
-              node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+              node_hostname: '{{ $labels.k8s_node_name }}'
             annotations:
               description: >-
-                Network interface "{{ $labels.device }}" changing its up status often on node-exporter {{
-                $labels.namespace }}/{{ $labels.pod }}
+                Network interface "{{ $labels.device }}" changing its up status often on node {{ $labels.k8s_node_name }}.
               runbook_url: default_runbook_url
               summary: Network interface is often changing its status
               dashboard_url: default_dashboard_url
@@ -23,11 +22,10 @@ additionalPrometheusRulesMap:
             labels:
               severity: critical
               group_name: node-network-interface-flapping
-              node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+              node_hostname: '{{ $labels.k8s_node_name }}'
             annotations:
               description: >-
-                Network interface "{{ $labels.device }}" changing its up status often on node-exporter {{
-                $labels.namespace }}/{{ $labels.pod }}
+                Network interface "{{ $labels.device }}" changing its up status often on node {{ $labels.k8s_node_name }}.
               runbook_url: default_runbook_url
               summary: Network interface is often changing its status
               dashboard_url: default_dashboard_url

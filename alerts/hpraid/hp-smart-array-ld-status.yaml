@@ -8,32 +8,32 @@ additionalPrometheusRulesMap:
         for: 5m
         labels:
           severity: warning
-          node: "{{ $labels.instance }}"
+          node: "{{ $labels.k8s_node_name }}"
           group_name: hp-smart-array-ld-status
-          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
-          affected_node: '{{ reReplaceAll ":.*" "" $labels.instance }}'
-          correlation_key: node/{{ reReplaceAll ":.*" "" $labels.instance }}
+          node_hostname: '{{ $labels.k8s_node_name }}'
+          affected_node: '{{ $labels.k8s_node_name }}'
+          correlation_key: node/{{ $labels.k8s_node_name }}
           correlation_scope: node
           root_cause: 'true'
         annotations:
           runbook_url: default_runbook_url
           dashboard_url: default_dashboard_url
           summary: "HP RAID logical disk status alert: possible LD array recovery in-progress"
-          description: "{{ $labels.name }}\nlabels: {{ $labels }}"
+          description: "{{ $labels.name }}\nNode: {{ $labels.k8s_node_name }}"
       - alert: hp-smart-array-ld-status-critical
         expr: hp_smart_array_ld_status{job="node-exporter"} < 1
         for: 15m
         labels:
           severity: critical
-          node: "{{ $labels.instance }}"
+          node: "{{ $labels.k8s_node_name }}"
           group_name: hp-smart-array-ld-status
-          node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
-          affected_node: '{{ reReplaceAll ":.*" "" $labels.instance }}'
-          correlation_key: node/{{ reReplaceAll ":.*" "" $labels.instance }}
+          node_hostname: '{{ $labels.k8s_node_name }}'
+          affected_node: '{{ $labels.k8s_node_name }}'
+          correlation_key: node/{{ $labels.k8s_node_name }}
           correlation_scope: node
           root_cause: 'true'
         annotations:
           runbook_url: default_runbook_url
           dashboard_url: default_dashboard_url
           summary: "HP RAID logical disk status alert: possible LD array recovery in-progress"
-          description: "{{ $labels.name }}\nlabels: {{ $labels }}"
+          description: "{{ $labels.name }}\nNode: {{ $labels.k8s_node_name }}"

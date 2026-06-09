@@ -9,7 +9,7 @@ additionalPrometheusRulesMap:
             labels:
               severity: warning
               group_name: node-textfile-collector-scrape-error
-              node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+              node_hostname: '{{ $labels.k8s_node_name }}'
             annotations:
               description: >-
                 Node Exporter text file collector on {{ $labels.instance }} failed to scrape. This warning alert
@@ -23,7 +23,7 @@ additionalPrometheusRulesMap:
             labels:
               severity: critical
               group_name: node-textfile-collector-scrape-error
-              node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+              node_hostname: '{{ $labels.k8s_node_name }}'
             annotations:
               description: >-
                 Node Exporter text file collector on {{ $labels.instance }} failed to scrape. This critical

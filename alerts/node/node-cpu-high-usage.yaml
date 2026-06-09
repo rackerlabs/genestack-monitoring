@@ -9,7 +9,7 @@ additionalPrometheusRulesMap:
             labels:
               severity: warning
               group_name: node-cpu-high-usage
-              node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+              node_hostname: '{{ $labels.k8s_node_name }}'
             annotations:
               description: CPU usage on {{ $labels.node_hostname }} has been above 90% for 5 minutes; current usage is {{ printf "%.2f" $value }}%.
               runbook_url: default_runbook_url
@@ -21,7 +21,7 @@ additionalPrometheusRulesMap:
             labels:
               severity: critical
               group_name: node-cpu-high-usage
-              node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+              node_hostname: '{{ $labels.k8s_node_name }}'
             annotations:
               description: CPU usage on {{ $labels.node_hostname }} has been above 90% for 10 minutes; current usage is {{ printf "%.2f" $value }}%.
               runbook_url: default_runbook_url

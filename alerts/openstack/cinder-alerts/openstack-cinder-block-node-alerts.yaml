@@ -18,7 +18,7 @@ additionalPrometheusRulesMap:
           runbook_url: default_runbook_url
           dashboard_url: default_dashboard_url
           summary: Cinder block node free capacity < 5.5 TB (30% of total)
-          description: "Cinder block node: {{ $labels.name }}\nFree Space: {{ $value }} GB\nLABELS: {{ $labels }}"
+          description: "Cinder block node: {{ $labels.name }}\nFree Space: {{ $value }} GB"
       - alert: cinder-block-node-freespace-critical
         expr: openstack_cinder_pool_capacity_free_gb{job="os-metrics-prometheus-openstack-exporter"} / 1000.0 < 5.50
         for: 10m
@@ -34,4 +34,4 @@ additionalPrometheusRulesMap:
           runbook_url: default_runbook_url
           dashboard_url: default_dashboard_url
           summary: Cinder block node free capacity < 5.5 TB (30% of total)
-          description: "Cinder block node: {{ $labels.name }}\nFree Space: {{ $value }} GB\nLABELS: {{ $labels }}"
+          description: "Cinder block node: {{ $labels.name }}\nFree Space: {{ $value }} GB"
