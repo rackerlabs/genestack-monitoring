@@ -3,31 +3,16 @@ additionalPrometheusRulesMap:
     groups:
       - name: node-host-down
         rules:
-          - alert: node-host-down-warning
-            expr: up{job="node-exporter"} == 0
-            for: 5m
-            labels:
-              severity: warning
-              group_name: node-host-down
-              node_hostname: '{{ $labels.k8s_node_name }}'
-            annotations:
-              description: >-
-                Host {{ $labels.instance }} is down or OpenTelemetry collector is not reporting metrics for 5
-                minutes.
-              runbook_url: default_runbook_url
-              summary: Host is down or metrics collection has stopped.
-              dashboard_url: default_dashboard_url
           - alert: node-host-down-critical
             expr: up{job="node-exporter"} == 0
-            for: 10m
+            for: 0m
             labels:
               severity: critical
               group_name: node-host-down
               node_hostname: '{{ $labels.k8s_node_name }}'
             annotations:
               description: >-
-                Host {{ $labels.instance }} is down or OpenTelemetry collector is not reporting metrics for 10
-                minutes.
+                Host {{ $labels.k8s_node_name }} is down or OpenTelemetry collector has stopped reporting metrics.
               runbook_url: default_runbook_url
               summary: Host is down or metrics collection has stopped.
               dashboard_url: default_dashboard_url

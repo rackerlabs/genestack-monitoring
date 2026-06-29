@@ -10,10 +10,10 @@ additionalPrometheusRulesMap:
             labels:
               severity: warning
               group_name: kube-pod-container-restarts
-              node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+              node_hostname: '{{ reReplaceAll ":.*" "" $labels.k8s_node_name }}'
             annotations:
               description: >-
-                Pod {{ $labels.namespace }}/{{ $labels.pod }} container {{ $labels.container }} is restarting
+                Pod {{ $labels.exported_namespace }}/{{ $labels.exported_pod }} container {{ $labels.container }} is restarting
                 frequently. Inspect pod logs and recent events.
               runbook_url: default_runbook_url
               summary: Pod container restart rate is high.
@@ -25,10 +25,10 @@ additionalPrometheusRulesMap:
             labels:
               severity: critical
               group_name: kube-pod-container-restarts
-              node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+              node_hostname: '{{ reReplaceAll ":.*" "" $labels.k8s_node_name }}'
             annotations:
               description: >-
-                Pod {{ $labels.namespace }}/{{ $labels.pod }} container {{ $labels.container }} restarted more
+                Pod {{ $labels.exported_namespace }}/{{ $labels.exported_pod }} container {{ $labels.container }} restarted more
                 than 5 times in 15 minutes. Investigate logs, events, and recent rollout changes.
               runbook_url: default_runbook_url
               summary: Pod container is restarting excessively.

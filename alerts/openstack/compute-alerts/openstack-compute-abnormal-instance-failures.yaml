@@ -1,41 +1,31 @@
 additionalPrometheusRulesMap:
   openstack-compute-abnormal-instance-failures:
     groups:
-    - name: openstack-compute-abnormal-instance-failures
+    - name: openstack-compute-error-instance-warning
       rules:
-      - alert: openstack-compute-abnormal-instance-failures-warning
-        expr: 'count(count(last_over_time(openstack_nova_server_status{status=~"BUILD|ERROR"}[60m])) by (id)) /
-
-          count(count(last_over_time(openstack_nova_server_status{status="ACTIVE"}[60m])) by (id)) * 100 >= 20
-
-          '
-        for: 0m
+      - alert: openstack-compute-error-instance-warning
+        expr: 100 * count(count by (id) (last_over_time(openstack_nova_server_status{status="ERROR"}[60m]))) / clamp_min(count(count by (id) (last_over_time(openstack_nova_server_status{status=~"ACTIVE|ERROR"}[60m]))), 1) >= 20
+        for: 10m
         labels:
           severity: warning
           group_name: openstack-compute-abnormal-instance-failures
           node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
         annotations:
           description: >-
-            This indicates a major problem building compute instances. View logs and take action to resolve
-            the build failures. This warning alert fires immediately.
+            20% or more of Nova instances observed over the last hour were seen in ERROR. This may indicate a potential problem building instances and should be monitored for further issues.
           runbook_url: default_runbook_url
-          summary: Instance build failure rate is abnormally high
+          summary: High percentage of OpenStack Nova instances in ERROR
           dashboard_url: default_dashboard_url
-      - alert: openstack-compute-abnormal-instance-failures-critical
-        expr: 'count(count(last_over_time(openstack_nova_server_status{status=~"BUILD|ERROR"}[60m])) by (id)) /
-
-          count(count(last_over_time(openstack_nova_server_status{status="ACTIVE"}[60m])) by (id)) * 100 >= 20
-
-          '
-        for: 5m
+      - alert: openstack-compute-error-instance-critical
+        expr:  100 * count(count by (id) (last_over_time(openstack_nova_server_status{status="ERROR"}[60m]))) / clamp_min(count(count by (id) (last_over_time(openstack_nova_server_status{status=~"ACTIVE|ERROR"}[60m]))), 1) >= 40
+        for: 10m
         labels:
           severity: critical
           group_name: openstack-compute-abnormal-instance-failures
           node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
         annotations:
           description: >-
-            This indicates a major problem building compute instances. View logs and take action to resolve
-            the build failures. This critical alert fires after 5m.
+            40% or more of Nova instances observed over the last hour were seen in ERROR. This may indicate a critical failure that needs to be addressed.
           runbook_url: default_runbook_url
-          summary: Instance build failure rate is abnormally high
+          summary:  High percentage of OpenStack Nova instances in ERROR
           dashboard_url: default_dashboard_url

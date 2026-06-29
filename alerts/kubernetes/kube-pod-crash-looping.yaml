@@ -13,7 +13,7 @@ additionalPrometheusRulesMap:
               node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
             annotations:
               description: >-
-                Pod {{ $labels.namespace }}/{{ $labels.pod }} ({{ $labels.container }}) is in waiting state
+                Pod {{ $labels.exported_namespace }}/{{ $labels.exported_pod }} ({{ $labels.container }}) is in waiting state
                 (reason: "CrashLoopBackOff"). This warning alert fires after
                 5m.
               runbook_url: default_runbook_url
@@ -29,7 +29,7 @@ additionalPrometheusRulesMap:
               node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
             annotations:
               description: >-
-                Pod {{ $labels.namespace }}/{{ $labels.pod }} ({{ $labels.container }}) is in waiting state
+                Pod {{ $labels.exported_namespace }}/{{ $labels.exported_pod }} ({{ $labels.container }}) is in waiting state
                 (reason: "CrashLoopBackOff"). This critical alert fires after 10m.
               runbook_url: default_runbook_url
               summary: Pod is crash looping.

@@ -22,13 +22,13 @@ additionalPrometheusRulesMap:
             labels:
               severity: warning
               group_name: kube-pod-not-ready
-              node_hostname: '{{ $labels.node }}'
-              affected_node: '{{ $labels.node }}'
-              correlation_key: node/{{ $labels.node }}
+              node_hostname: '{{ $labels.k8s_node_name }}'
+              affected_node: '{{ $labels.k8s_node_name }}'
+              correlation_key: node/{{ $labels.k8s_node_name }}
               correlation_scope: node
             annotations:
               description: >-
-                Pod {{ $labels.namespace }}/{{ $labels.pod }} has been in a non-ready state for longer than 5
+                Pod {{ $labels.exported_namespace }}/{{ $labels.exported_pod }} has been in a non-ready state for longer than 5
                 minutes.
               runbook_url: default_runbook_url
               summary: Pod has been in a non-ready state for more than 5 minutes.
@@ -52,13 +52,13 @@ additionalPrometheusRulesMap:
             labels:
               severity: critical
               group_name: kube-pod-not-ready
-              node_hostname: '{{ $labels.node }}'
-              affected_node: '{{ $labels.node }}'
-              correlation_key: node/{{ $labels.node }}
+              node_hostname: '{{ $labels.k8s_node_name }}'
+              affected_node: '{{ $labels.k8s_node_name }}'
+              correlation_key: node/{{ $labels.k8s_node_name }}
               correlation_scope: node
             annotations:
               description: >-
-                Pod {{ $labels.namespace }}/{{ $labels.pod }} has been in a non-ready state for longer than 10
+                Pod {{ $labels.exported_namespace }}/{{ $labels.exported_pod }} has been in a non-ready state for longer than 10
                 minutes.
               runbook_url: default_runbook_url
               summary: Pod has been in a non-ready state for more than 10 minutes.
