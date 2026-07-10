@@ -17,7 +17,7 @@ additionalPrometheusRulesMap:
           summary: High percentage of OpenStack Nova instances in ERROR
           dashboard_url: default_dashboard_url
       - alert: openstack-compute-error-instance-critical
-        expr:  100 * count(count by (id) (last_over_time(openstack_nova_server_status{status="ERROR"}[60m]))) / clamp_min(count(count by (id) (last_over_time(openstack_nova_server_status{status=~"ACTIVE|ERROR"}[60m]))), 1) >= 40
+        expr: 100 * count(count by (id) (last_over_time(openstack_nova_server_status{status="ERROR"}[60m]))) / clamp_min(count(count by (id) (last_over_time(openstack_nova_server_status{status=~"ACTIVE|ERROR"}[60m]))), 1) >= 40
         for: 10m
         labels:
           severity: critical
@@ -27,5 +27,5 @@ additionalPrometheusRulesMap:
           description: >-
             40% or more of Nova instances observed over the last hour were seen in ERROR. This may indicate a critical failure that needs to be addressed.
           runbook_url: default_runbook_url
-          summary:  High percentage of OpenStack Nova instances in ERROR
+          summary: High percentage of OpenStack Nova instances in ERROR
           dashboard_url: default_dashboard_url

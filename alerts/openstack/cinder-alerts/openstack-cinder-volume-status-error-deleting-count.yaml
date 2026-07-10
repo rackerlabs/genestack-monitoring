@@ -16,6 +16,8 @@ additionalPrometheusRulesMap:
           severity: warning
           group_name: openstack-cinder-volume-status-error-deleting-count
           node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+          correlation_key: cinder_volume_status/error_deleting
+          correlation_scope: cinder_volume_status
         annotations:
           description: >-
             There are {{ $value }} Cinder volumes in error_deleting state.
@@ -36,6 +38,8 @@ additionalPrometheusRulesMap:
           severity: critical
           group_name: openstack-cinder-volume-status-error-deleting-count
           node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+          correlation_key: cinder_volume_status/error_deleting
+          correlation_scope: cinder_volume_status
         annotations:
           description: >-
             There are {{ $value }} Cinder volumes in error_deleting state.
