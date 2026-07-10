@@ -13,8 +13,21 @@ additionalPrometheusRulesMap:
               node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
             annotations:
               description: >-
-                HPA {{ $labels.exported_namespace }}/{{ $labels.horizontalpodautoscaler  }} has been running at max
-                replicas for longer than 5 minutes on cluster {{ $labels.cluster }}.
+                HPA {{ $labels.exported_namespace }}/{{ $labels.horizontalpodautoscaler  }} has been running at max replicas for longer than 5 minutes on cluster {{ $labels.cluster }}.
+              runbook_url: default_runbook_url
+              summary: HPA is running at max replicas
+              dashboard_url: default_dashboard_url
+          - alert: kube-hpa-maxed-out-critical
+            expr: >-
+              kube_horizontalpodautoscaler_status_current_replicas{namespace=~".*"} == kube_horizontalpodautoscaler_spec_max_replicas{namespace=~".*"}
+            for: 10m
+            labels:
+              severity: critical
+              group_name: kube-hpa-maxed-out
+              node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+            annotations:
+              description: >-
+                HPA {{ $labels.exported_namespace }}/{{ $labels.horizontalpodautoscaler  }} has been running at max replicas for longer than 10 minutes on cluster {{ $labels.cluster }}.
               runbook_url: default_runbook_url
               summary: HPA is running at max replicas
               dashboard_url: default_dashboard_url
