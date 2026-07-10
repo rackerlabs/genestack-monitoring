@@ -9,7 +9,7 @@ additionalPrometheusRulesMap:
         labels:
           severity: warning
           node: "{{ $labels.instance }}"
-          group_name: openstack-cinder--block-node-alerts
+          group_name: openstack-cinder-block-node-alerts
           node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
           correlation_key: cinder_block_node/{{ $labels.name }}
           correlation_scope: cinder_block_node
@@ -18,14 +18,15 @@ additionalPrometheusRulesMap:
           runbook_url: default_runbook_url
           dashboard_url: default_dashboard_url
           summary: Cinder block node free capacity < 5.5 TB (30% of total)
-          description: "Cinder block node: {{ $labels.name }}\nFree Space: {{ $value }} GB"
+          description: "Cinder block node: {{ $labels.name }}
+Free Space: {{ $value }} GB"
       - alert: cinder-block-node-freespace-critical
         expr: openstack_cinder_pool_capacity_free_gb{job="os-metrics-prometheus-openstack-exporter"} / 1000.0 < 5.50
         for: 10m
         labels:
           severity: critical
           node: "{{ $labels.instance }}"
-          group_name: openstack-cinder--block-node-alerts
+          group_name: openstack-cinder-block-node-alerts
           node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
           correlation_key: cinder_block_node/{{ $labels.name }}
           correlation_scope: cinder_block_node
@@ -34,4 +35,5 @@ additionalPrometheusRulesMap:
           runbook_url: default_runbook_url
           dashboard_url: default_dashboard_url
           summary: Cinder block node free capacity < 5.5 TB (30% of total)
-          description: "Cinder block node: {{ $labels.name }}\nFree Space: {{ $value }} GB"
+          description: "Cinder block node: {{ $labels.name }}
+Free Space: {{ $value }} GB"
