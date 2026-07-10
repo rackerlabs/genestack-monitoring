@@ -10,6 +10,8 @@ additionalPrometheusRulesMap:
           severity: warning
           group_name: openstack-cinder-volume-status-error-counter
           node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+          correlation_key: cinder_volume_status/error
+          correlation_scope: cinder_volume_status
         annotations:
           description: >-
             There are {{ $value }} Cinder volumes in error state. This warning alert fires after 1m.
@@ -23,6 +25,8 @@ additionalPrometheusRulesMap:
           severity: critical
           group_name: openstack-cinder-volume-status-error-counter
           node_hostname: '{{ reReplaceAll ":.*" "" $labels.instance }}'
+          correlation_key: cinder_volume_status/error
+          correlation_scope: cinder_volume_status
         annotations:
           description: >-
             There are {{ $value }} Cinder volumes in error state. This critical alert fires after 5m.
